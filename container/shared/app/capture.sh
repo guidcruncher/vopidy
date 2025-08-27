@@ -1,18 +1,20 @@
 #/bin/bash
 input="alsa"
-device="hw:0,1"
+card="$(aplay -l | grep Loopback | grep card |  cut -d ' ' -f2 | sed 's/://' | head -n 1)"
+device="hw:$card,1"
 channels=2
 samplerate=48000
 format="ogg"
 contenttype="audio/ogg"
 codec="flac"
-level=5
-
+level=8
+bitrate="128000" 
 
 /usr/bin/ffmpeg -f "$input" \
          -i "$device" \
          -ar "$samplerate" \
          -ac "$channels" \
+         -b:a "$bitrate" \
          -c:a "$codec" \
          -compression_level "$level" \
          -f "$format" \
