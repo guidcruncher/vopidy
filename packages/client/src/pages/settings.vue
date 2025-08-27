@@ -60,8 +60,12 @@
             >
             <span v-if="settings.enableIcecast"
               >Stream URL:<br />
-              <a target="_blank" :href="streamUrl">{{ streamUrl }}</a></span
-            >
+              <a target="_blank" :href="streamUrl">{{ streamUrl }}</a
+              ><br />
+              <audio xmlns="http://www.w3.org/1999/xhtml" controls="controls" preload="none">
+                <source :src="streamUrl" type="audio/ogg" />
+              </audio>
+            </span>
           </td>
         </tr>
       </tbody>
