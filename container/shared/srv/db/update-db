@@ -1,0 +1,2 @@
+#!/bin/bash
+sqlite3 ./vopidy.sqlite < ./schema.sql

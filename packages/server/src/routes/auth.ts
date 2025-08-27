@@ -1,0 +1,112 @@
+import { HTTPException } from "hono/http-exception"
+import { AuthorizationCode } from "simple-oauth2"
+import { Hono } from "hono"
+import * as path from "node:path"
+import * as crypto from "node:crypto"
+import * as fs from "node:fs"
+import { Spotify } from "@/services/spotify"
+import { logger } from "@/core/logger"
+import { spotifyScopes, Auth } from "@/services/auth"
+
+export const auth = new Hono()
+
+auth.get("/", (c) => {
+  const url = new URL(c.req.url)
+  const auth = new Auth()
+  const redirectUri = `${url.protocol}//${url.host}/api/auth/callback`
+  const authorizationUri = auth.spotifyAuthClient.authorizeURL({
+    redirect_uri: redirectUri,
+    scope: spotifyScopes,
+    state: "3(#0/!~",
+    customParam: "prompt=login",
+  })
+
+  return c.redirect(authorizationUri, 302)
+})
+
+auth.get("/profile", async (c) => {
+  const spotifyClient = new Spotify()
+  const json = await spotifyClient.getProfile()
+  return c.json(json)
+})
+
+auth.get("/profile/image", async (c) => {
+  const spotifyClient = new Spotify()
+  const json = await spotifyClient.getProfile()
+  return c.redirect(json.images[0].url, 302)
+})
+
+auth.get("/refresh", async (c) => {
+  const filename = path.join(process.env.VOPIDY_CONFIG.toString(), ".vopidy-auth.json")
+  const auth = new Auth()
+  if (!fs.existsSync(filename)) {
+    throw new HTTPException(401, { message: "Unauthorized" })
+    return undefined
+  }
+
+  const json = JSON.parse(fs.readFileSync(filename, "utf-8"))
+  const accessToken = await auth.refreshToken(json.auth.refresh_token)
+
+  return c.json(accessToken)
+})
+
+auth.get("/token", async (c) => {
+  const auth = new Auth()
+  const accessToken = await auth.getAccessToken()
+  return c.json(accessToken)
+})
+
+auth.get("/callback", async (c) => {
+  const url = new URL(c.req.url)
+  const auth = new Auth()
+  const redirectUri = `${url.protocol}//${url.host}/api/auth/callback`
+  const options = {
+    code: c.req.query("code"),
+    redirect_uri: redirectUri,
+    scope: spotifyScopes,
+  }
+
+  try {
+    const accessToken: any = await auth.spotifyAuthClient.getToken(options)
+    auth.saveAuthState(accessToken)
+    const spotifyClient = new Spotify()
+
+    global.spotifyDeviceId = ""
+
+    let t = {
+      ...accessToken.token,
+      ...{
+        id: "",
+      },
+    }
+
+    await spotifyClient.connectToLibRespot("Vopidy", t.access_token)
+
+    const profile = await spotifyClient.getProfileByToken(t.access_token)
+    if (profile) {
+      auth.saveAuthState(accessToken, profile)
+      auth.saveAuthUsers(profile.id, accessToken, profile)
+      t.id = profile.id
+    }
+
+    const html = `<!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Vopidy</title>
+  </head>
+  <body>
+    <script language="javascript" >
+    localStorage.setItem("vopidy.id", "${t.id}");
+    window.location.href = "/";
+    </script>
+  </body>
+</html>`
+
+    return c.html(html)
+    //    return c.json(t)
+  } catch (error) {
+    logger.error("Error during auth callback", error)
+    return c.json(error.output)
+  }
+})

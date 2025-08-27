@@ -1,0 +1,30 @@
+{
+   "name": "vopidy",
+  "private": true,
+  "module": "index.ts",
+  "type": "module",
+  "workspaces": [
+    "packages/client",
+    "packages/server"
+  ],
+  "scripts": {
+    "clean": "sudo rm -rf node_modules packages/client/node_modules packages/server/node_modules bun.lock packages/client/bun.lock packages/server/bun.lock packages/client/dist packages/server/dist",
+    "deps": "npm install -no-audit && cd packages/client && npm install -no-audit && cd ../server && npm install -no-audit",
+    "build": "npm run format && cd packages/client && npm run build-only && cd ../server && npm run build",
+    "upd": "npm-check -gu && npm-check -u && cd packages/client && npm-check -u && cd ../server && npm-check -u",
+    "dev-server": "cd ./packages/server && npm run dev",
+    "format": "cd ./packages/client/ && npm run format && cd ../../packages/server && npm run format",
+    "version": "cd ./packages/client/ && npm --no-git-tag-version version minor && cd ../server/ && npm --no-git-tag-version version minor",
+    "publish": "npm run build && npm run version && npm run docker-build",
+    "docker-build": "docker buildx build . -f ./container/Dockerfile -t guidcruncher/vopidy:latest --pull --push",
+    "start-dev": "docker stop vopidy ; docker compose rm -f ; docker compose -f ./docker-compose-dev.yaml up -d",
+    "start-dev-build": "docker stop vopidy ; docker compose rm -f ; docker compose -f ./docker-compose-dev.yaml up -d --build",
+    "status": "docker exec -i -t vopidy pm2 status",
+    "logs": "docker exec -i -t vopidy pm2 logs --"
+  },
+  "trustedDependencies": [
+    "@mongodb-js/zstd"
+  ],
+  "dependencies": {
+  }
+}

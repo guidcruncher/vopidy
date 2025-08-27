@@ -1,0 +1,56 @@
+services:
+  vopidy:
+    image: guidcruncher/vopidy:develop
+    extra_hosts:
+      - vopidy:127.0.0.1
+    secrets:
+      - spotify-credentials
+      - pm2-credentials
+#    network_mode: host
+    networks:
+      proxy:
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
+    ports:
+      - 3004:3004
+      - 8000:8000
+      - 41899:41899
+    user: 1001:1001
+    group_add:
+      - audio
+      - root
+    userns_mode: keep-id
+    build:
+      context: .
+      dockerfile: ./container/Dockerfile-dev
+    expose:
+      - 3004:3004
+    environment:
+      - TZ=Europe/London
+      - MEMCACHE=true
+    container_name: vopidy
+    hostname: vopidy
+    restart: unless-stopped
+    volumes:
+      - .:/app/src
+      - ./tmp/config:/srv/config
+      - ./tmp/files:/srv/files
+      - ./tmp/db:/srv/db
+      - type: tmpfs
+        target: /tmp
+        tmpfs:
+          mode: 0o01777
+    devices:
+      - /dev/snd:/dev/snd:rw
+    privileged: true
+
+networks:
+  proxy:
+    external: true
+
+secrets:
+  spotify-credentials:
+    file: .spotifycredentials
+  pm2-credentials:
+    file: .pm2credentials
