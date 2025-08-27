@@ -44,7 +44,9 @@
       <tbody>
         <tr>
           <td>
-            <img src="/images/icecast.webp" style="width: 100px; height: 100px" />
+            <a target="_blank" :href="iceserver">
+              <img src="/images/icecast.webp" style="width: 100px; height: 100px" />
+            </a>
           </td>
           <td>&nbsp;</td>
           <td>
@@ -55,6 +57,10 @@
             ></v-switch>
             <span v-if="!settings.alsaLoopbackCapable"
               >ALSA Loopback device needs to be enabled on your host to use this feature.</span
+            >
+            <span v-if="settings.enableIcecast"
+              >Stream URL:<br />
+              <a target="_blank" :href="streamUrl">{{ streamUrl }}</a></span
             >
           </td>
         </tr>
@@ -80,6 +86,8 @@ export default {
   data() {
     return {
       settings: {},
+      streamUrl: '',
+      iceserver: '',
     }
   },
   mounted() {
@@ -88,6 +96,9 @@ export default {
         this.settings = res.result
       }
     })
+    this.iceserver = window.location.protocol + '//' + window.location.hostname + ':8000'
+    this.streamUrl =
+      window.location.protocol + '//' + window.location.hostname + ':8000/vopidy-stream.m3u'
   },
   beforeUnmount() {},
   methods: {
