@@ -1,5 +1,7 @@
 FROM guidcruncher/typescript-base:node-alsa-latest AS base
 
+ARG DATE=""
+ARG VERSION=""
 ARG BUILD_CONFIG=dev
 ARG DEBIAN_FRONTEND=noninteractive
 ENV NODE_ENV=development
@@ -83,6 +85,8 @@ ENV ALSA_CARD="AUDIO"
 ENV ALSA_DEVICE="0"
 ENV ALSA_CHANNELS="2"
 ENV ALSA_MIXERDEVICE=vopidy_pipe
+ENV BUILD_DATE=$DATE
+ENV BUILD_VERSION=$VERSION
 
 WORKDIR /app
 USER user

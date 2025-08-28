@@ -1,5 +1,5 @@
 {
-   "name": "vopidy",
+  "name": "vopidy",
   "private": true,
   "module": "index.ts",
   "type": "module",
@@ -16,9 +16,9 @@
     "format": "cd ./packages/client/ && npm run format && cd ../../packages/server && npm run format",
     "version": "cd ./packages/client/ && npm --no-git-tag-version version minor && cd ../server/ && npm --no-git-tag-version version minor",
     "publish": "npm run build && npm run version && npm run docker-build",
-    "docker-build": "docker buildx build . -f ./container/Dockerfile -t guidcruncher/vopidy:latest --pull --push",
-    "start-dev": "docker stop vopidy ; docker compose rm -f ; docker compose -f ./docker-compose-dev.yaml up -d",
-    "start-dev-build": "docker stop vopidy ; docker compose rm -f ; docker compose -f ./docker-compose-dev.yaml up -d --build",
+    "docker-build": "docker buildx build --build-arg VERSION=$(cat packages/server/package.json | jq .version -r) --build-arg DATE=$(date +'%s') . -f ./container/Dockerfile -t guidcruncher/vopidy:latest --pull --push",
+    "start-dev": "export DATE=$(date +'%s') ;export VERSION=$(cat ./packages/server/package.json | jq .version -r) ; docker stop vopidy ; docker compose rm -f ; docker compose -f ./docker-compose-dev.yaml up -d",
+    "start-dev-build": "export DATE=$(date +'%s') ;export VERSION=$(cat ./packages/server/package.json | jq .version -r); docker stop vopidy ; docker compose rm -f ; docker compose -f ./docker-compose-dev.yaml up -d --build",
     "status": "docker exec -i -t vopidy pm2 status",
     "logs": "docker exec -i -t vopidy pm2 logs --"
   },

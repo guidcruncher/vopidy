@@ -1,5 +1,7 @@
 FROM guidcruncher/typescript-base:node-alsa-latest AS base
 
+ARG DATE=""
+ARG VERSION=""
 ARG BUILD_CONFIG=prod
 ARG DEBIAN_FRONTEND=noninteractive
 ENV NODE_ENV=development
@@ -48,6 +50,8 @@ EOF
 
 FROM base AS build
 ARG BUILD_CONFIG
+ARG DATE 
+ARG VERSION
 
 RUN mkdir -p /build/client/src /build/server/src /build/server/dist
 COPY package.json /build/package.json
@@ -70,6 +74,8 @@ RUN npm i --no-audit --no-fund --omit=dev
 COPY ./container/shared/app/ /app/
 COPY ./container/shared/srv/ /srv/
 COPY ./container/shared/etc/ /etc/
+RUN mkdir -p /srv/etc
+COPY ./container/shared/etc/ /srv/etc/
 COPY ./container/${BUILD_CONFIG}/app/ /app/
 COPY ./container/${BUILD_CONFIG}/srv/ /srv/
 COPY ./container/${BUILD_CONFIG}/etc/ /etc/
@@ -105,6 +111,8 @@ ENV ALSA_CARD="AUDIO"
 ENV ALSA_DEVICE="0"
 ENV ALSA_CHANNELS="2"
 ENV ALSA_MIXERDEVICE=vopidy_pipe
+ENV BUILD_DATE=$DATE
+ENV BUILD_VERSION=$VERSION
 
 WORKDIR /app
 USER user

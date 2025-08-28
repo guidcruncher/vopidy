@@ -1,8 +1,10 @@
-{
+ {
+  "id": "vopidy ",
   "short_name": "Vopidy",
   "name": "Vopidy",
   "start_url": "/?source=pwa",
   "display": "standalone",
+  "categories": [ "entertainment", "music" ],
   "icons": [
     {
       "src": "/android-chrome-192x192.png",
@@ -15,9 +17,26 @@
       "type": "image/png"
     }
   ],
-  "orientation": "landscape",
+  "orientation": "any",
   "description": "Your friendly Music Server thats good to be with!",
   "background_color": "#533191",
   "theme_color": "#533191",
   "scope": "/",
+  "shortcuts": [
+  {
+    "name": "Now playing",
+    "short_name": "Playing",
+    "url": "/nowplaying"
+  },
+  {
+    "name": "Mixer desk",
+    "short_name": "Mixer",
+    "url": "/mixerdesk"
+  },
+  {
+    "name": "Settings",
+    "short_name": "Settings",
+    "url": "/settings"
+  }
+  ]
 }

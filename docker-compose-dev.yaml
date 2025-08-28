@@ -24,6 +24,9 @@ services:
     build:
       context: .
       dockerfile: ./container/Dockerfile-dev
+      args:
+        DATE: ${DATE}
+        VERSION: ${VERSION}-development
     expose:
       - 3004:3004
     environment:
