@@ -30,5 +30,5 @@
     "@mongodb-js/zstd"
   ],
   "dependencies": {},
-  "version": "0.0.2"
+  "version": "0.22.0"
 }
