@@ -26,7 +26,7 @@ module.exports = {
     cwd    : "/app/src/packages/server",
     script : "/usr/bin/icecast2",
     pid_file: "/srv/pids/icecast.pid",
-    args   : "-c /srv/defaults/icecast.xml",
+    args   : "-c /app/src/container/shared/srv/defaults/icecast.xml",
   },
   {
     name   : "client",
@@ -47,14 +47,14 @@ module.exports = {
     cwd    : "/srv/config/",
     script : "/usr/bin/mpd",
     pid_file: "/srv/pids/mpd.pid",
-    args   : "--no-daemon -v /srv/defaults/mpd.conf"
+    args   : "--no-daemon -v /app/src/container/shared/srv/defaults/mpd.conf"
   },
   {
     name   : "caddy",
     cwd    : "/usr/bin",
     script : "caddy",
     pid_file: "/srv/pids/caddy.pid",
-    args   : "run --config /srv/defaults/Caddyfile"
+    args   : "run --config /app/src/container/dev/srv/defaults/Caddyfile"
   }
   ]
 }
