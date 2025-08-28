@@ -41,7 +41,7 @@ module.exports = {
     cwd    : "/usr/bin/",
     script : "/usr/bin/mpd",
     pid_file: "/srv/pids/mpd.pid",
-    args   : "--no-daemon -v  /srv/config/mpd.conf"
+    args   : ""--no-daemon --stdout --verbose /srv/config/mpd.conf"
   },
   {
     name   : "caddy",
