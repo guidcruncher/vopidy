@@ -15,12 +15,18 @@
     "dev-server": "cd ./packages/server && npm run dev",
     "format": "cd ./packages/client/ && npm run format && cd ../../packages/server && npm run format",
     "version": "cd ./packages/client/ && npm --no-git-tag-version version minor && cd ../server/ && npm --no-git-tag-version version minor",
-    "publish": "npm run build && npm run version && npm run docker-build",
+    "publish": "npm run build && npm run docker-build",
     "docker-build": "docker buildx build --build-arg VERSION=$(cat packages/server/package.json | jq .version -r) --build-arg DATE=$(date +'%s') . -f ./container/Dockerfile -t guidcruncher/vopidy:latest --pull --push",
     "start-dev": "export DATE=$(date +'%s') ;export VERSION=$(cat ./packages/server/package.json | jq .version -r) ; docker stop vopidy ; docker compose rm -f ; docker compose -f ./docker-compose-dev.yaml up -d",
     "start-dev-build": "export DATE=$(date +'%s') ;export VERSION=$(cat ./packages/server/package.json | jq .version -r); docker stop vopidy ; docker compose rm -f ; docker compose -f ./docker-compose-dev.yaml up -d --build",
     "status": "docker exec -i -t vopidy pm2 status",
-    "logs": "docker exec -i -t vopidy pm2 logs --"
+    "logs": "docker exec -i -t vopidy pm2 logs --",
+    "commit:patch": "npm version patch --no-git-tag-version --force",
+    "commit:minor": "npm version minor --no-git-tag-version --force",
+    "commit:major": "npm version major --no-git-tag-version --force",
+    "precommit": "npm run clean && npm run commit:patch && git add --all",
+    "postcommit": "npm run build && export VERSION=$(cat ./packages/server/package.json | jq .version -r) ; git tag $VERSION && git push && git push origin main && git status && npm run docker-build",
+    "commit": "export VERSION=Fixs $(cat ./packages/server/package.json | jq .version -r) ; git commit -m $VERSION"
   },
   "trustedDependencies": [
     "@mongodb-js/zstd"
