@@ -11,7 +11,7 @@
                 @click="selectItem(item)"
                 v-bind:responsive="false"
               />
-              <span class="text-caption">{{ item.name }}</span>
+              <v-btn @click="selectItem(item)">{{ item.name }}</v-btn>
             </center>
           </div>
         </v-col>

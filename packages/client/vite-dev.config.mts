@@ -1,4 +1,6 @@
+
 // Plugins
+import {type PluginOption} from 'vite'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import Fonts from 'unplugin-fonts/vite'
@@ -12,6 +14,8 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 // Utilities
 import { defineConfig } from 'vite'
 import { fileURLToPath, URL } from 'node:url'
+
+
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -100,7 +104,18 @@ export default defineConfig({
     watch: {
       usePolling: false
     },
-    port: 3003,
+    port: 3004 ,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3002/',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+      '/files': {
+        target: 'http://localhost:3002/',
+        changeOrigin: true,
+      },
+    },
   },
   css: {
     preprocessorOptions: {

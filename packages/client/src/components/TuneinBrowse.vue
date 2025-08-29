@@ -70,7 +70,13 @@
             v-if="item.type == 'audio'"
             v-bind:responsive="false"
           />
-          <div class="text-caption" style="height: 40px; overflow: hidden">{{ item.text }}</div>
+          <div
+            @click="selectItem(item)"
+            class="text-caption"
+            style="height: 40px; overflow: hidden"
+          >
+            {{ item.text }}
+          </div>
         </center>
       </div>
     </div>

@@ -4,7 +4,7 @@
   "type": "module",
   "version": "0.23.0",
   "scripts": {
-    "dev": "vite --host",
+    "dev": "vite --host --config ./vite-dev.config.mts --mode development",
     "build": "npm run type-check && npm run \"build-only {@}\"",
     "preview": "vite preview",
     "build-only": "NODE_ENV=development rm -rf ./dist && vite build --config ./vite-dev.config.mts --mode development",

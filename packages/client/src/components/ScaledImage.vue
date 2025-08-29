@@ -63,7 +63,10 @@ export default {
       if (!url.startsWith('http')) {
         return url
       }
-
+      let u = new URL(url)
+      if (u.hostname == window.location.hostname) {
+        return url
+      }
       const params = new URLSearchParams()
       params.append('u', encodeURIComponent(window.btoa(url)))
       return '/api/p?' + params.toString()

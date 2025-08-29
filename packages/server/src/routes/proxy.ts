@@ -35,6 +35,7 @@ proxyRoute.get("/", async (c) => {
           const value = { b: Buffer.from(bytes).toString("base64"), c: contenttype }
           fs.writeFileSync(cacheFile, JSON.stringify(value))
         } else {
+          logger.error(`Proxy error: ${url} not found.`)
           return c.notFound()
         }
       }
@@ -45,6 +46,7 @@ proxyRoute.get("/", async (c) => {
         contenttype = cdata.headers.get("Content-Type")
         bytes = await cdata.bytes()
       } else {
+        logger.error(`Proxy error: ${url} not found.`)
         return c.notFound()
       }
     }

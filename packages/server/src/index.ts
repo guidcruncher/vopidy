@@ -13,6 +13,9 @@ import { proxyRoute } from "@/routes/proxy"
 import { ProcessLauncher } from "@/core/processlauncher"
 import { serve } from "@hono/node-server"
 import { contextStorage, getContext } from "hono/context-storage"
+import { serveStatic } from "@hono/node-server/serve-static"
+import * as fs from "fs"
+import * as path from "path"
 
 ProcessLauncher.start()
 const cfg = Config.load()
@@ -25,6 +28,7 @@ app.use(async (c, next) => {
   c.set("RequestID", reqId)
   const start = Date.now()
   logger.trace(`Begin`)
+  logger.trace(`URL: ${c.req.path}`)
   await next()
   const end = Date.now()
   logger.trace(`End in ${end - start}ms`)
@@ -45,6 +49,19 @@ app.use(
 
 app.notFound((c) => c.json({ status: 404, statusText: "Not Found", ok: false }, 404))
 
+app.use("/files/*", async (c, next) => {
+  let filename = path.join("/srv", c.req.path)
+  if (fs.existsSync(filename)) {
+    const contenttype = ""
+    const bytes = fs.readFileSync(filename)
+    return c.body(bytes, {
+      headers: { "Content-Type": contenttype },
+    })
+  }
+
+  return c.notFound()
+})
+
 // OpenAPI Documentation setup
 app.get("/doc.json", (c) => c.json(OpenApiDoc))
 app.get("/doc", swaggerUI({ url: "/api/doc.json" }))
@@ -59,6 +76,7 @@ app.route("/rpc", httprpc)
 const server = serve(
   {
     fetch: app.fetch,
+    hostname: "0.0.0.0",
     port: parseInt(process.env.SERVER_PORT ?? "3002"),
   },
   (info) => {

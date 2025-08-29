@@ -52,7 +52,7 @@ module.exports = {
   {
     name   : "caddy",
     cwd    : "/usr/bin",
-    script : "caddy",
+    script : "xcaddy",
     pid_file: "/srv/pids/caddy.pid",
     args   : "run --config /app/src/container/dev/srv/defaults/Caddyfile"
   }

@@ -3,7 +3,7 @@
     <v-navigation-drawer
       v-model="drawer"
       class="bg-deep-purple"
-      image="/images/55535.webp"
+      image="@/assets/images/55535.webp"
       theme="dark"
       :permanent="windowSize.x > 384"
     >

@@ -70,7 +70,13 @@
             v-if="item.itemType == 'file'"
             v-bind:responsive="false"
           />
-          <div class="text-caption" style="height: 40px; overflow: hidden">{{ item.name }}</div>
+          <div
+            @click="selectItem(item)"
+            class="text-caption"
+            style="height: 40px; overflow: hidden"
+          >
+            {{ item.name }}
+          </div>
         </center>
       </div>
     </div>
