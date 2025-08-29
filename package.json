@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "clean": "sudo rm -rf node_modules packages/client/node_modules packages/server/node_modules bun.lock packages/client/bun.lock packages/server/bun.lock packages/client/dist packages/server/dist",
-    "deps": "npm install -no-audit && cd packages/client && npm install -no-audit && cd ../server && npm install -no-audit",
+    "deps": "npm install -no-audit -no-fund  && cd packages/client && npm install -no-audit -no-fund  && cd ../server && npm install -no-audit -no-fund ",
     "build": "npm run format && cd packages/client && npm run build-only && cd ../server && npm run build",
     "upd": "npm-check -gu && npm-check -u && cd packages/client && npm-check -u && cd ../server && npm-check -u",
     "dev-server": "cd ./packages/server && npm run dev",
@@ -24,11 +24,11 @@
     "patch": "npm version patch --no-git-tag-version --force",
     "minor": "npm version minor --no-git-tag-version --force",
     "major": "npm version major --no-git-tag-version --force",
-    "release": "npm run build && npm run clean && git add --all && export VERSION=$(cat ./packages/server/package.json | jq .version -r) ; git commit -m $VERSION && git tag $VERSION && git push && git push --tags && git push origin dev:main -f && git status && npm run docker-build"
+    "release": "npm run build && git add --all && export VERSION=$(cat ./packages/server/package.json | jq .version -r) ; git commit -m $VERSION && git tag $VERSION && git push && git push --tags && git push origin dev:main -f && git status && npm run docker-build"
   },
   "trustedDependencies": [
     "@mongodb-js/zstd"
   ],
   "dependencies": {},
-  "version": "0.22.0"
+  "version": "0.23.0"
 }
