@@ -17,10 +17,10 @@
         to="settings"
         title="Settings"
       />
-<div class="text-caption pa-2" >
-Version {{buildVersion.version}}<br />
-Build {{ buildDate}}
-</div>
+      <div class="text-caption pa-2">
+        Version {{ buildVersion.version }}<br />
+        Build {{ buildDate }}
+      </div>
     </v-navigation-drawer>
 
     <v-app-bar border="b" class="ps-4" flat>
@@ -76,28 +76,32 @@ export default {
   props: {},
   data() {
     return {
-      windowSize: { x: 0, y: 300 },buildDate:''
+      windowSize: { x: 0, y: 300 },
+      buildDate: '',
     }
   },
   mounted() {
-this.buildDate=new Intl.DateTimeFormat(this.resolveLocale(),{dateStyle:"short",timeStyle:"long"} ).format(new Date(parseInt(buildVersion.buildDate) * 1000 ))
+    this.buildDate = new Intl.DateTimeFormat(this.resolveLocale(), {
+      dateStyle: 'short',
+      timeStyle: 'long',
+    }).format(new Date(parseInt(buildVersion.buildDate) * 1000))
     this.onResize()
   },
   beforeUnmount() {},
   methods: {
     resolveLocale() {
-const intl = window.Intl;
-    if (intl !== undefined) {
-        return intl.NumberFormat().resolvedOptions().locale;
-    }
+      const intl = window.Intl
+      if (intl !== undefined) {
+        return intl.NumberFormat().resolvedOptions().locale
+      }
 
-    const languages = navigator.languages as (string[] | undefined);
-    if (languages !== undefined && languages.length > 0) {
-        return languages[0];
-    }
+      const languages = navigator.languages as string[] | undefined
+      if (languages !== undefined && languages.length > 0) {
+        return languages[0]
+      }
 
-     return navigator.language ?? "en-US";
- },
+      return navigator.language ?? 'en-US'
+    },
     onResize() {
       this.windowSize = { x: window.innerWidth, y: window.innerHeight - 90 }
     },

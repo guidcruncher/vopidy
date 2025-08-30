@@ -20,9 +20,9 @@
     "start-dev-build": "export DATE=$(date +'%s') ;export VERSION=$(cat ./packages/server/package.json | jq .version -r); docker stop vopidy ; docker compose rm -f ; docker compose -f ./docker-compose-dev.yaml up -d --build",
     "status": "docker exec -i -t vopidy pm2 status",
     "logs": "docker exec -i -t vopidy pm2 logs --",
-    "patch": "npm version patch --no-git-tag-version --force",
-    "minor": "npm version minor --no-git-tag-version --force",
-    "major": "npm version major --no-git-tag-version --force",
+    "patch": "npm version patch --no-git-tag-version --force && bash ./genmanifest.sh",
+    "minor": "npm version minor --no-git-tag-version --force && bash ./genmanifest.sh",
+    "major": "npm version major --no-git-tag-version --force && bash ./genmanifest.sh",
     "release": "bash ./buildpackage.sh"
   },
   "trustedDependencies": [
