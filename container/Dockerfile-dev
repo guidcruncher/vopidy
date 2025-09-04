@@ -8,6 +8,7 @@ ENV NODE_ENV=development
 ARG TARGETARCH
 ENV TZ=UTC
 ENV GOLIBRESPOT_CREDENTIAL_TYPE=spotify_token
+ENV SPOTIFY_AUTHJSON=/local/state/vopidy/.vopidy-auth.json
 
 RUN <<EOF
 apk add --no-cache sqlite caddy memcached 
