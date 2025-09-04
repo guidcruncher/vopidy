@@ -133,7 +133,7 @@ export class Spotify {
   }
 
   private getLocalApi() {
-    retun process.env.GOLIBRESPOT_API.toString()
+    return process.env.GOLIBRESPOT_API.toString()
   }
 
   public async playTrack(id: string) {
