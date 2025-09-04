@@ -89,8 +89,9 @@ export class Auth {
     return res
   }
 
-  public login(id: string) {
+  public async login(id: string) {
     const filename = path.join(process.env.VOPIDY_DB.toString(), ".vopidy-users.json")
+    const spotifyClient = new Spotify()
     let res: any = {}
 
     if (!fs.existsSync(filename)) {
@@ -105,6 +106,11 @@ export class Auth {
 
     res = users[id]
     this.saveAuthState(res.auth, res.profile)
+
+    if (process.env.GOLIBRESPOT_CREDENTIAL_TYPE == "spotify_token") {
+      await spotifyClient.connectToLibRespotWithToken(res.auth)
+    }
+
     return res.profile
   }
 

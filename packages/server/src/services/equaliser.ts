@@ -90,12 +90,16 @@ export class Equaliser {
   }
 
   private async cset(device: string, numid: number, value: number) {
-    if (device == "") {return ""}
+    if (device == "") {
+      return ""
+    }
     return await this.amixer(["-D", device, "cset", `numid=${numid}`, `${value}`])
   }
 
   private async contents(device: string): Promise<MixerDesk> {
-    if (device == "") {return  undefined}
+    if (device == "") {
+      return undefined
+    }
     const ch = await this.amixer(["-D", device, "scontents"])
     const res = await this.amixer(["-D", device, "contents"])
     const contents = await this.parseContents(res, ch)

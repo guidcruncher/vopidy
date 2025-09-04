@@ -8,6 +8,9 @@ import * as path from "path"
 import { CacheManager } from "@/core/cachemanager"
 import { PagedItems } from "@/core/paging"
 import { WsClientStore } from "@/core/wsclientstore"
+import { promisify } from "node:util"
+import child_process from "node:child_process"
+const exec = promisify(child_process.exec)
 
 export class Spotify {
   private static history: string[] = []
@@ -70,6 +73,12 @@ export class Spotify {
     }
 
     return res.devices.filter((dev) => dev.name == name)
+  }
+
+  public async connectToLibRespotWithToken(auth: any) {
+    return await exec("/usr/local/bin/go-librespot.sh", {
+      env: { SPOTIFY_USERNAME: auth.profile.display_name, SPOTIFY_TOKEN: auth.auth.access_token },
+    })
   }
 
   public async connectToLibRespot(
