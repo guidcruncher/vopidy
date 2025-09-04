@@ -6,9 +6,9 @@ services:
     secrets:
       - spotify-credentials
       - pm2-credentials
-#    network_mode: host
-    networks:
-      proxy:
+    network_mode: host
+#    networks:
+#      proxy:
     dns:
       - 1.1.1.1
       - 8.8.8.8
@@ -34,9 +34,9 @@ services:
     restart: unless-stopped
     volumes:
       - .:/app/src
-      - ./tmp/config:/srv/config
+      - ./tmp/config:/local/config/vopidy
+      - ./tmp/db:/local/state/vopidy
       - ./tmp/files:/srv/files
-      - ./tmp/db:/srv/db
       - type: tmpfs
         target: /tmp
         tmpfs:

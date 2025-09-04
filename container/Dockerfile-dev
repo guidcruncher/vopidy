@@ -31,6 +31,7 @@ node
 /usr/bin/npm install -g pm2 node-gyp
 EOF
 
+COPY ./container/config.yml /local/config/go-librespot/config.yml
 COPY ./container/shared/srv/ /srv/
 COPY ./container/${BUILD_CONFIG}/app/ /app/
 COPY ./container/${BUILD_CONFIG}/srv/ /srv/
@@ -43,6 +44,7 @@ COPY . .
 RUN chown -R appuser: /app /srv /local
 
 ENV VOPIDY_CONFIG="/local/config/vopidy"
+ENV LIBRESPOT_CONFIG=/local/config/go-librespot
 ENV VOPIDY_FILES="/srv/files"
 ENV VOPIDY_DB="/local/state/vopidy"
 ENV VOPIDY_DEFAULTS="/srv/defaults"

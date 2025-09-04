@@ -12,7 +12,7 @@ mkdir -p \
 /srv/files/library \
 /srv/files/music \
 /srv/defaults \
-/local/state/vopidy \
+/local/state/vopidy/cache \
 /app/packages/client \
 /app/packages/server \
 /tmp \
