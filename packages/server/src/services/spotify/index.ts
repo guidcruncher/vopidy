@@ -132,9 +132,13 @@ export class Spotify {
     return res
   }
 
+  private getLocalApi() {
+    return process.env.GOLIBRESPOT_API.toString()
+  }
+
   public async playTrack(id: string) {
     //   await this.connectToLibRespot('Vopidy')
-    const url = `http://localhost:3678/player/play`
+    const url = `${this.getLocalApi()}/player/play`
     const body = { uri: id, skip_to_uri: "", paused: false }
     const res = await http.post(url, http.JsonBody(body))
     const item = await this.describe(id)
@@ -148,7 +152,7 @@ export class Spotify {
   }
 
   public async previous() {
-    const url = `http://localhost:3678/player/prev`
+    const url = `${this.getLocalApi()}/player/prev`
 
     const res = await http.post(url, http.EmptyBody())
     if (!res) {
@@ -158,7 +162,7 @@ export class Spotify {
   }
 
   public async next() {
-    const url = `http://localhost:3678/player/next`
+    const url = `${this.getLocalApi()}/player/next`
 
     const res = await http.post(url, http.JsonBody({}))
     if (!res) {
@@ -168,7 +172,7 @@ export class Spotify {
   }
 
   public async pause() {
-    const url = `http://localhost:3678/player/pause`
+    const url = `${this.getLocalApi()}/player/pause`
     const res = await http.post(url, http.EmptyBody())
     if (!res) {
       return undefined
@@ -177,7 +181,7 @@ export class Spotify {
   }
 
   public async resume() {
-    const url = `http://localhost:3678/player/resume`
+    const url = `${this.getLocalApi()}/player/resume`
     const res = await http.post(url, http.EmptyBody())
     if (!res) {
       return undefined
@@ -208,7 +212,7 @@ export class Spotify {
   }
 
   public async getStatus() {
-    const url = `http://localhost:3678/status`
+    const url = `${this.getLocalApi()}/status`
     let res: any = await http.get(url)
     let track: any = {}
 
@@ -258,7 +262,7 @@ export class Spotify {
   }
 
   public async setVolume(volume: number) {
-    const url = `http://localhost:3678/player/volume`
+    const url = `${this.getLocalApi()}/player/volume`
     const body = { volume: volume, relative: false }
 
     const res = await http.post(url, http.JsonBody(body))
@@ -269,7 +273,7 @@ export class Spotify {
   }
 
   public async getVolume() {
-    const url = `http://localhost:3678/player/volume`
+    const url = `${this.getLocalApi()}/player/volume`
     const res = await http.get(url)
     if (!res.ok) {
       return undefined

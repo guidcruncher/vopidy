@@ -32,7 +32,7 @@ export class MixerDesk {
 }
 
 export class Equaliser {
-  private mixerDevice = process.env.ALSA_MIXERDEVICE.toString()
+  private mixerDevice = (process.env.ALSA_MIXERDEVICE ?? "").toString()
 
   public static async initialise() {
     const state = Mixer.getPlaybackState()
@@ -90,10 +90,12 @@ export class Equaliser {
   }
 
   private async cset(device: string, numid: number, value: number) {
+    if (device == "") {return ""}
     return await this.amixer(["-D", device, "cset", `numid=${numid}`, `${value}`])
   }
 
   private async contents(device: string): Promise<MixerDesk> {
+    if (device == "") {return  undefined}
     const ch = await this.amixer(["-D", device, "scontents"])
     const res = await this.amixer(["-D", device, "contents"])
     const contents = await this.parseContents(res, ch)

@@ -1,4 +1,4 @@
-FROM guidcruncher/typescript-base:node-alsa-latest AS base
+FROM guidcruncher/node-pipewire:latest AS base
 
 ARG DATE=""
 ARG VERSION=""
@@ -8,31 +8,13 @@ ENV NODE_ENV=development
 ARG TARGETARCH
 ENV TZ=UTC
 
-RUN groupadd -g 1001 user
-RUN useradd user -u 1001 -g 1001 -p t  -m -s /bin/bash
-RUN usermod -a -G root user
-RUN usermod -a -G audio user
-RUN passwd -d user
-
 RUN <<EOF
-apt update
-apt install --no-install-recommends -y \
-  mpd tzdata sqlite3 caddy build-essential python3 \
-  socat memcached libmemcached-tools ffmpeg jq icecast2 nano mpc procps
+apk add --no-cache sqlite caddy memcached 
 
-apt clean -y > /dev/null
-rm -rf /var/cache/apt/archives /var/lib/apt/lists
-
-ln -sf /usr/share/zoneinfo/$TZ /etc/localtime
-
-echo $TZ > /etc/timezone
 mkdir -p \
   /srv \
-  /srv/pids \
-  /srv/config \
-  /srv/logs \
-  /srv/sockets \
-  /srv/librespot \
+  /local/state/vopidy/cache \
+  /local/config/vopidy \
   /srv/files \
   /srv/files/mixerdesk \
   /srv/files/playlists \
@@ -40,57 +22,41 @@ mkdir -p \
   /srv/files/library \
   /srv/files/music \
   /srv/defaults \
-  /srv/db \
   /app/packages/client \
   /app/packages/server \
   /tmp \
   /app/src
 
-npm install -g pm2 node-gyp
+node
+/usr/bin/npm install -g pm2 node-gyp
 EOF
 
-COPY ./container/shared/app/ /app/
+COPY ./container/config.yml /local/config/go-librespot/config.yml
 COPY ./container/shared/srv/ /srv/
-COPY ./container/shared/etc/ /etc/
 COPY ./container/${BUILD_CONFIG}/app/ /app/
 COPY ./container/${BUILD_CONFIG}/srv/ /srv/
-COPY ./container/${BUILD_CONFIG}/etc/ /etc/
-RUN /app/update-librespot.sh
 RUN chmod +x /app/*.sh
-RUN /app/update-librespot.sh
-RUN chmod +x /srv/librespot/go-librespot
 
 WORKDIR /app/src
 
 COPY . .
 
-RUN rm /etc/asound.conf
-RUN ln -sf /app/src/container/shared/etc/asound.conf /etc/asound.conf
-RUN chown -R user:user /app /srv 
-#  /etc/asound.conf
+RUN chown -R appuser: /app /srv /local
 
-ENV LIBRESPOT_CONFIG="/srv/config/"
-ENV VOPIDY_CONFIG="/srv/config"
+ENV VOPIDY_CONFIG="/local/config/vopidy"
+ENV LIBRESPOT_CONFIG=/local/config/go-librespot
 ENV VOPIDY_FILES="/srv/files"
-ENV VOPIDY_DB="/srv/db"
+ENV VOPIDY_DB="/local/state/vopidy"
 ENV VOPIDY_DEFAULTS="/srv/defaults"
-ENV VOPIDY_SOCKETS="/srv/sockets"
-ENV VOPIDY_CACHE="/srv/files/cache"
+ENV VOPIDY_CACHE="/local/state/vopidy/cache"
 ENV SPOTIFY_CLIENT_ID=""
 ENV SERVER_PORT=3002
 ENV IN_DOCKER=true
-ENV ALSA_DEFAULT_PCM=vopidy_pipe
-ENV ALSA_DEFAULT_CTL=vopidy_pipe
-ENV ALSA_CARD="AUDIO"
-ENV ALSA_DEVICE="0"
-ENV ALSA_CHANNELS="2"
-ENV ALSA_MIXERDEVICE=vopidy_pipe
 ENV BUILD_DATE=$DATE
 ENV BUILD_VERSION=$VERSION
 
 WORKDIR /app
-USER user
+# USER appuser
 
-ENTRYPOINT [ "/bin/bash", "-E", "-c" ]
-CMD [ "/app/start.sh" ]
+ENTRYPOINT [ "/usr/local/bin/entrypoint.sh", "/app/start.sh" ]
 
