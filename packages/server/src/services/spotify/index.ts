@@ -1,6 +1,6 @@
 import { logger } from "@/core/logger"
 import { _fetchCache, _fetch, http, Authorization } from "@/core/http"
-import { getAccessTokenOnly } from "@/services/auth"
+import { Auth, getAccessTokenOnly } from "@/services/auth"
 import { Mixer } from "@/services/mixer"
 import { db } from "@/services/db"
 import * as fs from "fs"
@@ -75,7 +75,10 @@ export class Spotify {
     return res.devices.filter((dev) => dev.name == name)
   }
 
-  public async connectToLibRespotWithToken(auth: any) {
+  public async connectToLibRespotWithToken() {
+    const authClient = new Auth()
+    const auth = authClient.loadAuthState()
+    logger.trace(`Connecting to Librespot with token ${auth.auth.access_token}`)
     return await exec("/usr/local/bin/go-librespot.sh", {
       env: { SPOTIFY_USERNAME: auth.profile.display_name, SPOTIFY_TOKEN: auth.auth.access_token },
     })
@@ -88,16 +91,23 @@ export class Spotify {
   ) {
     let state = this.getLibrespotState()
     let pstate = Mixer.getPlaybackState()
-    if (state.device_id == "") {
-      logger.error("Vopidy Librespot instance not found")
-      return "NOTFOUND"
-    }
 
     if (!forceReconnect) {
       if (pstate.librespot && pstate.librespot != "" && pstate.librespot == state.device_id) {
         logger.debug("Already connected")
-        return "CONNECTED "
+        return "CONNECTED"
       }
+    }
+
+    if (process.env.GOLIBRESPOT_CREDENTIAL_TYPE.toString() == "spotify_token") {
+      logger.debug("Connecting via spotify token credentials")
+      await spotifyClient.connectToLibRespotWithToken(res.auth)
+      return "CONNECTED"
+    }
+
+    if (state.device_id == "") {
+      logger.error("Vopidy Librespot instance not found")
+      return "NOTFOUND"
     }
 
     let res: any = {}

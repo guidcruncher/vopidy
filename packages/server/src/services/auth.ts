@@ -45,6 +45,15 @@ export class Auth {
     return state
   }
 
+  public loadAuthState() {
+    const filename = path.join(process.env.VOPIDY_DB.toString(), ".vopidy-auth.json")
+    if (fs.existsSync(filename)) {
+      const state = JSON.parse(fs.readFileSync(filename, "utf8"))
+      return state ?? {}
+    }
+    return {}
+  }
+
   public static getProfile() {
     const filename = path.join(process.env.VOPIDY_DB.toString(), ".vopidy-auth.json")
 
@@ -107,8 +116,8 @@ export class Auth {
     res = users[id]
     this.saveAuthState(res.auth, res.profile)
 
-    if (process.env.GOLIBRESPOT_CREDENTIAL_TYPE == "spotify_token") {
-      await spotifyClient.connectToLibRespotWithToken(res.auth)
+    if (process.env.GOLIBRESPOT_CREDENTIAL_TYPE.toString() == "spotify_token") {
+      await spotifyClient.connectToLibRespotWithToken()
     }
 
     return res.profile
