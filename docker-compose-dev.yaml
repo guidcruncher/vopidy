@@ -17,10 +17,6 @@ services:
       - 3004:3004
       - 8000:8000
       - 41899:41899
-    user: 1001:1001
-    group_add:
-      - audio
-      - root
     userns_mode: keep-id
     build:
       context: .

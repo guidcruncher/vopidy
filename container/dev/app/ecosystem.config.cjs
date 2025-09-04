@@ -5,7 +5,7 @@ module.exports = {
     cwd    : "/app/src/packages/server",
     script : "memcached",
     pid_file: "/local/state/memcached.pid",
-    args   : "-v -m 64 -u user -p 11211 -l 127.0.0.1 -P /local/state/memcached.pid",
+    args   : "-v -m 64 -u appuser -p 11211 -l 127.0.0.1 -P /local/state/memcached.pid",
   },
   {
     name   : "server",

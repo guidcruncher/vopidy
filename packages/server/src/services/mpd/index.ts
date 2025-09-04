@@ -12,7 +12,7 @@ import { Config } from "@/core/config"
 export class Mpd {
   private async getMpdClient() {
     const config = {
-      path: process.env.VOPIDY_SOCKETS.toString() + "/mpd",
+      path: process.env.MPD_SOCKET.toString(),
       //      host: "localhost",
       //      port: 6600,
     }

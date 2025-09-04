@@ -8,12 +8,6 @@ ENV NODE_ENV=development
 ARG TARGETARCH
 ENV TZ=UTC
 
-RUN groupadd -g 1001 user
-RUN useradd user -u 1001 -g 1001 -p t  -m -s /bin/bash
-RUN usermod -a -G root user
-RUN usermod -a -G audio user
-RUN passwd -d user
-
 RUN <<EOF
 apt update
 apt install --no-install-recommends -y \
@@ -45,7 +39,7 @@ mkdir -p \
   /app/packages/server \
   /build
 
-npm install -g pm2 node-gyp
+/usr/bin/npm install -g node-gyp
 EOF
 
 FROM base AS build
@@ -58,18 +52,18 @@ COPY package.json /build/package.json
 
 WORKDIR /build
 COPY . .
-RUN npm i --no-audit --no-fund
+RUN /usr/bin/npm i --no-audit --no-fund
 
 WORKDIR /build/packages/client
-RUN npm i --no-audit --no-fund
-RUN npm run build-production
+RUN /usr/bin/npm i --no-audit --no-fund
+RUN /usr/bin/npm run build-production
 
 WORKDIR /build/packages/server
-RUN npm i --no-audit --no-fund
-RUN npm run build-production
+RUN /usr/bin/npm i --no-audit --no-fund
+RUN /usr/bin/npm run build-production
 RUN cp package.json /build/packages/server/dist/
 WORKDIR /build/packages/server/dist/
-RUN npm i --no-audit --no-fund --omit=dev
+RUN /usr/bin/npm i --no-audit --no-fund --omit=dev
 
 COPY ./container/shared/app/ /app/
 COPY ./container/shared/srv/ /srv/
@@ -93,7 +87,7 @@ COPY --from=build /srv/ /srv/
 COPY ./container/shared/etc/ /etc/
 COPY ./container/${BUILD_CONFIG}/etc/ /etc/
 
-RUN chown -R user:user /app /srv
+RUN chown -R appuser:appgroup /app /srv
 
 ENV LIBRESPOT_CONFIG="/srv/config/"
 ENV VOPIDY_CONFIG="/srv/config"
@@ -115,8 +109,7 @@ ENV BUILD_DATE=$DATE
 ENV BUILD_VERSION=$VERSION
 
 WORKDIR /app
-USER user
+#USER appuser
 
-ENTRYPOINT [ "/bin/bash", "-E", "-c" ]
 CMD [ "/app/start.sh" ]
 

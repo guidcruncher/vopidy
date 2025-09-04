@@ -1,4 +1,4 @@
- FROM guidcruncher/node-pipewire:latest AS base
+FROM guidcruncher/node-pipewire:latest AS base
 
 ARG DATE=""
 ARG VERSION=""
@@ -8,14 +8,8 @@ ENV NODE_ENV=development
 ARG TARGETARCH
 ENV TZ=UTC
 
-RUN groupadd -g 1001 user
-RUN useradd user -u 1001 -g 1001 -p t  -m -s /bin/bash
-RUN usermod -a -G root user
-RUN usermod -a -G audio user
-RUN passwd -d user
-
 RUN <<EOF
-apk add --no-cache sqlite caddy memcached
+apk add --no-cache sqlite caddy memcached 
 
 mkdir -p \
   /srv \
@@ -33,10 +27,10 @@ mkdir -p \
   /tmp \
   /app/src
 
-npm install -g pm2 node-gyp
+node
+/usr/bin/npm install -g pm2 node-gyp
 EOF
 
-COPY ./container/shared/app/ /app/
 COPY ./container/shared/srv/ /srv/
 COPY ./container/${BUILD_CONFIG}/app/ /app/
 COPY ./container/${BUILD_CONFIG}/srv/ /srv/
@@ -46,7 +40,7 @@ WORKDIR /app/src
 
 COPY . .
 
-RUN chown -R appuser:appuser /app /srv /local
+RUN chown -R appuser: /app /srv /local
 
 ENV VOPIDY_CONFIG="/local/config/vopidy"
 ENV VOPIDY_FILES="/srv/files"
@@ -60,7 +54,7 @@ ENV BUILD_DATE=$DATE
 ENV BUILD_VERSION=$VERSION
 
 WORKDIR /app
-USER user
+# USER appuser
 
-CMD [ "/app/start.sh" ]
+ENTRYPOINT [ "/usr/local/bin/entrypoint.sh", "/app/start.sh" ]
 
