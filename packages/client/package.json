@@ -2,7 +2,7 @@
   "name": "vopidy",
   "private": true,
   "type": "module",
-  "version": "0.25.0",
+  "version": "0.26.0",
   "scripts": {
     "dev": "vite --host --config ./vite-dev.config.mts --mode development",
     "build": "npm run type-check && npm run \"build-only {@}\"",
