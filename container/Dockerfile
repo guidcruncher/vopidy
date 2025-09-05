@@ -40,7 +40,7 @@ COPY ./container/${BUILD_CONFIG}/app/ /app/
 RUN chmod +x /app/*.sh
 RUN mv /srv/defaults/Caddyfile /local/config/caddy
 
-FROM base As build
+FROM base AS build
 
 ARG BUILD_CONFIG
 ARG DATE 
