@@ -28,7 +28,6 @@ services:
       - 3004:3004
     environment:
       - TZ=Europe/London
-      - MEMCACHE=true
     container_name: vopidy
     hostname: vopidy
     restart: unless-stopped
@@ -44,6 +43,11 @@ services:
     devices:
       - /dev/snd:/dev/snd:rw
     privileged: true
+    cap_add:
+      - SYS_NICE
+      - CAP_IPC_LOCK
+      - CAP_NET_ADMIN
+      - SYS_RAWIO
 
 networks:
   proxy:

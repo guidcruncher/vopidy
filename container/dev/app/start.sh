@@ -28,7 +28,7 @@ if [ -f "/run/secrets/spotify-credentials" ]; then
 fi
  
 if [ ! -f "$VOPIDY_DB/vopidy.sqlite" ]; then
-  sqlite3 "$VOPIDY_DB/vopidy.sqlite"  < "$VOPIDY_DEFAULTS/schema.sql"
+  sh /srv/db/update-db.sh
 fi
 
 icecast="true"

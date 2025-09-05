@@ -1,4 +1,4 @@
-FROM guidcruncher/typescript-base:node-alsa-latest AS base
+FROM guidcruncher/node-pipewire:latest AS base
 
 ARG DATE=""
 ARG VERSION=""
@@ -7,26 +7,17 @@ ARG DEBIAN_FRONTEND=noninteractive
 ENV NODE_ENV=development
 ARG TARGETARCH
 ENV TZ=UTC
+ENV GOLIBRESPOT_CREDENTIAL_TYPE=spotify_token
+ENV SPOTIFY_AUTHJSON=/local/state/vopidy/.vopidy-auth.json
 
 RUN <<EOF
-apt update
-apt install --no-install-recommends -y \
-  mpd tzdata sqlite3 caddy build-essential python3 \
-  socat memcached libmemcached-tools ffmpeg jq icecast2 procps
+apk add --no-cache sqlite caddy memcached 
 
-apt clean -y > /dev/null
-rm -rf /var/cache/apt/archives /var/lib/apt/lists
-
-ln -sf /usr/share/zoneinfo/$TZ /etc/localtime
-
-echo $TZ > /etc/timezone
 mkdir -p \
   /srv \
-  /srv/pids \
-  /srv/config \
-  /srv/logs \
-  /srv/sockets \
-  /srv/librespot \
+  /local/state/vopidy/cache \
+  /local/config/vopidy \
+  /local/config/caddy \
   /srv/files \
   /srv/files/mixerdesk \
   /srv/files/playlists \
@@ -34,15 +25,24 @@ mkdir -p \
   /srv/files/library \
   /srv/files/music \
   /srv/defaults \
-  /srv/db \
   /app/packages/client \
   /app/packages/server \
-  /build
+  /tmp \
+  /app/src
 
-/usr/bin/npm install -g node-gyp
+node
+/usr/bin/npm install -g pm2 node-gyp
 EOF
 
-FROM base AS build
+COPY ./container/config.yml /local/config/go-librespot/config.yml
+COPY ./container/shared/srv/ /srv/
+COPY ./container/${BUILD_CONFIG}/app/ /app/
+COPY ./container/${BUILD_CONFIG}/srv/ /srv/
+RUN chmod +x /app/*.sh
+RUN mv /srv/defaults/Caddyfile /local/config/caddy
+
+FROM base As build
+
 ARG BUILD_CONFIG
 ARG DATE 
 ARG VERSION
@@ -65,51 +65,34 @@ RUN cp package.json /build/packages/server/dist/
 WORKDIR /build/packages/server/dist/
 RUN /usr/bin/npm i --no-audit --no-fund --omit=dev
 
-COPY ./container/shared/app/ /app/
-COPY ./container/shared/srv/ /srv/
-COPY ./container/shared/etc/ /etc/
-RUN mkdir -p /srv/etc
-COPY ./container/shared/etc/ /srv/etc/
-COPY ./container/${BUILD_CONFIG}/app/ /app/
-COPY ./container/${BUILD_CONFIG}/srv/ /srv/
-COPY ./container/${BUILD_CONFIG}/etc/ /etc/
-RUN chmod +x /app/*.sh
-RUN /app/update-librespot.sh
-RUN chmod +x /srv/librespot/go-librespot
 RUN cp /build/packages/client/dist/* /app/packages/client/ -r
 RUN cp /build/packages/server/dist/* /app/packages/server/ -r
 
-FROM base AS production
+FROM base AS runtime
 ARG BUILD_CONFIG
+ARG DATE=""
+ARG VERSION=""
 
 COPY --from=build /app/ /app/
 COPY --from=build /srv/ /srv/
-COPY ./container/shared/etc/ /etc/
-COPY ./container/${BUILD_CONFIG}/etc/ /etc/
 
-RUN chown -R appuser:appgroup /app /srv
 
-ENV LIBRESPOT_CONFIG="/srv/config/"
-ENV VOPIDY_CONFIG="/srv/config"
+ENV VOPIDY_CONFIG="/local/config/vopidy"
+ENV LIBRESPOT_CONFIG=/local/config/go-librespot
 ENV VOPIDY_FILES="/srv/files"
-ENV VOPIDY_DB="/srv/db"
+ENV VOPIDY_DB="/local/state/vopidy"
 ENV VOPIDY_DEFAULTS="/srv/defaults"
-ENV VOPIDY_SOCKETS="/srv/sockets"
-ENV VOPIDY_CACHE="/srv/files/cache"
+ENV VOPIDY_CACHE="/local/state/vopidy/cache"
 ENV SPOTIFY_CLIENT_ID=""
 ENV SERVER_PORT=3002
+ENV TZ=UTC
+ENV GOLIBRESPOT_CREDENTIAL_TYPE=spotify_token
+ENV SPOTIFY_AUTHJSON=/local/state/vopidy/.vopidy-auth.json
 ENV IN_DOCKER=true
-ENV ALSA_DEFAULT_PCM=vopidy_pipe
-ENV ALSA_DEFAULT_CTL=vopidy_pipe
-ENV ALSA_CARD="AUDIO"
-ENV ALSA_DEVICE="0"
-ENV ALSA_CHANNELS="2"
-ENV ALSA_MIXERDEVICE=vopidy_pipe
 ENV BUILD_DATE=$DATE
 ENV BUILD_VERSION=$VERSION
 
 WORKDIR /app
-#USER appuser
 
-CMD [ "/app/start.sh" ]
+ENTRYPOINT [ "/usr/local/bin/entrypoint.sh", "/app/start.sh" ]
 
