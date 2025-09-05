@@ -14,8 +14,7 @@ RUN <<EOF
 apk add --no-cache sqlite caddy memcached 
 
 mkdir -p \
-  /srv \
-  /local/state/vopidy/cache \
+  /srv /local/state/vopidy/cache \
   /local/config/vopidy \
   /srv/files \
   /srv/files/mixerdesk \
