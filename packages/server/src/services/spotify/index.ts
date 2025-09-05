@@ -101,7 +101,7 @@ export class Spotify {
 
     if (process.env.GOLIBRESPOT_CREDENTIAL_TYPE.toString() == "spotify_token") {
       logger.debug("Connecting via spotify token credentials")
-      await spotifyClient.connectToLibRespotWithToken(res.auth)
+      await this.connectToLibRespotWithToken()
       return "CONNECTED"
     }
 
