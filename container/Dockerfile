@@ -38,7 +38,7 @@ EOF
 COPY ./container/config.yml /local/config/go-librespot/config.yml
 COPY ./container/node-pipewire.d/${TARGETARCH}/* /usr/local/bin/node-pipewire.d/
 COPY ./container/shared/srv/ /srv/
-COPY ./pipewire-config/ /pipewire-condfig/
+COPY ./container/pipewire-config/ /pipewire-condfig/
 
 COPY ./container/${BUILD_CONFIG}/app/ /app/
 RUN chmod +x /app/*.sh
