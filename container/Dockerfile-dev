@@ -14,6 +14,7 @@ RUN <<EOF
 apk add --no-cache sqlite caddy memcached 
 
 mkdir -p \
+  /pipewire-config \
   /srv /local/state/vopidy/cache \
   /local/config/vopidy \
   /srv/files \
@@ -28,9 +29,10 @@ mkdir -p \
   /tmp \
   /app/src
 
-node
 /usr/bin/npm install -g pm2 node-gyp
 EOF
+
+COPY ./pipewire-config/ /pipewire-condfig/
 
 COPY ./container/config.yml /local/config/go-librespot/config.yml
 COPY ./container/shared/srv/ /srv/
