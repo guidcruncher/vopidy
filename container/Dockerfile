@@ -35,7 +35,6 @@ node
 EOF
 
 COPY ./container/config.yml /local/config/go-librespot/config.yml
-COPY ./container/node-pipewire.d/${TARGETARCH}/* /usr/local/bin/node-pipewire.d/
 COPY ./container/shared/srv/ /srv/
 
 COPY ./container/${BUILD_CONFIG}/app/ /app/
