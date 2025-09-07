@@ -85,6 +85,11 @@ export class Spotify {
     })
   }
 
+  public async login() {
+    const accessToken = await getAccessTokenOnly()
+    return await this.connectToLibRespot("Vopidy", accessToken, true)
+  }
+
   public async connectToLibRespot(
     name: string,
     accessToken: string,
@@ -154,19 +159,6 @@ export class Spotify {
 
   private async getLocalApi() {
     const url = process.env.GOLIBRESPOT_API.toString()
-    let librespotResponding = true
-    try {
-      let res = await fetch(url)
-      librespotResponding = res.ok
-    } catch (err) {
-      librespotResponding = false
-    }
-
-    if (!librespotResponding) {
-      logger.warn("Lauching go-librespot as its not running yet.")
-      let res = exec("/bin/sh /usr/local/bin/go-librespot.sh --nokill")
-    }
-
     return url
   }
 
@@ -252,7 +244,7 @@ export class Spotify {
 
     if (res.status == 204) {
       const accessToken = await getAccessTokenOnly()
-      await this.connectToLibRespot("Vopidy", accessToken, true)
+      await this.connectToLibRespot("Vopidy", accessToken, false)
       res = await http.get(url)
     }
 
