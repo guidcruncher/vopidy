@@ -164,7 +164,7 @@ export class Spotify {
 
     if (!librespotResponding) {
       logger.warn("Lauching go-librespot as its not running yet.")
-      let res = exec("/bin/sh /usr/local/bin/go-librespot.sh")
+      let res = exec("/bin/sh /usr/local/bin/go-librespot.sh --nokill")
     }
 
     return url

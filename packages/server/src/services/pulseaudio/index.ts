@@ -37,7 +37,7 @@ export class Pulseaudio {
     return res
   }
 
-  public async unMute() {
+  public async unmute() {
     const pa = await this.getServer()
     const res = await pa.setSinkMute(false, this.playbackSink)
     await pa.disconnect()
