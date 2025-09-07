@@ -10,6 +10,7 @@ import { PagedItems } from "@/core/paging"
 import { WsClientStore } from "@/core/wsclientstore"
 import { promisify } from "node:util"
 import child_process from "node:child_process"
+import spawnSync from "node:child_process"
 const exec = promisify(child_process.exec)
 
 export class Spotify {
@@ -151,13 +152,27 @@ export class Spotify {
     return res
   }
 
-  private getLocalApi() {
-    return process.env.GOLIBRESPOT_API.toString()
+  private async getLocalApi() {
+    const url = process.env.GOLIBRESPOT_API.toString()
+    let librespotResponding = true
+    try {
+      let res = await fetch(url)
+      librespotResponding = res.ok
+    } catch (err) {
+      librespotResponding = false
+    }
+
+    if (!librespotResponding) {
+      logger.warn("Lauching go-librespot as its not running yet.")
+      let res = exec("/bin/sh /usr/local/bin/go-librespot.sh")
+    }
+
+    return url
   }
 
   public async playTrack(id: string) {
     //   await this.connectToLibRespot('Vopidy')
-    const url = `${this.getLocalApi()}/player/play`
+    const url = `${await this.getLocalApi()}/player/play`
     const body = { uri: id, skip_to_uri: "", paused: false }
     const res = await http.post(url, http.JsonBody(body))
     const item = await this.describe(id)
@@ -171,7 +186,7 @@ export class Spotify {
   }
 
   public async previous() {
-    const url = `${this.getLocalApi()}/player/prev`
+    const url = `${await this.getLocalApi()}/player/prev`
 
     const res = await http.post(url, http.EmptyBody())
     if (!res) {
@@ -181,7 +196,7 @@ export class Spotify {
   }
 
   public async next() {
-    const url = `${this.getLocalApi()}/player/next`
+    const url = `${await this.getLocalApi()}/player/next`
 
     const res = await http.post(url, http.JsonBody({}))
     if (!res) {
@@ -191,7 +206,7 @@ export class Spotify {
   }
 
   public async pause() {
-    const url = `${this.getLocalApi()}/player/pause`
+    const url = `${await this.getLocalApi()}/player/pause`
     const res = await http.post(url, http.EmptyBody())
     if (!res) {
       return undefined
@@ -200,7 +215,7 @@ export class Spotify {
   }
 
   public async resume() {
-    const url = `${this.getLocalApi()}/player/resume`
+    const url = `${await this.getLocalApi()}/player/resume`
     const res = await http.post(url, http.EmptyBody())
     if (!res) {
       return undefined
@@ -231,7 +246,7 @@ export class Spotify {
   }
 
   public async getStatus() {
-    const url = `${this.getLocalApi()}/status`
+    const url = `${await this.getLocalApi()}/status`
     let res: any = await http.get(url)
     let track: any = {}
 
@@ -281,7 +296,7 @@ export class Spotify {
   }
 
   public async setVolume(volume: number) {
-    const url = `${this.getLocalApi()}/player/volume`
+    const url = `${await this.getLocalApi()}/player/volume`
     const body = { volume: volume, relative: false }
 
     const res = await http.post(url, http.JsonBody(body))
@@ -292,7 +307,7 @@ export class Spotify {
   }
 
   public async getVolume() {
-    const url = `${this.getLocalApi()}/player/volume`
+    const url = `${await this.getLocalApi()}/player/volume`
     const res = await http.get(url)
     if (!res.ok) {
       return undefined
