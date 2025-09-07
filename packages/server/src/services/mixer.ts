@@ -1,3 +1,4 @@
+import { Pulseaudio } from "@/services/pulseaudio"
 import { Mpd } from "@/services/mpd"
 import { Spotify } from "@/services/spotify"
 import * as fs from "node:fs"
@@ -43,11 +44,13 @@ export class Mixer {
   }
 
   public static async getStatus() {
+    const paClient = new Pulseaudio()
     const mpdClient = new Mpd()
     const spotifyClient = new Spotify()
     const source = Mixer.activeOutputDevice()
     let res: any = { playing: false, source: "" }
     let state = Mixer.getPlaybackState()
+    let volume = await paClient.getVolume()
 
     if (source != "") {
       switch (devicemap[source]) {
@@ -61,10 +64,10 @@ export class Mixer {
     }
 
     if (res) {
-      res.volume = state.volume
+      res.volume = volume
       res.muted = state.muted
     } else {
-      res = { muted: state.muted, volume: state.volume }
+      res = { muted: state.muted, volume: volume }
     }
 
     return res
@@ -133,6 +136,9 @@ export class Mixer {
   }
 
   public static async mute() {
+    const paClient = new Pulseaudio()
+    return await paClient.mute()
+
     const mpdClient = new Mpd()
     const spotifyClient = new Spotify()
     const source = Mixer.activeOutputDevice()
@@ -173,6 +179,9 @@ export class Mixer {
   }
 
   public static async unmute() {
+    const paClient = new Pulseaudio()
+    return await paClient.unmute()
+
     Mixer.setPlaybackState({ muted: false })
     let state = Mixer.getPlaybackState()
     return await Mixer.setVolume(state.lastvolume)
@@ -229,6 +238,10 @@ export class Mixer {
   }
 
   public static async setVolume(volume: number) {
+    const paClient = new Pulseaudio()
+    Mixer.setPlaybackState({ volume: volume, muted: false })
+    return await paClient.setVolume(volume)
+
     const isRejected = (input: PromiseSettledResult<unknown>): input is PromiseRejectedResult =>
       input.status === "rejected"
 
