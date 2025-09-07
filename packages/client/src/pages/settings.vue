@@ -2,26 +2,6 @@
   <PageTitle title="Settings" />
 
   <div class="pa-2">
-    <table border="0" cellpadding="2" cellspacing="0">
-      <tbody>
-        <tr>
-          <td>
-            <img src="/images/bitperfect.webp" style="width: 100px; height: 100px" />
-          </td>
-          <td>&nbsp;</td>
-          <td>
-            <h3>BitPerfect Playback</h3>
-            <v-switch
-              v-model="settings.enableBitPerfectPlayback"
-              label="Enable Direct to Hardware playback"
-            ></v-switch>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="pa-2">
-    <h3>Other Settings</h3>
     <v-switch v-model="settings.enableRequestCache" label="Enable Request Caching"></v-switch>
     <v-number-input
       label="Cache entry lifetime in seconds"
@@ -51,14 +31,7 @@
           <td>&nbsp;</td>
           <td>
             <h3>Icecast Server</h3>
-            <v-switch
-              v-model="settings.enableIcecast"
-              label="Enable Icecast Streaming Server"
-            ></v-switch>
-            <span v-if="!settings.alsaLoopbackCapable"
-              >ALSA Loopback device needs to be enabled on your host to use this feature.</span
-            >
-            <span v-if="settings.enableIcecast"
+            <span
               >Stream URL:<br />
               <a target="_blank" :href="streamUrl">{{ streamUrl }}</a
               ><br />
@@ -102,7 +75,7 @@ export default {
     })
     this.iceserver = window.location.protocol + '//' + window.location.hostname + ':8000'
     this.streamUrl =
-      window.location.protocol + '//' + window.location.hostname + ':8000/vopidy-stream.m3u'
+      window.location.protocol + '//' + window.location.hostname + ':8000/audiozw-stream.m3u'
   },
   beforeUnmount() {},
   methods: {
