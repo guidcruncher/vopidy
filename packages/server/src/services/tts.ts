@@ -4,7 +4,7 @@ import * as cp from "child_process"
 export class tts {
   async play(buffer: Buffer) {
     const child = cp.spawn("/usr/bin/pacat -p -d alsa-sink")
-    child.stdin.setEncoding("utf-8")
+//    child.stdin.setEncoding("utf-8")
     child.stdin.write(buffer.toString("utf8"))
     child.stdin.end()
   }
