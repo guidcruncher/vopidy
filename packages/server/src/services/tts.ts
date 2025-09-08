@@ -18,7 +18,7 @@ export class tts {
   }
 
   async speakShort(lang: string, text: string) {
-    return new Promise<Buffer>((resolve, reject) => {
+    return new Promise<boolean>((resolve, reject) => {
       googleTTS
         .getAudioBase64(text, {
           lang: lang,
@@ -37,9 +37,9 @@ export class tts {
   }
 
   async speakLong(lang: string, text: string) {
-    return new Promise<Buffer>((resolve, reject) => {
+    return new Promise<boolean>((resolve, reject) => {
       googleTTS
-        .getAudioBase64(text, {
+        .getAllAudioBase64(text, {
           lang: lang,
           slow: false,
           host: "https://translate.google.com",
