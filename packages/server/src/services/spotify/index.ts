@@ -80,7 +80,7 @@ export class Spotify {
     const authClient = new Auth()
     const auth = authClient.loadAuthState()
     logger.trace(`Connecting to Librespot with token ${auth.auth.access_token}`)
-    return await exec("/usr/local/bin/go-librespot.sh", {
+    return await exec("/usr/local/bin/pm2base.sh restart go-librespot", {
       env: { SPOTIFY_USERNAME: auth.profile.display_name, SPOTIFY_TOKEN: auth.auth.access_token },
     })
   }
@@ -97,14 +97,7 @@ export class Spotify {
   ) {
     let state = this.getLibrespotState()
     let pstate = Mixer.getPlaybackState()
-
-    if (!forceReconnect) {
-      if (pstate.librespot && pstate.librespot != "" && pstate.librespot == state.device_id) {
-        logger.debug("Already connected")
-        return "CONNECTED"
-      }
-    }
-
+    logger.warn("Connecting to go-librespot")
     if (process.env.GOLIBRESPOT_CREDENTIAL_TYPE.toString() == "spotify_token") {
       logger.debug("Connecting via spotify token credentials")
       await this.connectToLibRespotWithToken()
@@ -163,7 +156,6 @@ export class Spotify {
   }
 
   public async playTrack(id: string) {
-    //   await this.connectToLibRespot('Vopidy')
     const url = `${await this.getLocalApi()}/player/play`
     const body = { uri: id, skip_to_uri: "", paused: false }
     const res = await http.post(url, http.JsonBody(body))
@@ -244,7 +236,6 @@ export class Spotify {
 
     if (res.status == 204) {
       const accessToken = await getAccessTokenOnly()
-      await this.connectToLibRespot("Vopidy", accessToken, false)
       res = await http.get(url)
     }
 

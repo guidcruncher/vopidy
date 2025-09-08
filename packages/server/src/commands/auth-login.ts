@@ -2,6 +2,7 @@ import { JsonRpcMessage } from "@/rpc/jsonrpcmessage"
 import type { JsonRpcCommand } from "@/rpc/jsonrpccommandinjector"
 import { Auth } from "@/services/auth"
 import { Spotify } from "@/services/spotify"
+
 export const execute: JsonRpcCommand = async (message: JsonRpcMessage) => {
   const authClient = new Auth()
   const spotifyClient = new Spotify()
