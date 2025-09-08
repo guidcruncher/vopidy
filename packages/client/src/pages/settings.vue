@@ -75,7 +75,7 @@ export default {
     })
     this.iceserver = window.location.protocol + '//' + window.location.hostname + ':8000'
     this.streamUrl =
-      window.location.protocol + '//' + window.location.hostname + ':8000/audiozw-stream.m3u'
+      window.location.protocol + '//' + window.location.hostname + ':8000/audio-stream.m3u'
   },
   beforeUnmount() {},
   methods: {
