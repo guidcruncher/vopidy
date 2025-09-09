@@ -20,6 +20,14 @@ export class Pulseaudio {
     return volume
   }
 
+  public async getVolumeLinear() {
+    const pa = await this.getServer()
+    const id = await pa.lookupSink(this.playbackSink)
+    const sink = await pa.getSinkInfo(id)
+    await pa.disconnect()
+    return sink.volume.current[0]
+  }
+
   public async setVolume(levelPercent: number) {
     const pa = await this.getServer()
     const res = await pa.setSinkVolume(
