@@ -1,11 +1,13 @@
 import * as googleTTS from "google-tts-api"
 import * as cp from "child_process"
+import { StringDecoder } from "node:string_decoder"
+import { Buffer } from "node:buffer"
 
 export class tts {
-  async play(buffer: Buffer) {
+  play(buffer: Buffer) {
     const child = cp.spawn("/usr/bin/pacat -p -d alsa-sink")
-    //    child.stdin.setEncoding("utf-8")
-    child.stdin.write(buffer.toString("utf8"))
+    const decoder = new StringDecoder("utf8")
+    child.stdin.write(decoder.end(buffer))
     child.stdin.end()
   }
 
@@ -27,7 +29,7 @@ export class tts {
           timeout: 10000,
         })
         .then((res) => {
-          await this.play(Buffer.from(res, "base64"))
+          this.play(Buffer.from(res, "base64"))
           resolve(true)
         })
         .catch((err) => {
@@ -46,10 +48,12 @@ export class tts {
           timeout: 10000,
         })
         .then((data) => {
-          await this.play(
-            data.reduce((item) => {
-              return Buffer.from(item, "base64")
-            }),
+          this.play(
+            Buffer.concat(
+              data.map((item) => {
+                return Buffer.from(item.base64, "base64")
+              }),
+            ),
           )
           resolve(true)
         })
