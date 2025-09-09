@@ -15,6 +15,11 @@ export const CommandMap = {
     params: ["config"],
     help: " Saves the current config",
   },
+  "tts.speak": {
+    import: "tts-speak",
+    params: ["text", "lang"],
+    help: "Use text to speech",
+  },
   "player.play": {
     import: "player-play",
     params: ["source", "id"],
