@@ -10,7 +10,6 @@ import * as os from "os"
 import * as crypto from "crypto"
 import { Pulseaudio } from "@/services/pulseaudio"
 import { promisify } from "node:util"
-import child_process from "node:child_process"
 const execFile = promisify(child_process.execFile)
 
 export class tts {
