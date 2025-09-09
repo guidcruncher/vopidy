@@ -4,7 +4,7 @@ import { swaggerUI } from "@hono/swagger-ui"
 import { cors } from "hono/cors"
 import * as crypto from "crypto"
 import { AppEnv } from "@/core/appenv"
-import { Config } from "@/core/config"
+import { ConfigWriter, Config } from "@/core/config"
 import { OpenApiDoc } from "@/routes/openapidoc"
 import { auth } from "@/routes/auth"
 import { logger } from "@/core/logger"
@@ -19,6 +19,8 @@ import * as path from "path"
 
 ProcessLauncher.start()
 const cfg = Config.load()
+ConfigWriter(cfg)
+
 const app = new Hono<AppEnv>()
 
 app.use(contextStorage())

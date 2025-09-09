@@ -13,6 +13,9 @@ export class Config {
   public requestCacheLifetimeSeconds: number = 7200
   public imageCacheMaxAgeHours: number = 24
   public alsaLoopbackCapable: boolean = true
+  public nightStartHour: number = 23
+  public nightEndHour: number = 6
+  public announceTimeHourly: boolean = true
 
   public static load(): Config {
     const filename = path.join(process.env.VOPIDY_CONFIG as string, "vopidy-config.json")
