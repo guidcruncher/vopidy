@@ -1,8 +1,8 @@
 services:
-  vopidy:
+  vopidy-dev:
     image: guidcruncher/vopidy:develop
     extra_hosts:
-      - vopidy:127.0.0.1
+      - vopidy-dev:127.0.0.1
     secrets:
       - spotify-credentials
       - pm2-credentials
@@ -28,8 +28,8 @@ services:
       - 3004:3004
     environment:
       - TZ=Europe/London
-    container_name: vopidy
-    hostname: vopidy
+    container_name: vopidy-dev
+    hostname: vopidy-dev
     restart: unless-stopped
     volumes:
       - .:/app/src
