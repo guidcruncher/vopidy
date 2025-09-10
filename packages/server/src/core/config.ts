@@ -18,6 +18,7 @@ export class Config {
   public announceTimeHourly: boolean = true
   public timezone: string = "UTC"
   public locale: string = "en-US"
+  public clockType: string = "analog"
 
   public static isNight(): boolean {
     const config = Config.load()

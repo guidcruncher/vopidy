@@ -1,5 +1,8 @@
 <template>
-  <AnalogClock />
+  <Clock />
+  <NowPlaying />
+  <PlayerControl />
+  <VolumeControl />
   <Bookmarks />
 </template>
 

@@ -13,7 +13,8 @@ export const auth = new Hono()
 auth.get("/", (c) => {
   const url = new URL(c.req.url)
   const auth = new Auth()
-  const redirectUri = (process.env.BASE_PATH ?? `${url.protocol}//${url.host}`).toString()+"/api/auth/callback"
+  const redirectUri =
+    (process.env.BASE_PATH ?? `${url.protocol}//${url.host}`).toString() + "/api/auth/callback"
   const authorizationUri = auth.spotifyAuthClient.authorizeURL({
     redirect_uri: redirectUri,
     scope: spotifyScopes,
@@ -59,7 +60,8 @@ auth.get("/token", async (c) => {
 auth.get("/callback", async (c) => {
   const url = new URL(c.req.url)
   const auth = new Auth()
-  const redirectUri = (process.env.BASE_PATH ?? `${url.protocol}//${url.host}`).toString()+"/api/auth/callback"
+  const redirectUri =
+    (process.env.BASE_PATH ?? `${url.protocol}//${url.host}`).toString() + "/api/auth/callback"
   const options = {
     code: c.req.query("code"),
     redirect_uri: redirectUri,
@@ -67,21 +69,21 @@ auth.get("/callback", async (c) => {
   }
 
   // try {
-    const accessToken: any = await auth.spotifyAuthClient.getToken(options)
-    auth.saveAuthState(accessToken)
-    const spotifyClient = new Spotify()
+  const accessToken: any = await auth.spotifyAuthClient.getToken(options)
+  auth.saveAuthState(accessToken)
+  const spotifyClient = new Spotify()
 
-    global.spotifyDeviceId = ""
+  global.spotifyDeviceId = ""
 
-    let t = {
-      ...accessToken.token,
-      ...{
-        id: "",
-      },
-    }
+  let t = {
+    ...accessToken.token,
+    ...{
+      id: "",
+    },
+  }
 
-    await spotifyClient.connectToLibRespot("Vopidy", t.access_token)
-try {
+  await spotifyClient.connectToLibRespot("Vopidy", t.access_token)
+  try {
     const profile = await spotifyClient.getProfileByToken(t.access_token)
     if (profile) {
       auth.saveAuthState(accessToken, profile)

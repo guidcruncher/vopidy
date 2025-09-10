@@ -11,6 +11,7 @@ declare module 'vue' {
     AnalogClock: typeof import('./components/AnalogClock.vue')['default']
     ArtistNames: typeof import('./components/ArtistNames.vue')['default']
     Bookmarks: typeof import('./components/Bookmarks.vue')['default']
+    Clock: typeof import('./components/Clock.vue')['default']
     DigitalClock: typeof import('./components/DigitalClock.vue')['default']
     Equaliser: typeof import('./components/Equaliser.vue')['default']
     FileBrowse: typeof import('./components/FileBrowse.vue')['default']

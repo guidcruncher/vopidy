@@ -31,6 +31,10 @@
       thumb-label="always"
     ></v-range-slider>
     <v-switch v-model="settings.announceTimeHourly" label="Announce time every hour"></v-switch>
+    <v-combobox
+  label="Clock Display type" v-model="clockType"
+  :items="[{value:'analog', title:'Analog'}, {value:'digital', title:'Digital'}, {value:'none', title:'None'}]"
+></v-combobox>
   </div>
 
   <div class="pa-2">
@@ -79,12 +83,14 @@ export default {
       settings: {},
       streamUrl: '',
       iceserver: '',
+      clockType: 'none',
       daytime: [],
     }
   },
   mounted() {
     vopidy('core.config-get', []).then((res) => {
       if (res.ok) {
+        this.clockType = res.result.clockType
         this.settings = res.result
         this.daytime = [res.result.nightEndHour ?? 6, res.result.nightStartHour ?? 23]
       }
@@ -106,6 +112,7 @@ export default {
         this.settings.nightEndHour = this.daytime[0]
         this.settings.timezone = getTimezone()
         this.settings.locale = getLocale()
+        this.settings.clockType = this.clockType.value ?? this.settings.clockType
         vopidy('core.config-set', [this.settings]).then((res) => {
           window.location.reload()
         })
