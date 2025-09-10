@@ -76,5 +76,6 @@ secrets:
 | ICECAST_COMPLEVEL           | No       | 5        | Icecast compression level (1-10)                                                |
 | ICECAST_ENABLE              | No       | true     | Enable Icecast                                                                  |
 | ICECAST_SAMPLERATE          | No       | 48000    | Icecast sample rate                                                             |
-| TZ                          | No       | UTC      | Timezone            
-
+| TZ                          | No       | UTC      | Timezone                                                                        |
+| BASE_PATH                   | No       |          | The base path of the application (eg: http://192.168.1.201:3004)                |
+| SHOW_REQUEST_TIMINGS        | No       | false    | Enables detailed trace logs showing every request and its duration              |

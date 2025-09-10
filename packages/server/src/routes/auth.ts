@@ -13,7 +13,7 @@ export const auth = new Hono()
 auth.get("/", (c) => {
   const url = new URL(c.req.url)
   const auth = new Auth()
-  const redirectUri = `${url.protocol}//${url.host}/api/auth/callback`
+  const redirectUri = (process.env.BASE_PATH ?? `${url.protocol}//${url.host}`).toString()+"/api/auth/callback"
   const authorizationUri = auth.spotifyAuthClient.authorizeURL({
     redirect_uri: redirectUri,
     scope: spotifyScopes,

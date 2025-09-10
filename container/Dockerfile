@@ -1,3 +1,5 @@
+
+
 FROM guidcruncher/node-pipewire:latest AS base
 
 ARG DATE=""
@@ -92,6 +94,7 @@ ENV IN_DOCKER=true
 ENV BUILD_DATE=$DATE
 ENV BUILD_VERSION=$VERSION
 ENV SHOW_REQUEST_TIMINGS=false
+ENV BASE_PATH="http://192.168.1.201:3004"
  
 WORKDIR /app
 
