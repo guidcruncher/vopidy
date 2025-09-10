@@ -59,14 +59,14 @@ auth.get("/token", async (c) => {
 auth.get("/callback", async (c) => {
   const url = new URL(c.req.url)
   const auth = new Auth()
-  const redirectUri = `${url.protocol}//${url.host}/api/auth/callback`
+  const redirectUri = (process.env.BASE_PATH ?? `${url.protocol}//${url.host}`).toString()+"/api/auth/callback"
   const options = {
     code: c.req.query("code"),
     redirect_uri: redirectUri,
     scope: spotifyScopes,
   }
 
-  try {
+  // try {
     const accessToken: any = await auth.spotifyAuthClient.getToken(options)
     auth.saveAuthState(accessToken)
     const spotifyClient = new Spotify()
@@ -81,7 +81,7 @@ auth.get("/callback", async (c) => {
     }
 
     await spotifyClient.connectToLibRespot("Vopidy", t.access_token)
-
+try {
     const profile = await spotifyClient.getProfileByToken(t.access_token)
     if (profile) {
       auth.saveAuthState(accessToken, profile)
