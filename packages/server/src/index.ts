@@ -14,6 +14,8 @@ import { ProcessLauncher } from "@/core/processlauncher"
 import { serve } from "@hono/node-server"
 import { contextStorage, getContext } from "hono/context-storage"
 import { serveStatic } from "@hono/node-server/serve-static"
+import { loadScheduler } from "@/core/scheduler"
+
 import * as fs from "fs"
 import * as path from "path"
 
@@ -29,8 +31,11 @@ app.use(async (c, next) => {
   const reqId = c.req.header("X-Request-ID") ?? crypto.randomBytes(8).toString("hex")
   c.set("RequestID", reqId)
   const start = Date.now()
-  logger.trace(`Begin`)
-  logger.trace(`URL: ${c.req.path}`)
+  if ((process.env.SHOW_REQUEST_TIMINGS ?? "true").toString() == "true") {
+    logger.trace(`Begin`)
+    logger.trace(`URL: ${c.req.path}`)
+  }
+
   await next()
   const end = Date.now()
   logger.trace(`End in ${end - start}ms`)
@@ -85,5 +90,7 @@ const server = serve(
     logger.debug(`Server is running on http://localhost:${info.port}`)
   },
 )
+
+loadScheduler()
 
 wsrpc.injectWebSocket(server)

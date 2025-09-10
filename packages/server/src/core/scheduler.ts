@@ -19,7 +19,7 @@ export class SchedulerInstance {
   }
 }
 
-export const Scheduler = () => {
+export const loadScheduler = () => {
   const config = Config.load()
   const scheduler = new SchedulerInstance()
 

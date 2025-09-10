@@ -51,6 +51,7 @@ export class Mixer {
     let res: any = { playing: false, source: "" }
     let state = Mixer.getPlaybackState()
     let volume = await paClient.getVolume()
+    let paState = await paClient.getSinkInfo()
 
     if (source != "") {
       switch (devicemap[source]) {
@@ -65,9 +66,9 @@ export class Mixer {
 
     if (res) {
       res.volume = volume
-      res.muted = state.muted
+      res.muted = paState.mute
     } else {
-      res = { muted: state.muted, volume: volume }
+      res = { muted: paState.mute, volume: volume }
     }
 
     return res
@@ -184,7 +185,7 @@ export class Mixer {
 
     Mixer.setPlaybackState({ muted: false })
     let state = Mixer.getPlaybackState()
-    return await Mixer.setVolume(state.lastvolume)
+    return false
   }
 
   public static activeOutputDevice() {

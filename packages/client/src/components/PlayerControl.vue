@@ -115,6 +115,7 @@ export default {
     playerOp(method) {
       vopidy(`player.${method}`, []).then((res) => {
         emit('player-command', { command: method })
+ vopidy('core.status', []).then((res) => {
         if (res.ok) {
           if (res.result.track) {
             this.status = res.result
@@ -123,11 +124,10 @@ export default {
             this.muted = res.result.muted
             this.ready = true
           } else {
-            this.status = undefined
-            this.ready = false
           }
         }
       })
+})
     },
     mixerOp(method) {
       vopidy(`mixer.${method}`, []).then((res) => {
