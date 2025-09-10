@@ -132,14 +132,13 @@ export default {
     mixerOp(method) {
       vopidy(`mixer.${method}`, []).then((res) => {
         emit('mixer-command', { command: method })
-        if (res.ok) {
           this.getStatus()
-        }
       })
     },
     getStatus() {
       vopidy('core.status', []).then((res) => {
         if (res.ok) {
+          this.muted = res.result.muted
           if (res.result.track) {
             this.hastrack = true
             this.status = res.result
