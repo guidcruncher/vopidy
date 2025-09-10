@@ -19,6 +19,20 @@
       :disabled="!settings.enableImageCache"
     ></v-number-input>
   </div>
+
+  <div class="pa-2">
+    Daytime hours
+    <v-range-slider
+      v-model="daytime"
+      strict
+      :min="0"
+      :max="23"
+      :step="1"
+      thumb-label="always"
+    ></v-range-slider>
+    <v-switch v-model="settings.announceTimeHourly" label="Announce time every hour"></v-switch>
+  </div>
+
   <div class="pa-2">
     <table border="0" cellpadding="2" cellspacing="0">
       <tbody>
@@ -44,7 +58,6 @@
       </tbody>
     </table>
   </div>
-
   <div class="pa-2">
     <v-btn @click="saveSettings">Save configuration</v-btn>
   </div>
@@ -65,12 +78,14 @@ export default {
       settings: {},
       streamUrl: '',
       iceserver: '',
+      daytime: [],
     }
   },
   mounted() {
     vopidy('core.config-get', []).then((res) => {
       if (res.ok) {
         this.settings = res.result
+        this.daytime = [res.result.nightEndHour ?? 6, res.result.nightStartHour ?? 23]
       }
     })
     this.iceserver = window.location.protocol + '//' + window.location.hostname + ':8000'
@@ -86,7 +101,9 @@ export default {
         if (res.ok) {
           config = res.result
         }
-
+        this.settings.nightStartHour = this.daytime[1]
+        this.settings.nightEndHour = this.daytime[0]
+        this.settings.timezone = (Intl.DateTimeFormat().resolvedOptions().timeZone)
         vopidy('core.config-set', [this.settings]).then((res) => {
           window.location.reload()
         })

@@ -16,6 +16,14 @@ export class Config {
   public nightStartHour: number = 23
   public nightEndHour: number = 6
   public announceTimeHourly: boolean = true
+  public timezone: string = "UTC"
+
+  public static localDate() {
+    const config = Config.load()
+    const tz = config.timezone ?? "UTC"
+    let date_string = new Date().toLocaleString("en-US", { timeZone: tz })
+    return new Date(date_string)
+  }
 
   public static load(): Config {
     const filename = path.join(process.env.VOPIDY_CONFIG as string, "vopidy-config.json")
