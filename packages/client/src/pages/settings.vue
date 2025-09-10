@@ -69,6 +69,7 @@
 <script lang="ts">
 import { vopidy } from '@/services/vopidy'
 import { on, emit, off } from '@/composables/useeventbus'
+import { getTimezone, getLocale } from '@/services/locales'
 
 export default {
   name: 'settings',
@@ -103,7 +104,8 @@ export default {
         }
         this.settings.nightStartHour = this.daytime[1]
         this.settings.nightEndHour = this.daytime[0]
-        this.settings.timezone = (Intl.DateTimeFormat().resolvedOptions().timeZone)
+        this.settings.timezone = getTimezone()
+        this.settings.locale = getLocale()
         vopidy('core.config-set', [this.settings]).then((res) => {
           window.location.reload()
         })

@@ -10,7 +10,7 @@ export class SchedulerInstance {
 
 export const Scheduler = () => {
   const config = Config.load()
-  const scheduler = new ScheduleInstance()
+  const scheduler = new SchedulerInstance()
 
   if (config.nightStartHour && config.nightEndHour) {
     cron.schedule(`0 ${config.nightEndHour}-${config.nightStartHour} * * *`, () => {})

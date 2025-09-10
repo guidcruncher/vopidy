@@ -17,12 +17,34 @@ export class Config {
   public nightEndHour: number = 6
   public announceTimeHourly: boolean = true
   public timezone: string = "UTC"
+  public locale: string = "en-US"
 
-  public static localDate() {
+  public static localDate(): Date {
     const config = Config.load()
-    const tz = config.timezone ?? "UTC"
+    const tz = config.timezone ?? "Universal"
+
     let date_string = new Date().toLocaleString("en-US", { timeZone: tz })
     return new Date(date_string)
+  }
+
+  public static localDateString() {
+    const config = Config.load()
+    const locale = config.locale ?? "en-US"
+    const date = new Date()
+    let fmt = new Intl.DateTimeFormat(locale, {
+      timeStyle: "short",
+      timeZone: config.timezone ?? "Universal",
+    })
+
+    if (config.nightEndHour && config.nightEndHour == date.getHours()) {
+      fmt = new Intl.DateTimeFormat(locale, {
+        dateStyle: "full",
+        timeStyle: "short",
+        timeZone: config.timezone ?? "Universal",
+      })
+    }
+
+    return fmt.format(date) + " " + (date.getHours() < 12 ? "am" : "pm ")
   }
 
   public static load(): Config {

@@ -14,6 +14,7 @@ export const execute: JsonRpcCommand = async (message: JsonRpcMessage) => {
   newCfg.nightEndHour = message.params["config"].nightEndHour
   newCfg.announceTimeHourly = message.params["config"].announceTimeHourly
   newCfg.timezone = message.params["config"].timezone
+  newCfg.locale = message.params["config"].locale
 
   ConfigWriter(newCfg)
   ApplyConfig(cfg, newCfg)

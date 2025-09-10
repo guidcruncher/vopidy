@@ -20,6 +20,11 @@ export const CommandMap = {
     params: ["text", "lang"],
     help: "Use text to speech",
   },
+  "tts.time": {
+    import: "tts-time",
+    params: ["lang"],
+    help: "Use text to speech to say current time",
+  },
   "player.play": {
     import: "player-play",
     params: ["source", "id"],
