@@ -19,6 +19,16 @@ export class Config {
   public timezone: string = "UTC"
   public locale: string = "en-US"
 
+  public static isNight(): boolean {
+    const config = Config.load()
+    if (!config.nightStartHour) {
+      return false
+    }
+
+    const hour = Config.localDate().getHours()
+    return !(hour >= config.nightEndHour && hour < config.nightStartHour)
+  }
+
   public static localDate(): Date {
     const config = Config.load()
     const tz = config.timezone ?? "Universal"
