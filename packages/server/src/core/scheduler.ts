@@ -14,7 +14,7 @@ export class SchedulerInstance {
 
     if (config.announceTimeHourly && !Config.isNight()) {
       let date = Config.localDateString()
-      await ttsClient.speak(locale[0], date)
+      await ttsClient.speak(locale[0], `It's ${date}`)
     }
   }
 }

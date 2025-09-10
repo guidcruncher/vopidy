@@ -91,7 +91,8 @@ ENV SPOTIFY_AUTHJSON=/local/state/vopidy/.vopidy-auth.json
 ENV IN_DOCKER=true
 ENV BUILD_DATE=$DATE
 ENV BUILD_VERSION=$VERSION
-
+ENV SHOW_REQUEST_TIMINGS=false
+ 
 WORKDIR /app
 
 ENTRYPOINT [ "/usr/local/bin/entrypoint.sh", "/app/start.sh" ]
