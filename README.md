@@ -38,6 +38,8 @@ services:
       - ICECAST_ENABLE=true
       - ICECAST_SAMPLERATE=48000
       - TZ=UTC
+      - BASE_PATH=http://192.168.1.201:3004
+      - SHOW_REQUEST_TIMINGS=false
     container_name: vopidy
     hostname: vopidy
     restart: unless-stopped
