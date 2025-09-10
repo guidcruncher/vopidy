@@ -115,24 +115,24 @@ export default {
     playerOp(method) {
       vopidy(`player.${method}`, []).then((res) => {
         emit('player-command', { command: method })
- vopidy('core.status', []).then((res) => {
-        if (res.ok) {
-          if (res.result.track) {
-            this.status = res.result
-            this.playing = res.result.playing
-            this.paused = res.result.paused
-            this.muted = res.result.muted
-            this.ready = true
-          } else {
+        vopidy('core.status', []).then((res) => {
+          if (res.ok) {
+            if (res.result.track) {
+              this.status = res.result
+              this.playing = res.result.playing
+              this.paused = res.result.paused
+              this.muted = res.result.muted
+              this.ready = true
+            } else {
+            }
           }
-        }
+        })
       })
-})
     },
     mixerOp(method) {
       vopidy(`mixer.${method}`, []).then((res) => {
         emit('mixer-command', { command: method })
-          this.getStatus()
+        this.getStatus()
       })
     },
     getStatus() {

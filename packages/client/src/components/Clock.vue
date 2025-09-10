@@ -6,27 +6,25 @@ export default {
   data() {
     return {
       clockType: 'analog',
-      ready: false
+      ready: false,
     }
   },
   mounted() {
-  vopidy('core.config-get', []).then((res) => {
+    vopidy('core.config-get', []).then((res) => {
       if (res.ok) {
         this.clockType = res.result.clockType ?? 'analog'
-        this.ready=true
+        this.ready = true
       }
-  })
+    })
   },
-  beforeUnmount() {
-  },
-  methods: {
-  },
+  beforeUnmount() {},
+  methods: {},
 }
 </script>
 
 <template>
-<div v-if="ready">
-  <AnalogClock v-if="clockType=='analog'" />
-  <DigitalClock v-if="clockType=='digital'" />
-</div>
+  <div v-if="ready">
+    <AnalogClock v-if="clockType == 'analog'" />
+    <DigitalClock v-if="clockType == 'digital'" />
+  </div>
 </template>

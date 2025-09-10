@@ -32,9 +32,14 @@
     ></v-range-slider>
     <v-switch v-model="settings.announceTimeHourly" label="Announce time every hour"></v-switch>
     <v-combobox
-  label="Clock Display type" v-model="clockType"
-  :items="[{value:'analog', title:'Analog'}, {value:'digital', title:'Digital'}, {value:'none', title:'None'}]"
-></v-combobox>
+      label="Clock Display type"
+      v-model="clockType"
+      :items="[
+        { value: 'analog', title: 'Analog' },
+        { value: 'digital', title: 'Digital' },
+        { value: 'none', title: 'None' },
+      ]"
+    ></v-combobox>
   </div>
 
   <div class="pa-2">
