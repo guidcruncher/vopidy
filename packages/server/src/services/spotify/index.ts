@@ -165,7 +165,7 @@ export class Spotify {
       type: "track-changed",
       data: { uri: id, source: "spotify" },
     })
-    let status:any = await this.getStatus()
+    let status: any = await this.getStatus()
     if (status.paused) {
       await this.resume()
       status.paused = false

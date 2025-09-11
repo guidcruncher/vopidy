@@ -23,7 +23,6 @@ declare module 'vue' {
     PlaybackQueue: typeof import('./components/PlaybackQueue.vue')['default']
     PlayerControl: typeof import('./components/PlayerControl.vue')['default']
     PopularHistory: typeof import('./components/PopularHistory.vue')['default']
-    PopularReleases: typeof import('./components/PopularReleases.vue')['default']
     RadioBrowserBrowse: typeof import('./components/RadioBrowserBrowse.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
