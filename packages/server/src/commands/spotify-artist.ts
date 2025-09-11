@@ -1,7 +1,7 @@
-import { JsonRpcMessage } from "@/rpc/jsonrpcmessage"
+import { shimNonPaged } from "@/core/paging"
 import type { JsonRpcCommand } from "@/rpc/jsonrpccommandinjector"
+import { JsonRpcMessage } from "@/rpc/jsonrpcmessage"
 import { Spotify } from "@/services/spotify"
-import { PagedItems, shimNonPaged } from "@/core/paging"
 
 export const execute: JsonRpcCommand = async (message: JsonRpcMessage) => {
   const spotifyClient = new Spotify()

@@ -1,9 +1,8 @@
-import { Hono } from "hono"
-import { createNodeWebSocket } from "@hono/node-ws"
-import { JsonRpcProcessor } from "@/rpc/jsonrpcprocessor"
-import { WsClientStore } from "@/core/wsclientstore"
-import { on, off, emit } from "@/core/eventemitter2"
 import { logger } from "@/core/logger"
+import { WsClientStore } from "@/core/wsclientstore"
+import { JsonRpcProcessor } from "@/rpc/jsonrpcprocessor"
+import { createNodeWebSocket } from "@hono/node-ws"
+import { Hono } from "hono"
 
 export const httprpc = new Hono()
 

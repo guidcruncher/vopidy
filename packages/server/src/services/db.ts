@@ -1,7 +1,6 @@
-import { logger } from "@/core/logger"
+import * as crypto from "crypto"
 import { open } from "sqlite"
 import sqlite3 from "sqlite3"
-import * as crypto from "crypto"
 
 export class db {
   public static async getDb() {

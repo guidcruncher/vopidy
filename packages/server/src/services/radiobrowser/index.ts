@@ -1,12 +1,11 @@
-import { logger } from "@/core/logger"
-import { _fetchCache, _fetch, http } from "@/core/http"
+import { _fetchCache } from "@/core/http"
 import { PagedItems } from "@/core/paging"
+import { WsClientStore } from "@/core/wsclientstore"
 import { db } from "@/services/db"
+import { Mixer } from "@/services/mixer"
+import { Mpd } from "@/services/mpd"
 import * as dns from "dns"
 import * as util from "util"
-import { Mpd } from "@/services/mpd"
-import { Mixer } from "@/services/mixer"
-import { WsClientStore } from "@/core/wsclientstore"
 
 const resolveSrv = util.promisify(dns.resolveSrv)
 

@@ -1,6 +1,6 @@
-import { M3uParser } from "m3u-parser-generator"
-import { Icons } from "@/services/icons"
 import { db } from "@/services/db"
+import { Icons } from "@/services/icons"
+import { M3uParser } from "m3u-parser-generator"
 
 export class M3uFile {
   private static async toItemList(playlist: any) {

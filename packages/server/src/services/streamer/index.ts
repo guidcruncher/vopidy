@@ -1,11 +1,8 @@
-import { logger } from "@/core/logger"
-import { _fetchCache, _fetch, http } from "@/core/http"
-import { getAccessTokenOnly } from "@/services/auth"
 import { PagedItems } from "@/core/paging"
-import { db } from "@/services/db"
-import { Mpd } from "@/services/mpd"
-import { Mixer } from "@/services/mixer"
 import { WsClientStore } from "@/core/wsclientstore"
+import { db } from "@/services/db"
+import { Mixer } from "@/services/mixer"
+import { Mpd } from "@/services/mpd"
 
 export class Streamer {
   public async search(query: string, offset: number, limit: number): Promise<PagedItems<any>> {

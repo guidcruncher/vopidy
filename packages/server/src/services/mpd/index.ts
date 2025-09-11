@@ -1,13 +1,13 @@
-import { logger } from "@/core/logger"
-const mpdapi = require("mpd-api")
-import { Mixer } from "@/services/mixer"
-import { TuneIn } from "@/services/tunein"
-import { db } from "@/services/db"
-import { WsClientStore } from "@/core/wsclientstore"
-import { RadioBrowser } from "@/services/radiobrowser"
-import { LocalMusic } from "@/services/localmusic"
-import * as fs from "fs"
 import { Config } from "@/core/config"
+import { logger } from "@/core/logger"
+import { WsClientStore } from "@/core/wsclientstore"
+import { db } from "@/services/db"
+import { LocalMusic } from "@/services/localmusic"
+import { Mixer } from "@/services/mixer"
+import { RadioBrowser } from "@/services/radiobrowser"
+import { TuneIn } from "@/services/tunein"
+import * as fs from "fs"
+const mpdapi = require("mpd-api")
 
 export class Mpd {
   private async getMpdClient() {

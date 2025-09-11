@@ -1,5 +1,5 @@
-import { EventEmitter } from "node:events"
 import { HTTPException } from "hono/http-exception"
+import { EventEmitter } from "node:events"
 
 export type listener = (...args) => {}
 

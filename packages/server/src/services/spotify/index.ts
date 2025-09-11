@@ -1,16 +1,15 @@
-import { logger } from "@/core/logger"
-import { _fetchCache, _fetch, http, Authorization } from "@/core/http"
-import { Auth, getAccessTokenOnly } from "@/services/auth"
-import { Mixer } from "@/services/mixer"
-import { db } from "@/services/db"
-import * as fs from "fs"
-import * as path from "path"
 import { CacheManager } from "@/core/cachemanager"
+import { _fetch, _fetchCache, Authorization, http } from "@/core/http"
+import { logger } from "@/core/logger"
 import { PagedItems } from "@/core/paging"
 import { WsClientStore } from "@/core/wsclientstore"
+import { Auth, getAccessTokenOnly } from "@/services/auth"
+import { db } from "@/services/db"
+import { Mixer } from "@/services/mixer"
+import * as fs from "fs"
+import { default as child_process } from "node:child_process"
 import { promisify } from "node:util"
-import child_process from "node:child_process"
-import spawnSync from "node:child_process"
+import * as path from "path"
 const exec = promisify(child_process.exec)
 
 export class Spotify {
@@ -1111,5 +1110,4 @@ export class Spotify {
 
     return id
   }
-
 }

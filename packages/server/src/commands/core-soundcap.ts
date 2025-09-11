@@ -1,5 +1,5 @@
-import { JsonRpcMessage } from "@/rpc/jsonrpcmessage"
 import type { JsonRpcCommand } from "@/rpc/jsonrpccommandinjector"
+import { JsonRpcMessage } from "@/rpc/jsonrpcmessage"
 import { Alsa } from "@/services/alsa"
 
 export const execute: JsonRpcCommand = async (message: JsonRpcMessage) => {

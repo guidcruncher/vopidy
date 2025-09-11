@@ -1,9 +1,9 @@
-import * as fs from "fs"
-import * as path from "path"
 import { logger } from "@/core/logger"
-import { spawn } from "node:child_process"
-import { Mpd } from "@/services/mpd"
 import { pm2 } from "@/core/pm2"
+import { Mpd } from "@/services/mpd"
+import * as fs from "fs"
+import { spawn } from "node:child_process"
+import * as path from "path"
 
 export class Alsa {
   public async getCardInfo() {

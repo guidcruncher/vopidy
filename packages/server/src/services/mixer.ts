@@ -1,10 +1,10 @@
-import { Pulseaudio } from "@/services/pulseaudio"
+import { logger } from "@/core/logger"
+import { WsClientStore } from "@/core/wsclientstore"
+import { Equaliser } from "@/services/equaliser"
 import { Mpd } from "@/services/mpd"
+import { Pulseaudio } from "@/services/pulseaudio"
 import { Spotify } from "@/services/spotify"
 import * as fs from "node:fs"
-import { logger } from "@/core/logger"
-import { Equaliser } from "@/services/equaliser"
-import { WsClientStore } from "@/core/wsclientstore"
 
 export class PlaybackState {
   uri: string = ""

@@ -1,7 +1,7 @@
-import { JsonRpcMessage } from "@/rpc/jsonrpcmessage"
 import type { JsonRpcCommand } from "@/rpc/jsonrpccommandinjector"
-import { M3uFile } from "@/services/m3ufile"
+import { JsonRpcMessage } from "@/rpc/jsonrpcmessage"
 import { db } from "@/services/db"
+import { M3uFile } from "@/services/m3ufile"
 
 export const execute: JsonRpcCommand = async (message: JsonRpcMessage) => {
   if (message.params.length == 0) {

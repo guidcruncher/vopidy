@@ -1,8 +1,6 @@
-import { logger } from "@/core/logger"
-import { _fetchCache, _fetch, http, Authorization } from "@/core/http"
-import { Auth, getAccessTokenOnly } from "@/services/auth"
-import { CacheManager } from "@/core/cachemanager"
+import { _fetchCache } from "@/core/http"
 import { PagedItems } from "@/core/paging"
+import { getAccessTokenOnly } from "@/services/auth"
 
 export class SpotifyFinder {
   public async keyword(

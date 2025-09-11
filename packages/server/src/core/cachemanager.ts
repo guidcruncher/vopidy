@@ -1,5 +1,5 @@
-import { logger } from "@/core/logger"
 import { Config } from "@/core/config"
+import { logger } from "@/core/logger"
 const Memcached = require("memcached")
 
 export class CacheManager {

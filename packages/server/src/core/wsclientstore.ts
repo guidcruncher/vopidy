@@ -1,5 +1,5 @@
-import { JsonRpcEvent } from "@/rpc/jsonrpcevent"
 import { logger } from "@/core/logger"
+import { JsonRpcEvent } from "@/rpc/jsonrpcevent"
 
 export class WsClientStore {
   private static wsclients

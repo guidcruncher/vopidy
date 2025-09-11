@@ -1,5 +1,5 @@
-import { exec } from "node:child_process"
 import { logger } from "@/core/logger"
+import { exec } from "node:child_process"
 
 export class pm2 {
   public static async exec(command: string, services: string[]) {

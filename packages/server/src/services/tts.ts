@@ -1,15 +1,14 @@
-import { Mixer } from "@/services/mixer"
 import { logger } from "@/core/logger"
-import * as googleTTS from "google-tts-api"
-import child_process from "node:child_process"
-import { StringDecoder } from "node:string_decoder"
-import { Buffer } from "node:buffer"
-import * as fs from "fs"
-import * as path from "path"
-import * as os from "os"
-import * as crypto from "crypto"
+import { Mixer } from "@/services/mixer"
 import { Pulseaudio } from "@/services/pulseaudio"
+import * as crypto from "crypto"
+import * as fs from "fs"
+import * as googleTTS from "google-tts-api"
+import { Buffer } from "node:buffer"
+import child_process from "node:child_process"
 import { promisify } from "node:util"
+import * as os from "os"
+import * as path from "path"
 const execFile = promisify(child_process.execFile)
 
 export class tts {

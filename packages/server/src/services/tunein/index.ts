@@ -1,9 +1,9 @@
-import { Mpd } from "@/services/mpd"
-import { Mixer } from "@/services/mixer"
-import { db } from "@/services/db"
-import { WsClientStore } from "@/core/wsclientstore"
-import { _fetchCache, _fetch, http } from "@/core/http"
+import { _fetchCache, http } from "@/core/http"
 import { PagedItems } from "@/core/paging"
+import { WsClientStore } from "@/core/wsclientstore"
+import { db } from "@/services/db"
+import { Mixer } from "@/services/mixer"
+import { Mpd } from "@/services/mpd"
 
 export class TuneIn {
   public async categories() {

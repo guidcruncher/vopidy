@@ -1,12 +1,10 @@
-import { HTTPException } from "hono/http-exception"
-import { AuthorizationCode } from "simple-oauth2"
-import { Hono } from "hono"
-import * as path from "node:path"
-import * as crypto from "node:crypto"
-import * as fs from "node:fs"
-import { Spotify } from "@/services/spotify"
 import { logger } from "@/core/logger"
-import { spotifyScopes, Auth } from "@/services/auth"
+import { Auth, spotifyScopes } from "@/services/auth"
+import { Spotify } from "@/services/spotify"
+import { Hono } from "hono"
+import { HTTPException } from "hono/http-exception"
+import * as fs from "node:fs"
+import * as path from "node:path"
 
 export const auth = new Hono()
 

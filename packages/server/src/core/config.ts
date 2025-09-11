@@ -1,8 +1,8 @@
-import * as fs from "fs"
-import * as path from "path"
-import { Alsa } from "@/services/alsa"
 import { logger } from "@/core/logger"
 import { pm2 } from "@/core/pm2"
+import { Alsa } from "@/services/alsa"
+import * as fs from "fs"
+import * as path from "path"
 
 export class Config {
   public enableIcecast: boolean = true

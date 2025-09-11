@@ -1,20 +1,19 @@
-import { Hono } from "hono"
-import { prettyJSON } from "hono/pretty-json"
-import { swaggerUI } from "@hono/swagger-ui"
-import { cors } from "hono/cors"
-import * as crypto from "crypto"
 import { AppEnv } from "@/core/appenv"
-import { ConfigWriter, Config } from "@/core/config"
-import { OpenApiDoc } from "@/routes/openapidoc"
-import { auth } from "@/routes/auth"
+import { Config, ConfigWriter } from "@/core/config"
 import { logger } from "@/core/logger"
-import { httprpc, setupWebsocket } from "@/routes/jsonrpc"
-import { proxyRoute } from "@/routes/proxy"
 import { ProcessLauncher } from "@/core/processlauncher"
-import { serve } from "@hono/node-server"
-import { contextStorage, getContext } from "hono/context-storage"
-import { serveStatic } from "@hono/node-server/serve-static"
 import { loadScheduler } from "@/core/scheduler"
+import { auth } from "@/routes/auth"
+import { httprpc, setupWebsocket } from "@/routes/jsonrpc"
+import { OpenApiDoc } from "@/routes/openapidoc"
+import { proxyRoute } from "@/routes/proxy"
+import { serve } from "@hono/node-server"
+import { swaggerUI } from "@hono/swagger-ui"
+import * as crypto from "crypto"
+import { Hono } from "hono"
+import { contextStorage } from "hono/context-storage"
+import { cors } from "hono/cors"
+import { prettyJSON } from "hono/pretty-json"
 
 import * as fs from "fs"
 import * as path from "path"
@@ -39,9 +38,9 @@ app.use(async (c, next) => {
   await next()
   const end = Date.now()
 
- if ((process.env.SHOW_REQUEST_TIMINGS ?? "true").toString() == "true") {
-  logger.trace(`End in ${end - start}ms`)
- }
+  if ((process.env.SHOW_REQUEST_TIMINGS ?? "true").toString() == "true") {
+    logger.trace(`End in ${end - start}ms`)
+  }
 
   c.res.headers.set("X-Response-Time", `${end - start}`)
   c.res.headers.set("X-Request-ID", reqId)

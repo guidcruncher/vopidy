@@ -1,5 +1,5 @@
-import { colorConsole } from "tracer"
 import { currentRequestId } from "@/core/appenv"
+import { colorConsole } from "tracer"
 
 export const logger = colorConsole({
   format: [

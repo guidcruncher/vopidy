@@ -1,5 +1,4 @@
-import { Hono } from "hono"
-import { contextStorage, getContext } from "hono/context-storage"
+import { getContext } from "hono/context-storage"
 
 export type AppEnv = {
   Variables: {

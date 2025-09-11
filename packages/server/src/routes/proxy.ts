@@ -1,10 +1,9 @@
-import { logger } from "@/core/logger"
-import { Hono } from "hono"
-import { HTTPException } from "hono/http-exception"
-import * as fs from "fs"
-import * as path from "path"
-import * as crypto from "crypto"
 import { Config } from "@/core/config"
+import { logger } from "@/core/logger"
+import * as crypto from "crypto"
+import * as fs from "fs"
+import { Hono } from "hono"
+import * as path from "path"
 
 const isImageCacheEnabled = () => {
   const cfg: Config = Config.load()

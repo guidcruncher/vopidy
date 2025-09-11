@@ -1,12 +1,11 @@
-import { JsonRpcMessage } from "@/rpc/jsonrpcmessage"
 import type { JsonRpcCommand } from "@/rpc/jsonrpccommandinjector"
+import { JsonRpcMessage } from "@/rpc/jsonrpcmessage"
 import { Auth } from "@/services/auth"
+import { RadioBrowser } from "@/services/radiobrowser"
 import { Spotify } from "@/services/spotify"
 import { SpotifyFinder } from "@/services/spotify/finder"
-import { RadioBrowser } from "@/services/radiobrowser"
-import { TuneIn } from "@/services/tunein"
-import { LocalMusic } from "@/services/localmusic"
 import { Streamer } from "@/services/streamer"
+import { TuneIn } from "@/services/tunein"
 
 export const execute: JsonRpcCommand = async (message: JsonRpcMessage) => {
   const spotifyClient = new Spotify()

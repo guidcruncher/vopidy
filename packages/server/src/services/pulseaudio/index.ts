@@ -1,5 +1,4 @@
-import { PulseAudio } from "pulseaudio.js"
-import { percentToVolume, volumeToPercent, dBToVolume, volumeTodB } from "pulseaudio.js"
+import { percentToVolume, PulseAudio, volumeToPercent } from "pulseaudio.js"
 
 export class Pulseaudio {
   playbackSink = "alsa-sink"

@@ -1,7 +1,7 @@
-import { logger } from "@/core/logger"
-import cron from "node-cron"
 import { Config } from "@/core/config"
+import { logger } from "@/core/logger"
 import { tts } from "@/services/tts"
+import cron from "node-cron"
 
 export class SchedulerInstance {
   public async hourly() {

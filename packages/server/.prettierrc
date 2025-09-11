@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/prettierrc",
   "plugins": ["prettier-plugin-organize-imports"],
-  "organizeImportsSkipDestructiveCodeActions": true
+  "organizeImportsSkipDestructiveCodeActions": false,
   "semi": false,
   "singleQuote": false,
   "printWidth": 100
