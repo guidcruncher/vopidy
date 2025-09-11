@@ -166,10 +166,10 @@ export class Spotify {
       data: { uri: id, source: "spotify" },
     })
     let status = this.getStatus()
-       if (status.paused) {
-          await this.resume()
-          status.paused = false
-       }
+    if (status.paused) {
+      await this.resume()
+      status.paused = false
+    }
     return status
   }
 

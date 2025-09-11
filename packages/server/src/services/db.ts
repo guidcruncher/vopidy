@@ -13,7 +13,7 @@ export class db {
   }
 
   public static async addToPlaybackHistory(source, item) {
-    if (!item.id) {
+    if (!item.id || !item.name || item.name == "") {
       return
     }
     const dbc = await db.getDb()
