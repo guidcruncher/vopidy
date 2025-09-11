@@ -15,13 +15,13 @@ export class SchedulerInstance {
     if (config.announceTimeHourly && !Config.isNight()) {
       let date = Config.localDateString()
 
-      if (config.nightEndHour && config.nightEndHour == date.getHours()) {
+      if (config.nightEndHour && config.nightEndHour == Config.localDate().getHours()) {
         await ttsClient.speak(locale[0], `Good Morning, It's ${date}`)
       } else {
-        if (config.nightStartHour && config.nightStartHour == date.getHours()) {
+        if (config.nightStartHour && config.nightStartHour == Config.localDate().getHours()) {
           await ttsClient.speak(locale[0], `It's ${date}, Good night.`)
         } else {
-          if (date.getHours() == 12) {
+          if (Config.localDate().getHours() == 12) {
             await ttsClient.speak(locale[0], `Good afternoon, It's ${date}`)
           } else {
             await ttsClient.speak(locale[0], `It's ${date}`)

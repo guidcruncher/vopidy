@@ -8,13 +8,15 @@ export const execute: JsonRpcCommand = async (message: JsonRpcMessage) => {
   let res = {}
   let date = Config.localDateString()
   let lang = message.params["lang"]
-  if (config.nightEndHour && config.nightEndHour == date.getHours()) {
+  const config = Config.load()
+
+  if (config.nightEndHour && config.nightEndHour == Config.localDate().getHours()) {
     await ttsClient.speak(lang, `Good Morning, It's ${date}`)
   } else {
-    if (config.nightStartHour && config.nightStartHour == date.getHours()) {
+    if (config.nightStartHour && config.nightStartHour == Config.localDate().getHours()) {
       await ttsClient.speak(lang, `It's ${date}, Good night.`)
     } else {
-      if (date.getHours() == 12) {
+      if (Config.localDate().getHours() == 12) {
         await ttsClient.speak(lang, `Good afternoon, It's ${date}`)
       } else {
         await ttsClient.speak(lang, `It's ${date}`)
