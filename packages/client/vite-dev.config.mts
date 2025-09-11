@@ -25,7 +25,7 @@ export default defineConfig({
     modulePreload:{polyfill: true},
   },
   plugins: [
-    vueDevTools(),
+//    vueDevTools(),
     VueRouter({
       dts: 'src/typed-router.d.ts',
     }),
