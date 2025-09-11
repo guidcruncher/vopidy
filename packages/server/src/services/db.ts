@@ -38,7 +38,7 @@ export class db {
   public static async getPlaybackHistoryPop() {
     const dbc = await db.getDb()
     let res: any[] = await dbc.all(
-      `SELECT count(uri) as total, source, uri, image, name, artist, type from playback_history group by source, uri, image, name, artist, type order by total asc;`,
+      `SELECT count(uri) as total, source, uri, image, name, artist, type from playback_history group by source, uri, image, name, artist, type ORDER BY total DESC;`,
     )
     await dbc.close()
     return res
