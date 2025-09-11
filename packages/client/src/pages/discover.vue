@@ -12,7 +12,6 @@
 
 <script lang="ts" setup></script>
 <script lang="ts">
-import { vopidy } from '@/services/vopidy'
 export default {
   name: 'SpotifyBrowse',
   props: {},

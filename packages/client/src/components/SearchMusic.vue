@@ -89,9 +89,9 @@
 <style></style>
 <script lang="ts" setup></script>
 <script lang="ts">
-import { vopidy } from '@/services/vopidy'
-import { on, emit, off } from '@/composables/useeventbus'
+import { emit } from '@/composables/useeventbus'
 import { PagedItems } from '@/core/paging'
+import { vopidy } from '@/services/vopidy'
 
 export default {
   name: 'SearchMusic',

@@ -1,5 +1,4 @@
-import { config } from '@/config'
-import { on, emit, off } from '@/composables/useeventbus'
+import { emit } from '@/composables/useeventbus'
 import { ws } from '@/core/ws'
 
 export const VopidyEventBus = () => {

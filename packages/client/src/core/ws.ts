@@ -1,5 +1,4 @@
 import { config } from '@/config'
-import { on, emit, off } from '@/composables/useeventbus'
 
 export class ws {
   static socket: any = undefined

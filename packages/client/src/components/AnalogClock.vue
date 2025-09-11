@@ -1,5 +1,5 @@
 <script lang="ts">
-import { on, emit, off } from '../composables/useeventbus'
+import { emit } from '../composables/useeventbus'
 
 export default {
   name: 'AnalogClock',

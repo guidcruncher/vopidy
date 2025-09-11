@@ -87,8 +87,8 @@
 <style></style>
 <script lang="ts" setup></script>
 <script lang="ts">
+import { off, on } from '@/composables/useeventbus'
 import { vopidy } from '@/services/vopidy'
-import { on, emit, off } from '@/composables/useeventbus'
 
 export default {
   name: 'SpotifyItemDetail',

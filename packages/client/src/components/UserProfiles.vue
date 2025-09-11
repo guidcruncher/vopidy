@@ -31,8 +31,6 @@
 <script lang="ts" setup></script>
 <script lang="ts">
 import { vopidy } from '@/services/vopidy'
-import { on, emit, off } from '@/composables/useeventbus'
-import { config } from '@/config'
 
 export default {
   name: 'History',

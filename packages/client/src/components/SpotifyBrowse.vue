@@ -100,11 +100,11 @@
 }
 </style>
 <script lang="ts" setup>
-import { on, emit, off } from '@/composables/useeventbus'
-import { useResizeObserver } from '@vueuse/core'
-import { ref, useTemplateRef } from 'vue'
+import { emit, off, on } from '@/composables/useeventbus'
 import { useUiStateStore } from '@/stores/uistatestore'
+import { useResizeObserver } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
+import { useTemplateRef } from 'vue'
 
 const uiStateStore = useUiStateStore()
 const { drawer, profileImage, displayMode } = storeToRefs(uiStateStore)

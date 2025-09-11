@@ -16,19 +16,15 @@
 </template>
 
 <script lang="ts" setup>
-import { useDisplay } from 'vuetify'
-import { ref } from 'vue'
 import { useUiStateStore } from '@/stores/uistatestore'
 import { storeToRefs } from 'pinia'
+import { useDisplay } from 'vuetify'
 
 const display = useDisplay()
 const uiStateStore = useUiStateStore()
 const { drawer, profileImage } = storeToRefs(uiStateStore)
 </script>
 <script lang="ts">
-import { vopidy } from '@/services/vopidy'
-import { on, emit, off } from '@/composables/useeventbus'
-
 export default {
   name: 'anonlayout',
   props: {},

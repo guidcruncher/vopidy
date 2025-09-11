@@ -76,9 +76,8 @@
 //
 </script>
 <script lang="ts">
+import { getLocale, getTimezone } from '@/services/locales'
 import { vopidy } from '@/services/vopidy'
-import { on, emit, off } from '@/composables/useeventbus'
-import { getTimezone, getLocale } from '@/services/locales'
 
 export default {
   name: 'settings',

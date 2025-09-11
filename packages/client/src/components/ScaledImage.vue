@@ -1,6 +1,4 @@
 <script lang="ts">
-import { ref } from 'vue'
-
 const sizes = {
   xs: 64,
   sm: 80,

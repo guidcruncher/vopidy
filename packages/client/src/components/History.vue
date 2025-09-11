@@ -26,7 +26,7 @@
 }
 </style>
 <script lang="ts" setup>
-import { on, emit, off } from '@/composables/useeventbus'
+import { emit, off, on } from '@/composables/useeventbus'
 const el = useTemplateRef('el')
 useResizeObserver(el, (entries) => {
   const entry = entries[0]
@@ -40,9 +40,8 @@ useResizeObserver(el, (entries) => {
 </script>
 <script lang="ts">
 import { vopidy } from '@/services/vopidy'
-import { on, emit, off } from '@/composables/useeventbus'
 import { useResizeObserver } from '@vueuse/core'
-import { ref, useTemplateRef } from 'vue'
+import { useTemplateRef } from 'vue'
 
 export default {
   name: 'History',

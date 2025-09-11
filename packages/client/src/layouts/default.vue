@@ -54,12 +54,12 @@
 </template>
 
 <script lang="ts" setup>
-import { useDisplay } from 'vuetify'
 import { contents } from '@/router/contents'
-import { ref } from 'vue'
 import { useUiStateStore } from '@/stores/uistatestore'
-import { storeToRefs } from 'pinia'
 import buildVersion from '@/version.json'
+import { storeToRefs } from 'pinia'
+import { ref } from 'vue'
+import { useDisplay } from 'vuetify'
 
 const display = useDisplay()
 const uiStateStore = useUiStateStore()
@@ -69,7 +69,6 @@ const items = ref(contents)
 </script>
 <script lang="ts">
 import { vopidy } from '@/services/vopidy'
-import { on, emit, off } from '@/composables/useeventbus'
 
 export default {
   name: 'layout',

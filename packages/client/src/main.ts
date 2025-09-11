@@ -10,19 +10,19 @@ import { VopidyEventBus } from '@/services/vopidyeventbus'
 import router from './router'
 
 // Components
-import App from './App.vue'
 import { vopidy } from '@/services/vopidy'
+import App from './App.vue'
 
 // Composables
 import { createApp } from 'vue'
 
 // Stores
-import { useUiStateStore } from '@/stores/uistatestore'
 import { useConfigStore } from '@/stores/configstore'
+import { useUiStateStore } from '@/stores/uistatestore'
 
 // Styles
-import 'unfonts.css'
 import '@/assets/global.css'
+import 'unfonts.css'
 
 const app = createApp(App)
 

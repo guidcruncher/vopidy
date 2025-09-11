@@ -1,4 +1,4 @@
-import mitt, { type EventType, type Handler } from 'mitt'
+import mitt, { type EventType } from 'mitt'
 
 export interface GlobalEvents extends Record<EventType, unknown> {}
 
