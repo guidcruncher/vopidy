@@ -2,6 +2,7 @@ import { JsonRpcMessage } from "@/rpc/jsonrpcmessage"
 import type { JsonRpcCommand } from "@/rpc/jsonrpccommandinjector"
 import { Auth } from "@/services/auth"
 import { Spotify } from "@/services/spotify"
+import { SpotifyFinder } from "@/services/spotify/finder"
 import { RadioBrowser } from "@/services/radiobrowser"
 import { TuneIn } from "@/services/tunein"
 import { LocalMusic } from "@/services/localmusic"
@@ -12,6 +13,7 @@ export const execute: JsonRpcCommand = async (message: JsonRpcMessage) => {
   const tuneInClient = new TuneIn()
   const radioBrowserClient = new RadioBrowser()
   const streamClient = new Streamer()
+  const spotifyFinder = new SpotifyFinder()
 
   const catalog = message.params["catalog"].split(":")
   const query = message.params["query"]
@@ -30,7 +32,7 @@ export const execute: JsonRpcCommand = async (message: JsonRpcMessage) => {
 
     case "spotify":
       const market = Auth.getProfile().market
-      return await spotifyClient.search(catalog[1], query, offset, limit, market)
+      return await spotifyFinder.keyword(catalog[1], query, offset, limit, market)
   }
 }
 

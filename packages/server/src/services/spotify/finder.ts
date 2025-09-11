@@ -4,8 +4,8 @@ import { Auth, getAccessTokenOnly } from "@/services/auth"
 import { CacheManager } from "@/core/cachemanager"
 import { PagedItems } from "@/core/paging"
 
-export class finder {
-  public async search(
+export class SpotifyFinder {
+  public async keyword(
     catalog: string,
     query: string,
     offset: number,
