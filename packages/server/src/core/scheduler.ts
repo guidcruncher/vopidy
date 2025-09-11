@@ -14,7 +14,20 @@ export class SchedulerInstance {
 
     if (config.announceTimeHourly && !Config.isNight()) {
       let date = Config.localDateString()
-      await ttsClient.speak(locale[0], `It's ${date}`)
+
+      if (config.nightEndHour && config.nightEndHour == date.getHours()) {
+        await ttsClient.speak(locale[0], `Good Morning, It's ${date}`)
+      } else {
+        if (config.nightStartHour && config.nightStartHour == date.getHours()) {
+          await ttsClient.speak(locale[0], `It's ${date}, Good night.`)
+        } else {
+          if (date.getHours() == 12) {
+            await ttsClient.speak(locale[0], `Good afternoon, It's ${date}`)
+          } else {
+            await ttsClient.speak(locale[0], `It's ${date}`)
+          }
+        }
+      }
     }
   }
 }
