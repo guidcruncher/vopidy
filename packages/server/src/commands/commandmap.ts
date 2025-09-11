@@ -31,7 +31,7 @@ export const CommandMap = {
     help: "Start plaaying track from source",
   },
   "player.history": { import: "player-history", help: "Get the playback history" },
-  "player.history.popular": { import: "player-historypop", help:"List history by popularity"},
+  "player.history.popular": { import: "player-historypop", help: "List history by popularity" },
   "player.stop": { import: "player-stop", help: "Stop playback" },
   "player.pause": { import: "player-pause", help: "Pause playhack" },
   "player.resume": { import: "player-resume", help: "Resume playback" },
