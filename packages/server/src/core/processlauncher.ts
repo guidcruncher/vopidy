@@ -54,10 +54,9 @@ export class ProcessLauncher {
           }
           track.source = "spotify"
           track.uri = track.id
-          let artist = track.artist
-            .map((t) => {
-              return t.name
-            })
+          let artist = track.artist.map((t) => {
+            return t.name
+          })
           track.artist = artist.join(", ")
           Mixer.savePlaybackTrack("spotify", track.uri)
         case "metadata":
