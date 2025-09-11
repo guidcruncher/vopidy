@@ -3,6 +3,7 @@ import { WsClientStore } from "@/core/wsclientstore"
 import { db } from "@/services/db"
 import { Mixer } from "@/services/mixer"
 import { Mpd } from "@/services/mpd"
+import { Spotify } from "@/services/spotify"
 import { exec } from "node:child_process"
 
 export class ProcessLauncher {
@@ -39,6 +40,26 @@ export class ProcessLauncher {
       logger.trace(`Incoming Librespot event ${event.data}`)
       json.data.source = "spotify"
       switch (json.type) {
+        case "playing":
+          const spotifyClient = new Spotify()
+          const parts = json.data.uri.split(":")
+          let track: any = {}
+          switch (parts[1]) {
+            case "track":
+              track = await spotifyClient.getTrack(parts[2])
+              break
+            case "episode":
+              track = await spotifyClient.getEpisode(parts[2])
+              break
+          }
+          track.source = "spotify"
+          track.uri = track.id
+          track.artist = track.artist
+            .map((t) => {
+              return t.name
+            })
+            .join(", ")
+          Mixer.savePlaybackTrack("spotify", track.uri)
         case "metadata":
           json.type = "track-changed"
           const mpdClient = new Mpd()
@@ -61,7 +82,6 @@ export class ProcessLauncher {
         case "inactive":
         case "not_playing":
         case "paused":
-        case "playing":
         case "repeat_context":
         case "repeat_track":
         case "shuffle_context":
