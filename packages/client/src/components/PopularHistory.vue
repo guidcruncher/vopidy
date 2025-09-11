@@ -1,7 +1,7 @@
 <template>
   <v-card ref="el">
     <div class="pa-2">
-      <v-row no-gutters class="icon-histcols">
+      <v-row no-gutters class="icon-pophistcols">
         <v-col v-for="(item, index) in items">
           <div style="padding: 2px">
             <center>
@@ -11,7 +11,7 @@
                 @click="selectItem(item)"
                 v-bind:responsive="false"
               />
-              <span class="text-caption">{{ item.name }}</span>
+              <span class="text-caption">{{ item.name }} ({{ item.total }})</span>
             </center>
           </div>
         </v-col>
@@ -20,7 +20,7 @@
   </v-card>
 </template>
 <style>
-.icon-histcols {
+.icon-pophistcols {
   display: grid;
   grid-template-columns: repeat(v-bind('cols'), 1fr);
 }
