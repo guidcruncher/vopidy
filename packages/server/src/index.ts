@@ -38,7 +38,11 @@ app.use(async (c, next) => {
 
   await next()
   const end = Date.now()
+
+ if ((process.env.SHOW_REQUEST_TIMINGS ?? "true").toString() == "true") {
   logger.trace(`End in ${end - start}ms`)
+ }
+
   c.res.headers.set("X-Response-Time", `${end - start}`)
   c.res.headers.set("X-Request-ID", reqId)
 })

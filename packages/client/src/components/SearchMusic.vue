@@ -39,7 +39,7 @@
             >
             <v-icon color="white" v-if="item.type == 'stream'">mdi-music</v-icon>
             <v-icon color="white" v-if="item.type == 'track'">mdi-speaker</v-icon>
-            <v-icon color="white" v-if="item.type == 'playlist'">mdi-playlist-music</v-icon>
+            <v-icon color="white" v-if="item.type == 'aplaylist'">mdi-playlist-music</v-icon>
             <v-icon color="white" v-if="item.type == 'show'">mdi-podcast</v-icon>
             <v-icon color="white" v-if="item.type == 'artist'">mdi-account-music</v-icon>
           </v-avatar>

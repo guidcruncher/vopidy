@@ -117,6 +117,7 @@ export class SpotifyFinder {
           break
       }
 
+      viewitem.source = "spotify"
       view.items.push(viewitem)
     }
 
