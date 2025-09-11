@@ -4,9 +4,9 @@ import { percentToVolume, volumeToPercent, dBToVolume, volumeTodB } from "pulsea
 export class Pulseaudio {
   playbackSink = "alsa-sink"
 
-  private async getSinkInfo() {
+  public async getSinkInfo(sink: string = "") {
     const pa = await this.getServer()
-    const info = await pa.getSinkInfo(this.playbackSink)
+    const info = await pa.getSinkInfo(sink == "" ? this.playbackSink : sink)
     await pa.disconnect()
     return info
   }
