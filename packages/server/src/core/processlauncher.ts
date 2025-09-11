@@ -54,11 +54,11 @@ export class ProcessLauncher {
           }
           track.source = "spotify"
           track.uri = track.id
-          track.artist = track.artist
+          let artist = track.artist
             .map((t) => {
               return t.name
             })
-            .join(", ")
+          track.artist = artist.join(", ")
           Mixer.savePlaybackTrack("spotify", track.uri)
         case "metadata":
           json.type = "track-changed"
@@ -72,7 +72,7 @@ export class ProcessLauncher {
             album: json.data.album_name,
             name: json.data.name,
             type: json.data.uri.split(":")[1],
-            artist: json.data.artist_names.join(", "),
+            artist: (json.data.artist_names ?? []).join(", "),
           }
           db.addToPlaybackHistory("spotify", item)
           Mixer.savePlaybackTrack("spotify", json.data.uri)
