@@ -11,11 +11,11 @@
     "format": "prettier --config ./.prettierrc --write \"src/**/*.ts\" src/*.ts"
   },
   "dependencies": {
-    "@hono/node-server": "^1.19.0",
+    "@hono/node-server": "^1.19.2",
     "@hono/node-ws": "^1.2.0",
     "@hono/swagger-ui": "^0.5.2",
     "google-tts-api": "^2.0.2",
-    "hono": "^4.9.4",
+    "hono": "^4.9.7",
     "htmlparser2": "^10.0.0",
     "m3u-parser-generator": "^5.0.1",
     "memcached": "^2.2.2",
@@ -38,7 +38,7 @@
     "eslint": "^9.33.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
-    "globals": "^16.3.0",
+    "globals": "^16.4.0",
     "prettier": "^3.6.2",
     "prettier-plugin-organize-imports": "^4.2.0",
     "tsc-alias": "^1.8.16",
@@ -46,5 +46,5 @@
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.40.0"
   },
-  "version": "0.41.0"
+  "version": "0.42.0"
 }
