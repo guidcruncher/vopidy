@@ -1,5 +1,3 @@
-
-
 FROM guidcruncher/node-pipewire:latest AS base
 
 ARG DATE=""
@@ -78,7 +76,7 @@ ARG VERSION=""
 COPY --from=build /app/ /app/
 COPY --from=build /srv/ /srv/
 
-
+ENV MACHINE_NAME="Vopidy"
 ENV VOPIDY_CONFIG="/local/config/vopidy"
 ENV LIBRESPOT_CONFIG=/local/config/go-librespot
 ENV VOPIDY_FILES="/srv/files"

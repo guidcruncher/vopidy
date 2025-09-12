@@ -44,6 +44,7 @@ COPY . .
 
 RUN chown -R appuser: /app /srv /local
 
+ENV MACHINE_NAME="Vopidy"
 ENV VOPIDY_CONFIG="/local/config/vopidy"
 ENV LIBRESPOT_CONFIG=/local/config/go-librespot
 ENV VOPIDY_FILES="/srv/files"
