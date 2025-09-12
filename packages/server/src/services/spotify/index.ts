@@ -159,7 +159,7 @@ export class Spotify {
      return url
     } catch (err) {
       logger.error("Error connexting to  Librespot",err)
-      pm2.restartGoLibRespot()
+      await this.connectToLibRespotWithToken()
     }
 
     return url
