@@ -37,6 +37,22 @@ export class pm2 {
     })
   }
 
+  public static async restartGoLibRespot() {
+    return new Promise<string>((resolve, reject) => {
+      exec("/usr/local/bin/pm2base.sh restart go-librespot", (error, stdout, stderr) => {
+        if (error) {
+          logger.error("Error running pm2", error)
+          reject(error)
+          return
+        }
+        if (stderr && stderr != "") {
+          logger.error("Error running pm2", stderr)
+        }
+        resolve(stdout)
+      })
+    })
+  }
+
   public static async start(services: string[]) {
     const cmd = `/usr/local/bin/pm2 start /app/ecosystem.config.cjs --only "${services.join(",")}"`
     logger.trace("pm2 spawn " + cmd)
