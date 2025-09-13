@@ -5,7 +5,6 @@ import { PagedItems } from "@/core/paging"
 import { WsClientStore } from "@/core/wsclientstore"
 import { Auth, getAccessTokenOnly } from "@/services/auth"
 import { db } from "@/services/db"
-import { pm2 } from "@/core/pm2"
 import { Mixer } from "@/services/mixer"
 import * as fs from "fs"
 import { default as child_process } from "node:child_process"
@@ -154,11 +153,11 @@ export class Spotify {
     const url = process.env.GOLIBRESPOT_API.toString()
 
     try {
-     const res = await fetch(url)
+      const res = await fetch(url)
 
-     return url
+      return url
     } catch (err) {
-      logger.error("Error connexting to  Librespot",err)
+      logger.error("Error connexting to  Librespot", err)
       await this.connectToLibRespotWithToken()
     }
 
@@ -255,7 +254,7 @@ export class Spotify {
     }
 
     if (!res.ok) {
-      logger.error(res)  
+      logger.error(res)
       return undefined
     }
 
