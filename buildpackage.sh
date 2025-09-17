@@ -14,4 +14,5 @@ git push
 git push --tags
 git push origin dev:main -f
 git status
-docker buildx build --build-arg VERSION="$VERSION" --build-arg DATE="$DATE" . -f ./container/Dockerfile -t guidcruncher/vopidy:latest -t guidcruncher/vopidy:"$VERSION" --pull --push
+# docker buildx imagetools create guidcruncher/vopidy:latest --tag guidcruncher/vopidy:previous
+docker buildx build --build-arg VERSION="$VERSION" --build-arg DATE="$DATE" . -f ./container/Dockerfile -t guidcruncher/vopidy:latest --pull --push
