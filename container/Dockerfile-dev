@@ -1,0 +1,68 @@
+FROM guidcruncher/node-pipewire:latest AS base
+
+ARG DATE=""
+ARG VERSION=""
+ARG BUILD_CONFIG=dev
+ARG DEBIAN_FRONTEND=noninteractive
+ENV NODE_ENV=development
+ARG TARGETARCH
+ENV TZ=UTC
+ENV GOLIBRESPOT_CREDENTIAL_TYPE=spotify_token
+ENV SPOTIFY_AUTHJSON=/local/state/vopidy/.vopidy-auth.json
+
+RUN <<EOF
+apk add --no-cache sqlite caddy memcached 
+
+mkdir -p \
+  /srv /local/state/vopidy/cache \
+  /local/config/vopidy \
+  /srv/files \
+  /srv/files/mixerdesk \
+  /srv/files/playlists \
+  /srv/files/cache \
+  /srv/files/library \
+  /srv/files/music \
+  /srv/defaults \
+  /app/packages/client \
+  /app/packages/server \
+  /tmp \
+  /app/src
+
+/usr/bin/npm install -g pm2 node-gyp
+EOF
+
+
+COPY ./container/config.yml /local/config/go-librespot/config.yml
+COPY ./container/shared/srv/ /srv/
+COPY ./container/${BUILD_CONFIG}/app/ /app/
+COPY ./container/${BUILD_CONFIG}/srv/ /srv/
+RUN chmod +x /app/*.sh
+RUN mv /srv/defaults/Caddyfile /local/config/caddy
+
+WORKDIR /app/src
+
+COPY . .
+
+RUN chown -R appuser: /app /srv /local
+
+ENV MACHINE_NAME="Vopidy"
+ENV VOPIDY_CONFIG="/local/config/vopidy"
+ENV LIBRESPOT_CONFIG=/local/config/go-librespot
+ENV VOPIDY_FILES="/srv/files"
+ENV VOPIDY_DB="/local/state/vopidy"
+ENV VOPIDY_DEFAULTS="/srv/defaults"
+ENV VOPIDY_CACHE="/local/state/vopidy/cache"
+ENV SPOTIFY_CLIENT_ID=""
+ENV SERVER_PORT=3002
+ENV IN_DOCKER=true
+ENV BUILD_DATE=$DATE
+ENV BUILD_VERSION=$VERSION
+ENV SHOW_REQUEST_TIMINGS=false
+ENV BASE_PATH="http://192.168.1.201:3004"
+ENV ENABLE_SERVICES=go-librespot,icecast,capture-audio
+
+WORKDIR /app
+# USER appuser
+
+ENTRYPOINT [ "/usr/local/bin/entrypoint.sh", "/app/start.sh" ]
+

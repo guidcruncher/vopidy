@@ -1,0 +1,117 @@
+#EXTM3U
+#EXTINF:-1 tvg-logo="bbc-world-service.webp", BBC World Service
+https://a.files.bbci.co.uk/media/live/manifesto/audio/simulcast/hls/nonuk/sbr_low/ak/bbc_world_service.m3u8
+#EXTINF:-1 tvg-logo="bbc-news.webp", BBC News  
+https://vs-hls-push-ww-live.akamaized.net/x=4/i=urn:bbc:pips:service:bbc_news_channel_hd/t=3840/v=pv14/b=5070016/main.m3u8
+#EXTINF:-1 tvg-logo="bbc-radio-1.webp", BBC Radio 1
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_one&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-1xtra.webp", BBC Radio 1Xtra
+https://lsn.lv/bbcradio.m3u8?station=bbc_1xtra&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-2.webp", BBC Radio 2
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_two&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-3.webp", BBC Radio 3
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_three&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-4.webp", BBC Radio 4
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_fourfm&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-4 extra.webp", BBC Radio 4 Extra
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_four_extra&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-5 live.webp", BBC Radio 5 live
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_five_live&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-6 music.webp", BBC Radio 6 Music
+https://lsn.lv/bbcradio.m3u8?station=bbc_6music&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-asian-network.webp", BBC Asian Network
+https://lsn.lv/bbcradio.m3u8?station=bbc_asian_network&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-cwr.webp", BBC CWR
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_coventry_warwickshire&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-essex.webp", BBC Essex
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_essex&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-hereford-and-worcester.webp", BBC Hereford and Worcester
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_hereford_worcester&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-berkshire.webp", BBC Radio Berkshire
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_berkshire&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-bristol.webp", BBC Radio Bristol
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_bristol&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-cambridgeshire.webp", BBC Radio Cambridgeshire
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_cambridge&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-cornwall.webp", BBC Radio Cornwall
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_cornwall&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-cumbria.webp", BBC Radio Cumbria
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_cumbria&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-cymru.webp", BBC Radio Cymru
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_cymru&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-cymru 2.webp", BBC Radio Cymru 2
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_cymru_2&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-derby.webp", BBC Radio Derby
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_derby&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-devon.webp", BBC Radio Devon
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_devon&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-foyle.webp", BBC Radio Foyle
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_foyle&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-gloucestershire.webp", BBC Radio Gloucestershire
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_gloucestershire&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-guernsey.webp", BBC Guernsey
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_guernsey&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-humberside.webp", BBC Radio Humberside
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_humberside&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-jersey.webp", BBC Radio Jersey
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_jersey&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-kent.webp", BBC Radio Kent
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_kent&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-lancashire.webp", BBC Radio Lancashire
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_lancashire&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-leeds.webp", BBC Radio Leeds
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_leeds&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-leicester.webp", BBC Radio Leicester
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_leicester&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-lincolnshire.webp", BBC Lincolnshire
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_lincolnshire&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-london.webp", BBC Radio London
+https://lsn.lv/bbcradio.m3u8?station=bbc_london&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-manchester.webp", BBC Radio Manchester
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_manchester&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-merseyside.webp", BBC Radio Merseyside
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_merseyside&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-nan gaidheal.webp", BBC Radio nan Gaidheal
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_nan_gaidheal&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-newcastle.webp", BBC Newcastle
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_newcastle&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-norfolk.webp", BBC Radio Norfolk
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_norfolk&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-northampton.webp", BBC Radio Northampton
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_northampton&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-nottingham.webp", BBC Radio Nottingham
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_nottingham&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-oxford.webp", BBC Radio Oxford
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_oxford&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-scotland.webp", BBC Radio Scotland
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_scotland_fm&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-sheffield.webp", BBC Radio Sheffield
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_sheffield&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-shropshire.webp", BBC Radio Shropshire
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_shropshire&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-solent.webp", BBC Radio Solent
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_solent&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-somerset.webp", BBC Radio Somerset
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_somerset_sound&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-stoke.webp", BBC Radio Stoke
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_stoke&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-suffolk.webp", BBC Radio Suffolk
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_suffolk&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-surrey.webp", BBC Radio Surrey
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_surrey&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-sussex.webp", BBC Radio Sussex
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_sussex&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-tees.webp", BBC Tees
+https://lsn.lv/bbcradio.m3u8?station=bbc_tees&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-ulster.webp", BBC Radio Ulster
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_ulster&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-wales.webp", BBC Radio Wales
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_wales_fm&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-wiltshire.webp", BBC Radio Wiltshire
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_wiltshire&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-wm.webp", BBC Radio WM
+https://lsn.lv/bbcradio.m3u8?station=bbc_wm/bbc_wm.isml&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-radio-york.webp", BBC Radio York
+https://lsn.lv/bbcradio.m3u8?station=bbc_radio_york&bitrate=320000
+#EXTINF:-1 tvg-logo="bbc-three-counties-radio.webp", BBC Three Counties Radio
+https://lsn.lv/bbcradio.m3u8?station=bbc_three_counties_radio&bitrate=320000

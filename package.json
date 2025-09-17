@@ -1,0 +1,32 @@
+{
+  "name": "vopidy",
+  "private": true,
+  "module": "index.ts",
+  "type": "module",
+  "workspaces": [
+    "packages/client",
+    "packages/server"
+  ],
+  "scripts": {
+    "clean": "sudo rm -rf node_modules packages/client/node_modules packages/server/node_modules bun.lock packages/client/bun.lock packages/server/bun.lock packages/client/dist packages/server/dist",
+    "deps": "npm install -no-audit -no-fund  && cd packages/client && npm install -no-audit -no-fund  && cd ../server && npm install -no-audit -no-fund ",
+    "build": "npm run format && cd packages/client && npm run build-only && cd ../server && npm run build",
+    "upd": "npm-check -gu && npm-check -u && cd packages/client && npm-check -u && cd ../server && npm-check -u",
+    "dev-server": "cd ./packages/server && npm run dev",
+    "format": "cd ./packages/client/ && npm run format && cd ../../packages/server && npm run format",
+    "version": "cd ./packages/client/ && npm --no-git-tag-version version minor && cd ../server/ && npm --no-git-tag-version version minor",
+    "start-dev": "export DATE=$(date +'%s') ;export VERSION=$(cat ./packages/server/package.json | jq .version -r) ; docker stop vopidy-dev ; docker compose rm -f ; docker-compose -f ./docker-compose-dev.yaml pull ; docker compose -f ./docker-compose-dev.yaml up -d",
+    "start-dev-build": "export DATE=$(date +'%s') ;export VERSION=$(cat ./packages/server/package.json | jq .version -r); docker stop vopidy-dev ; docker compose rm -f ; docker-compose -f ./docker-compose-dev.yaml pull ; docker compose -f ./docker-compose-dev.yaml up -d --build",
+    "status": "docker exec -i -t vopidy-dev pm2 status",
+    "logs": "docker exec -i -t vopidy-dev pm2 logs --",
+    "patch": "npm version patch --no-git-tag-version --force && bash ./genmanifest.sh",
+    "minor": "npm version minor --no-git-tag-version --force && bash ./genmanifest.sh",
+    "major": "npm version major --no-git-tag-version --force && bash ./genmanifest.sh",
+    "release": "bash ./buildpackage.sh"
+  },
+  "trustedDependencies": [
+    "@mongodb-js/zstd"
+  ],
+  "dependencies": {},
+  "version": "0.50.0"
+}

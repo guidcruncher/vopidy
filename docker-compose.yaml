@@ -1,0 +1,39 @@
+services:
+  vopidy:
+    image: guidcruncher/vopidy:latest
+    extra_hosts:
+      - vopidy:127.0.0.1
+    secrets:
+      - spotify-credentials
+    networks:
+      - vopidy_network
+    userns_mode: keep-id
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    expose:
+      - 3003:3003
+      - 8000:8000
+      - 41899:41899
+    environment:
+      - TZ=Europe/London
+      - BASE_PATH=http://192.168.1.201:3004
+      - SHOW_REQUEST_TIMINGS=false
+    container_name: vopidy
+    hostname: vopidy
+    restart: unless-stopped
+    volumes:
+      - /srv/docker/stacks/vopidy/config:/srv/config
+      - /srv/docker/stacks/vopidy/files:/srv/files
+      - /srv/docker/stacks/vopidy/db:/srv/db
+    devices:
+      - /dev/snd:/dev/snd:rw
+    privileged: true
+
+networks:
+  vopidy_network:
+    external: true
+
+secrets:
+  spotify-credentials:
+    file: .spotifycredentials

@@ -1,0 +1,50 @@
+.scaled-img {
+  overflow: hidden;
+}
+
+.scaled-img span {
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+}
+
+.scaled-img img {
+  vertical-align: middle;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.scaled-img-xs {
+  width: 64px;
+  height: 64px;
+}
+
+.scaled-img-sm {
+  width: 80px;
+  height: 80px;
+}
+
+.scaled-img-md {
+  width: 100px;
+  height: 100px;
+}
+
+.scaled-img-lg {
+  width: 150px;
+  height: 150px;
+}
+
+.scaled-img-xl {
+  width: 200px;
+  height: 200px;
+}
+
+.scaled-img-xxl {
+  width: 250px;
+  heith: 250px;
+}
+
+.scaled-img-xxxl {
+  width: 300px;
+  height: 300px;
+}
