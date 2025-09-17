@@ -152,29 +152,38 @@ export class FFplay implements IMediaPlayer {
       const opts = [`${FFplay.url}`, `-show_entries`, `format_tags`]
       const stateProc = spawnSync("/usr/bin/ffprobe", opts, { encoding: "utf-8" })
       const res = (stateProc.stdout ?? "").toString().split("\n")
+      const info = { artist: "", title: "", streamTitle: "" }
       let title = ""
       for (const line of res) {
+        if (line.trim().startsWith("TAG:artist=")) {
+          info.artist = line.trim().replaceAll("TAG:artist=", "")
+        }
+
+        if (line.trim().startsWith("TAG:title=")) {
+          info.title = line.trim().replaceAll("TAG:title=", "")
+        }
+
         if (line.trim().startsWith("TAG:StreamTitle=")) {
-          title = line.trim().replaceAll("TAG:StreamTitle=", "")
+          info.streamTitle = line.trim().replaceAll("TAG:StreamTitle=", "")
         }
       }
 
-      if (FFplay.nowplaying != title) {
-        FFplay.nowplaying = title
+      if (FFplay.nowplaying != info.streamTitle) {
+        FFplay.nowplaying = info.streamTitle
         WsClientStore.broadcast({
           type: "streamtitle-changed",
-          data: { url: FFplay.url, title: title },
+          data: { url: FFplay.url, tags: info },
         })
       }
 
-      return title
+      return info.streamTitle
     } catch (err) {
       logger.error("Error in getNowPlaying", err)
       if (FFplay.nowplaying != "") {
         FFplay.nowplaying = ""
         WsClientStore.broadcast({
           type: "streamtitle-changed",
-          data: { url: FFplay.url, title: "" },
+          data: { url: FFplay.url, tags: info },
         })
       }
       return ""
