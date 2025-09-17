@@ -43,16 +43,18 @@ export class pm2 {
 
   public static async restartGoLibRespot() {
     return new Promise<string>((resolve, reject) => {
-      exec("/usr/local/bin/pm2base.sh restart go-librespot", (error, stdout, stderr) => {
-        if (error) {
-          logger.error("Error running pm2", error)
-          reject(error)
-          return
-        }
-        if (stderr && stderr != "") {
-          logger.error("Error running pm2", stderr)
-        }
-        resolve(stdout)
+      exec("kill $(pgrep -f go-librespot)", (error, stdout, stderr) => {
+        exec("/usr/local/bin/pm2base.sh restart go-librespot", (error, stdout, stderr) => {
+          if (error) {
+            logger.error("Error running pm2", error)
+            reject(error)
+            return
+          }
+          if (stderr && stderr != "") {
+            logger.error("Error running pm2", stderr)
+          }
+          resolve(stdout)
+        })
       })
     })
   }

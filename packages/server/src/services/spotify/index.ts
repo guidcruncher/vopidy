@@ -2,6 +2,7 @@ import { CacheManager } from "@/core/cachemanager"
 import { _fetch, _fetchCache, Authorization, http } from "@/core/http"
 import { logger } from "@/core/logger"
 import { PagedItems } from "@/core/paging"
+import { pm2 } from "@/core/pm2"
 import { WsClientStore } from "@/core/wsclientstore"
 import { Auth, getAccessTokenOnly } from "@/services/auth"
 import { db } from "@/services/db"
@@ -11,6 +12,7 @@ import * as fs from "fs"
 import { default as child_process } from "node:child_process"
 import { promisify } from "node:util"
 import * as path from "path"
+
 const exec = promisify(child_process.exec)
 
 export class Spotify implements IMediaPlayer {
@@ -184,10 +186,10 @@ export class Spotify implements IMediaPlayer {
       data: { uri: id, source: "spotify" },
     })
     let status: any = await this.getStatus()
-    if (status.paused) {
-      await this.resume()
-      status.paused = false
-    }
+    //    if (status.paused) {
+    //      await this.resume()
+    //      status.paused = false
+    //    }
     return status
   }
 
@@ -231,7 +233,7 @@ export class Spotify implements IMediaPlayer {
 
   public async stop() {
     Mixer.removePlaybackState()
-    await this.pause()
+    await pm2.restartGoLibRespot()
     return await this.getStatus()
   }
 

@@ -309,28 +309,6 @@ export class Mixer {
       await spotifyClient.stop()
     }
 
-    let stateMpd: any = await mpdClient.getStatus()
-    let stateLibrespot: any = await spotifyClient.getStatus()
-    if (!stateMpd) {
-      stateMpd = { playing: false }
-    }
-    if (!stateLibrespot) {
-      stateLibrespot = { playing: false }
-    }
-
-    if (output == "mpd" && stateLibrespot.playing) {
-      await spotifyClient.stop()
-    }
-
-    if (output == "spotify" && stateMpd.playing) {
-      await mpdClient.stop()
-    }
-
-    if (output == "" && (stateMpd.playing || stateLibrespot.playing)) {
-      await mpdClient.stop()
-      await spotifyClient.stop()
-      Mixer.setPlaybackState({ source: "", uri: "" })
-    }
     return true
   }
 

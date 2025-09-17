@@ -39,7 +39,6 @@ export class http {
   }
 
   private static async __fetch(req: Request, auth?: Authorization) {
-    logger.trace(`http  ${req.method} ${req.url}`)
     if (auth) {
       req.headers.append("Authorization", `${auth.type} ${auth.value}`)
     }
@@ -47,7 +46,6 @@ export class http {
     let res: any = {}
     try {
       res = await fetch(req)
-      logger.trace(`http status ${res.status}  ${req.method} ${req.url}`)
     } catch (err) {
       logger.error("fetch error", err)
       const exerr: HttpResponse = {
@@ -196,11 +194,9 @@ export class http {
 }
 
 export const _fetch = async (url, opts: any = {}) => {
-  logger.trace(`http  ${url}`)
   let res: any = {}
   try {
     res = await fetch(url, opts)
-    logger.trace(`http status ${res.status}  ${opts.method ?? "GET"} ${url}`)
   } catch (err) {
     logger.error("fetch error", err)
     res = {
@@ -249,7 +245,6 @@ export const _fetchCache = async (url, opts: any = {}) => {
 
   const data = await CacheManager.get(hash)
   if (!data) {
-    logger.trace("Fetch " + url)
     const res = await fetch(url, opts)
     if (!res.ok) {
       logger.error("Fetch Error - not ok - " + JSON.stringify(res))

@@ -16,7 +16,7 @@ export class FFplay implements IMediaPlayer {
   private static proc: any = undefined
   private static stopped: boolean = false
   private static url: string = ""
-
+  private static nowplaying: string = ""
   private static _instance: FFplay
 
   private constructor() {}
@@ -43,6 +43,7 @@ export class FFplay implements IMediaPlayer {
     if (fs.existsSync(pidFile)) {
       fs.unlinkSync(pidFile)
     }
+    Mixer.removePlaybackState()
   }
 
   public async playTrackUrl(url: string) {
@@ -151,17 +152,33 @@ export class FFplay implements IMediaPlayer {
       const opts = [`${FFplay.url}`, `-show_entries`, `format_tags`]
       const stateProc = spawnSync("/usr/bin/ffprobe", opts, { encoding: "utf-8" })
       const res = (stateProc.stdout ?? "").toString().split("\n")
+      let title = ""
       for (const line of res) {
         if (line.trim().startsWith("TAG:StreamTitle=")) {
-          const title = line.trim().replaceAll("TAG:StreamTitle=", "")
-          return title
+          title = line.trim().replaceAll("TAG:StreamTitle=", "")
         }
       }
-      return ""
+
+      if (FFplay.nowplaying != title) {
+        FFplay.nowplaying = title
+        WsClientStore.broadcast({
+          type: "streamtitle-changed",
+          data: { url: FFplay.url, title: title },
+        })
+      }
+
+      return title
     } catch (err) {
       logger.error("Error in getNowPlaying", err)
+      if (FFplay.nowplaying != "") {
+        FFplay.nowplaying = ""
+        WsClientStore.broadcast({
+          type: "streamtitle-changed",
+          data: { url: FFplay.url, title: "" },
+        })
+      }
+      return ""
     }
-    return ""
   }
 
   public async getStatus() {
