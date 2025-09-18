@@ -41,7 +41,7 @@ export default {
       intervalHandle: 0,
       paused: false,
       position: { duration: 0, progress: 0 },
-      status: { track: { image: '/images/noplay1.webp' } },
+      status: { track: { image: '/images/noplay1.webp' ,nowplaying: {streamTitle:''} } },
       ready: false,
     }
   },
