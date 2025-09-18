@@ -144,6 +144,8 @@ export class FFplay implements IMediaPlayer {
   }
 
   public async getNowPlaying() {
+const info = { artist: "", title: "", streamTitle: "" }
+
     if (!FFplay.active || FFplay.url == "") {
       return ""
     }
@@ -152,7 +154,6 @@ export class FFplay implements IMediaPlayer {
       const opts = [`${FFplay.url}`, `-show_entries`, `format_tags`]
       const stateProc = spawnSync("/usr/bin/ffprobe", opts, { encoding: "utf-8" })
       const res = (stateProc.stdout ?? "").toString().split("\n")
-      const info = { artist: "", title: "", streamTitle: "" }
       let title = ""
       for (const line of res) {
         if (line.trim().startsWith("TAG:artist=")) {
