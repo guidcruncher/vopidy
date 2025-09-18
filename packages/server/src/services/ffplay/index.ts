@@ -177,7 +177,7 @@ export class FFplay implements IMediaPlayer {
         })
       }
 
-      return info.streamTitle
+      return info
     } catch (err) {
       logger.error("Error in getNowPlaying", err)
       if (FFplay.nowplaying != "") {
@@ -187,7 +187,7 @@ export class FFplay implements IMediaPlayer {
           data: { url: FFplay.url, tags: info },
         })
       }
-      return ""
+      return info
     }
   }
 

@@ -2,13 +2,13 @@
   <center>
     <ScaledImage :src="status.track.image" size="xxl" padding="5" />
     <h2 v-if="status.track">{{ status.track.name }}</h2>
-    <h3 v-if="status.track && status.track.nowplaying">{{ status.track.nowplaying }}</h3>
-    <h3 v-if="!status.track && status.track.nowplaying">{{ status.track.album }}</h3>
-    <h4 v-if="status.track">
+    <h3 v-if="status.track && status.track.nowplaying">{{ status.track.nowplaying.streamTitle }}</h3>
+    <h3 v-if="!status.track && status.track.album">{{ status.track.album }}</h3>
+    <h4 v-if="status.track.artist">
       <ArtistNames v-if="status.track.artist" :artists="status.track.artist" />
     </h4>
     <v-slider
-      max-width="250"
+      max-width="270"
       @end="performSeek"
       v-if="position.duration != 0"
       min="0"
@@ -17,8 +17,11 @@
       :max="position.duration"
       v-model="position.progress"
     >
-      <template v-slot:append>
+      <template v-slot:prepend>
         <span class="text-caption">{{ progressTimestamp }}</span>
+      </template>
+      <template v-slot:append>
+        <span class="text-caption">{{ remainingTimestamp }}</span>
       </template></v-slider
     >
   </center>
@@ -54,6 +57,17 @@ export default {
       }
       return dte.toISOString().slice(14, 19)
     },
+    remainingTimestamp() {
+      if (!this.position || !this.position.progress || this.position.progress <= 0) {
+        return ''
+      }
+      const dte = new Date(null)
+      dte.setSeconds(this.position.duration - this.position.progress)
+      if (this.position.duration > 3600) {
+        return dte.toISOString().slice(11, 19)
+      }
+      return dte.toISOString().slice(14, 19)
+    },
   },
   mounted() {
     this.getStatus(() => {
@@ -71,6 +85,10 @@ export default {
         }, 1000)
       }
     })
+    on('vopidy.streamtitle-changed', (meta) => {
+        if (this.status) { this.status.meta = meta}
+    })
+
     on('vopidy.track-changed', () => {
       this.position = { duration: 0, progress: 0 }
       this.getStatus(() => {
@@ -113,6 +131,7 @@ export default {
       this.intervalHandle = 0
     }
     off('vopidy.track-changed')
+    off('vopidy.streamtitle-changed')
     off('player-command')
   },
   methods: {
