@@ -38,7 +38,10 @@ export class db {
   public static async getPlaybackHistoryPop() {
     const dbc = await db.getDb()
     let res: any[] = await dbc.all(
-      `SELECT count(uri) as total, source, uri, image, name, artist, type from playback_history group by source, uri, image, name, artist, type ORDER BY total DESC;`,
+      `SELECT COUNT(uri) as total, source, uri, image, name, artist, type FROM (
+       SELECT DISTINCT unixepoch(strftime('%F %H:%M:00' ,created)) AS created,
+       uri,source, uri, image, name, artist, type FROM playback_history)
+       GROUP BY source, uri ORDER BY total DESC;`,
     )
     await dbc.close()
     return res
@@ -47,8 +50,8 @@ export class db {
   public static async getPlaybackHistory() {
     const dbc = await db.getDb()
     let res: any[] = await dbc.all(
-      `SELECT source, uri, image, album, name, artist, type, COUNT(uri) AS popularity, MAX(created) AS lastplayed  FROM playback_history 
-       GROUP BY source, uri, image, album, name, artist, type ORDER BY lastplayed DESC`,
+      `SELECT source, uri, image, album, name, artist, type, COUNT(uri) AS popularity, unixepoch(strftime('%F %H:%M:00' ,created)) AS lastplayed FROM playback_history 
+       GROUP BY source, uri, lastplayed ORDER BY lastplayed DESC`,
     )
     await dbc.close()
     return res
