@@ -34,6 +34,10 @@
 
           <v-menu activator="parent" v-once>
             <v-list density="compact" nav>
+              <v-list-item>
+                <CompactPlayerControl />
+              </v-list-item>
+
               <v-list-item append-icon="mdi-cog-outline" link to="settings" title="Settings" />
 
               <v-list-item append-icon="mdi-logout" link title="Logout" @click="logout()" />

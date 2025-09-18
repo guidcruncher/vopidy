@@ -2,7 +2,9 @@
   <center>
     <ScaledImage :src="status.track.image" size="xxl" padding="5" />
     <h2 v-if="status.track">{{ status.track.name }}</h2>
-    <h3 v-if="status.track && status.track.nowplaying">{{ status.track.nowplaying.streamTitle }}</h3>
+    <h3 v-if="status.track && status.track.nowplaying">
+      {{ status.track.nowplaying.streamTitle }}
+    </h3>
     <h3 v-if="!status.track && status.track.album">{{ status.track.album }}</h3>
     <h4 v-if="status.track.artist">
       <ArtistNames v-if="status.track.artist" :artists="status.track.artist" />
@@ -41,7 +43,7 @@ export default {
       intervalHandle: 0,
       paused: false,
       position: { duration: 0, progress: 0 },
-      status: { track: { image: '/images/noplay1.webp' ,nowplaying: {streamTitle:''} } },
+      status: { track: { image: '/images/noplay1.webp', nowplaying: { streamTitle: '' } } },
       ready: false,
     }
   },
@@ -86,7 +88,9 @@ export default {
       }
     })
     on('vopidy.streamtitle-changed', (meta) => {
-        if (this.status) { this.status.meta = meta}
+      if (this.status) {
+        this.status.meta = meta
+      }
     })
 
     on('vopidy.track-changed', () => {

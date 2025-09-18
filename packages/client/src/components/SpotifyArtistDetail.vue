@@ -194,7 +194,7 @@ export default {
           if (res.result.items) {
             if (res.result.items.length > 0) {
               this.items.push(...res.result.items)
-              this.offset = res.result.offser
+              this.offset = res.result.offset
               this.limit = res.result.limit
               this.ready = true
               this.offset += this.limit
