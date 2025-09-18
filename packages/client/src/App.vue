@@ -1,11 +1,9 @@
 <template>
   <div id="app">
     <v-app>
-      <transition name="slide-fade" mode="out-in">
-        <router-view></router-view>
-      </transition>
+      <router-view></router-view>
     </v-app>
-    <Loader v-if="loading" />
+    <Loader v-if="appLoading" />
   </div>
 </template>
 
@@ -21,7 +19,7 @@ export default {
   name: 'App',
   props: {},
   data() {
-    return { loading: true }
+    return { appLoading: true }
   },
   mounted() {
     const configStore = useConfigStore()
@@ -30,7 +28,7 @@ export default {
         useUiStateStore().setProfileImage()
       }
       setTimeout(() => {
-        this.loading = false
+        this.appLoading = false
       }, 3000)
     })
   },

@@ -110,7 +110,9 @@ export default {
 </script>
 <template>
   <div :class="border" :style="{ width: pixelSize, height: pixelSize, padding: derivedPadding }">
-    <div :class="derivedClass"><span /><img :src="proxy(src)" @load="sniffBgColor($event)" /></div>
+    <div :class="derivedClass">
+      <span /><img :src="proxy(src)" @load="sniffBgColor($event)" v-show="ready" />
+    </div>
   </div>
 </template>
 <style></style>

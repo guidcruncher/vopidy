@@ -10,6 +10,13 @@
           <tr>
             <td>
               <ScaledImage :src="detail.image" size="md" padding="5" />
+              <img
+                v-if="detail.barcodeUrl"
+                :src="detail.barcodeUrl"
+                @load="visible = true"
+                v-show="visible"
+                style="width: 110px"
+              />
             </td>
             <td align="left">
               <h4><ArtistNames v-if="detail.artist" :artists="detail.artist" /></h4>

@@ -23,7 +23,7 @@ export class Spotify implements IMediaPlayer {
     return { type: "Bearer", value: token }
   }
 
-  public getCodeImageUrl(color = "1DB954", uri: string, whiteBar: boolean = true) {
+  public getCodeImageUrl(uri: string, color = "533191", whiteBar: boolean = true) {
     let barColor = "black"
     if (whiteBar) {
       barColor = "white"
@@ -415,6 +415,7 @@ export class Spotify implements IMediaPlayer {
           name: value.name,
           owner: value.owner ? value.owner.display_name : "",
           type: value.type,
+          barcodeUrl: this.getCodeImageUrl(value.uri),
         }
         break
       case "episode":
@@ -1050,6 +1051,7 @@ export class Spotify implements IMediaPlayer {
       external_urls: value.external_urls,
       tracks: tracks,
       albums: albums,
+      barcodeUrl: this.getCodeImageUrl(value.uri),
     }
 
     return data
@@ -1082,6 +1084,7 @@ export class Spotify implements IMediaPlayer {
           genres: value.genres,
           href: value.href,
           external_urls: value.external_urls,
+          barcodeUrl: this.getCodeImageUrl(value.uri),
         }
         data.push(item)
       }

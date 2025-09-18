@@ -8,6 +8,9 @@
       left: 0;
       z-index: 10000;
       background-color: #533191;
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-image: url('/images/55535.webp');
     "
   >
     <div style="margin-left: auto; margin-top: 100px; margin-right: auto">
