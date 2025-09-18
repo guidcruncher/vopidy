@@ -37,6 +37,7 @@ EOF
 COPY ./container/config.yml /local/config/go-librespot/config.yml
 COPY ./container/shared/srv/ /srv/
 
+COPY ./container/shared/app/ /app/
 COPY ./container/${BUILD_CONFIG}/app/ /app/
 RUN chmod +x /app/*.sh
 RUN mv /srv/defaults/Caddyfile /local/config/caddy

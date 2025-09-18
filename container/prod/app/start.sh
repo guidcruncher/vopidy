@@ -27,23 +27,11 @@ if [ ! -f "$VOPIDY_DB/vopidy.sqlite" ]; then
   sh /srv/db/update-db.sh
 fi
 
-icecast="false"
 memcached="true"
 
 if [ -f "$VOPIDY_CONFIG/vopidy-config.json" ]; then
-  bitperfect="$(cat $VOPIDY_CONFIG/vopidy-config.json | jq '.enableBitPerfectPlayback' -r)"
-
-  icecast="$(cat $VOPIDY_CONFIG/vopidy-config.json | jq '.enableIcecast' -r)"
   memcached="$(cat $VOPIDY_CONFIG/vopidy-config.json | jq '.enableRequestCache' -r)"
 fi
-
-  if [ "$icecast" == "true" ]; then
-    pm2base.sh start icecast capture-audio
-  else
-    pm2base.sh stop icecast capture-audio
-    kill $(pgrep -f ffmpeg)
-    kill $(pgrep -f icecast)
-  fi
 
 cd /app/
 
