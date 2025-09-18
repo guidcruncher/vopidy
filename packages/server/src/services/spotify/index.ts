@@ -25,10 +25,16 @@ export class Spotify implements IMediaPlayer {
 
   public getCodeImageUrl(uri: string, color = "533191", whiteBar: boolean = true) {
     let barColor = "black"
+    let segments = uri.split(":")
     if (whiteBar) {
       barColor = "white"
     }
-    return `https://scannables.scdn.co/uri/plain/svg/${color}/${barColor}/1080/spotify:user:${uri}`
+
+    if (segments[1] == "playlist") {
+      return `https://scannables.scdn.co/uri/plain/svg/${color}/${barColor}/1080/spotify:user:${uri}`
+    }
+
+    return `https://scannables.scdn.co/uri/plain/svg/${color}/${barColor}/1080/${uri}`
   }
 
   public getLibrespotState() {
@@ -381,6 +387,7 @@ export class Spotify implements IMediaPlayer {
             : [],
           popularity: value.popularity,
           type: value.type,
+          barcodeUrl: this.getCodeImageUrl(value.uri),
         }
         break
       case "album":
@@ -395,6 +402,7 @@ export class Spotify implements IMediaPlayer {
             : [],
           popularity: value.popularity,
           type: value.type,
+          barcodeUrl: this.getCodeImageUrl(value.uri),
         }
         break
       case "show":
@@ -406,6 +414,7 @@ export class Spotify implements IMediaPlayer {
           publisher: value.publisher,
           description: value.description,
           type: value.type,
+          barcodeUrl: this.getCodeImageUrl(value.uri),
         }
         break
       case "playlist":
@@ -426,6 +435,7 @@ export class Spotify implements IMediaPlayer {
           name: value.name,
           artist: [{ name: value.show.publisher }],
           type: value.type,
+          barcodeUrl: this.getCodeImageUrl(value.uri),
           publisher: value.show.publisher,
         }
         break
@@ -470,6 +480,7 @@ export class Spotify implements IMediaPlayer {
           name: value.name,
           owner: value.owner ? value.owner.display_name : "",
           type: value.type,
+          barcodeUrl: this.getCodeImageUrl(value.uri),
         }
         data.push(item)
       }
@@ -570,6 +581,7 @@ export class Spotify implements IMediaPlayer {
             : [],
           popularity: value.popularity,
           type: value.type,
+          barcodeUrl: this.getCodeImageUrl(value.uri),
         }
         data.push(item)
       }
@@ -609,6 +621,7 @@ export class Spotify implements IMediaPlayer {
         : [],
       popularity: value.popularity,
       type: value.type,
+      barcodeUrl: this.getCodeImageUrl(value.uri),
       items: [],
     }
 
@@ -678,6 +691,7 @@ export class Spotify implements IMediaPlayer {
           publisher: value.publisher,
           description: value.description,
           type: value.type,
+          barcodeUrl: this.getCodeImageUrl(value.uri),
         }
         data.push(item)
       }
@@ -718,6 +732,7 @@ export class Spotify implements IMediaPlayer {
           })
         : [],
       type: value.type,
+      barcodeUrl: this.getCodeImageUrl(value.uri),
     }
     return item
   }
@@ -747,6 +762,7 @@ export class Spotify implements IMediaPlayer {
       name: value.name,
       artist: [{ name: value.show.publisher }],
       type: value.type,
+      barcodeUrl: this.getCodeImageUrl(value.uri),
     }
     return item
   }
@@ -784,6 +800,7 @@ export class Spotify implements IMediaPlayer {
               })
             : [],
           type: value.type,
+          barcodeUrl: this.getCodeImageUrl(value.uri),
         }
         data.push(item)
       }
@@ -826,6 +843,7 @@ export class Spotify implements IMediaPlayer {
                 })
               : [],
             type: value.type,
+            barcodeUrl: this.getCodeImageUrl(value.uri),
           })
           break
         case "episode":
@@ -836,6 +854,7 @@ export class Spotify implements IMediaPlayer {
             name: value.name,
             artist: [{ name: value.show.publisher }],
             type: value.type,
+            barcodeUrl: this.getCodeImageUrl(value.uri),
           })
       }
     })
@@ -875,6 +894,7 @@ export class Spotify implements IMediaPlayer {
           : [],
         popularity: value.popularity,
         type: value.type,
+        barcodeUrl: this.getCodeImageUrl(value.uri),
       }
       data.push(item)
     }
@@ -927,6 +947,7 @@ export class Spotify implements IMediaPlayer {
             })
           : [],
         type: value.type,
+        barcodeUrl: this.getCodeImageUrl(value.uri),
       }
       data.push(item)
     }
@@ -969,6 +990,7 @@ export class Spotify implements IMediaPlayer {
           : [],
         popularity: value.popularity,
         type: value.type,
+        barcodeUrl: this.getCodeImageUrl(value.uri),
       }
       data.push(item)
     }
@@ -1004,6 +1026,7 @@ export class Spotify implements IMediaPlayer {
         publisher: value.publisher,
         description: value.description,
         type: value.type,
+        barcodeUrl: this.getCodeImageUrl(value.uri),
       }
       data.push(item)
     }
@@ -1043,6 +1066,7 @@ export class Spotify implements IMediaPlayer {
     data = {
       id: value.uri,
       type: value.type,
+      barcodeUrl: this.getCodeImageUrl(value.uri),
       image: value.images ? this.getImageUrl(value.images) : "",
       name: value.name,
       popularity: value.popularity,
@@ -1051,7 +1075,6 @@ export class Spotify implements IMediaPlayer {
       external_urls: value.external_urls,
       tracks: tracks,
       albums: albums,
-      barcodeUrl: this.getCodeImageUrl(value.uri),
     }
 
     return data

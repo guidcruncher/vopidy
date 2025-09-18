@@ -144,7 +144,7 @@ export class FFplay implements IMediaPlayer {
   }
 
   public async getNowPlaying() {
-const info = { artist: "", title: "", streamTitle: "" }
+    const info = { artist: "", title: "", streamTitle: "" }
 
     if (!FFplay.active || FFplay.url == "") {
       return ""
