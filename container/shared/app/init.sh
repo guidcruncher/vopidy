@@ -15,14 +15,14 @@ mkdir -p \
 /local/state/vopidy/cache \
 /tmp \
 
-icecast="false"
+cast="false"
 
 if [ -f "$VOPIDY_CONFIG/vopidy-config.json" ]; then
-  icecast="$(cat $VOPIDY_CONFIG/vopidy-config.json | jq '.enableIcecast' -r)"
+  cast="$(cat $VOPIDY_CONFIG/vopidy-config.json | jq '.enableCast' -r)"
 fi
 
-  if [ "$icecast" == "true" ]; then
-    export ENABLE_SERVICES=go-librespot,icecast,capture-audio
+  if [ "$cast" == "true" ]; then
+    export ENABLE_SERVICES=go-librespot,snapserver
   else
     export ENABLE_SERVICES=go-librespot
   fi

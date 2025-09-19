@@ -59,9 +59,9 @@ export class pm2 {
     })
   }
 
-  public static async killIcecast() {
+  public static async killCast() {
     return new Promise<string>((resolve, reject) => {
-      exec("/usr/local/bin/icecast.sh shutdown", (error, stdout, stderr) => {
+      exec("/usr/local/bin/snapserver.sh shutdown", (error, stdout, stderr) => {
         if (error) {
           logger.error("Error running pm2", error)
           reject(error)

@@ -4,7 +4,7 @@ import * as fs from "fs"
 import * as path from "path"
 
 export class Config {
-  public enableIcecast: boolean = true
+  public enableCast: boolean = true
   public enableBitPerfectPlayback: boolean = false
   public enableRequestCache: boolean = true
   public enableImageCache: boolean = true
@@ -90,11 +90,11 @@ export const ApplyConfig = async (o: Config, n: Config) => {
     await pm2.exec(false, n.enableRequestCache ? "start" : "stop", ["memcached"])
   }
 
-  if (o.enableIcecast != n.enableIcecast) {
-    logger.debug(`enableIcecast changed to ${n.enableIcecast}`)
-    await pm2.exec(true, n.enableIcecast ? "start" : "stop", ["icecast", "capture-audio"])
-    if (!n.enableIcecast) {
-      await pm2.killIcecast()
+  if (o.enableCast != n.enableCast) {
+    logger.debug(`enableCast changed to ${n.enableCast}`)
+    await pm2.exec(true, n.enableCast ? "start" : "stop", ["snapserver"])
+    if (!n.enableCast) {
+      await pm2.killCast()
     }
   }
 }
