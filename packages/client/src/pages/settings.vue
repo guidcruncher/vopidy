@@ -47,21 +47,15 @@
       <tbody>
         <tr>
           <td>
-            <a target="_blank" :href="iceserver">
-              <img src="/images/icecast.webp" style="width: 100px; height: 100px" />
-            </a>
+              <img src="https://raw.githubusercontent.com/badaix/snapcast/develop/doc/Snapcast.svg" style="width: 100px; height: 100px" />
           </td>
           <td>&nbsp;</td>
           <td>
-            <h3>Icecast Server</h3>
-            <v-switch v-model="settings.enableIcecast" label="Enable Icecast server"></v-switch>
+            <h3>Snapcast Server</h3>
+            <v-switch v-model="settings.enableCast" label="Enable Snapcast server"></v-switch>
             <span
-              >Stream URL:<br />
-              <a target="_blank" :href="streamUrl">{{ streamUrl }}</a
-              ><br />
-              <audio xmlns="http://www.w3.org/1999/xhtml" controls="controls" preload="none">
-                <source :src="streamUrl" type="audio/ogg" />
-              </audio>
+              >
+Please see <a target="_new" href="https://github.com/badaix/snapcast">https://github.com/badaix/snapcast</a> for documentation on Snapcast. 
             </span>
           </td>
         </tr>
