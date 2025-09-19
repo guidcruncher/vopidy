@@ -18,14 +18,6 @@ import { prettyJSON } from "hono/pretty-json"
 import * as fs from "fs"
 import * as path from "path"
 
-process.on("uncaughtException", (err, origin) => {
-  logger.error(`Caught exception: ${err}\n` + `Exception origin: ${origin}\n`)
-})
-
-process.on("unhandledRejection", (reason, promise) => {
-  logger.error(`Unhandled Rejection at: ${promise}, reason: ${reason}`)
-})
-
 ProcessLauncher.start()
 const cfg = Config.load()
 ConfigWriter(cfg)
