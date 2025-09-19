@@ -9,7 +9,7 @@ export const execute: JsonRpcCommand = async (message: JsonRpcMessage) => {
   newCfg.enableBitPerfectPlayback = message.params["config"].enableBitPerfectPlayback
   newCfg.enableRequestCache = message.params["config"].enableRequestCache
   newCfg.requestCacheLifetimeSeconds = message.params["config"].requestCacheLifetimeSeconds
-  newCfg.enableIcecast = message.params["config"].enableIcecast
+  newCfg.enableCast = message.params["config"].enableCast
   newCfg.nightStartHour = message.params["config"].nightStartHour
   newCfg.nightEndHour = message.params["config"].nightEndHour
   newCfg.announceTimeHourly = message.params["config"].announceTimeHourly
