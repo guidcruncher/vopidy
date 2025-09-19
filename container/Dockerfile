@@ -44,8 +44,6 @@ RUN mv /srv/defaults/Caddyfile /local/config/caddy
 
 FROM base AS build
 
-COPY ./container/pipewire-config/ /pipewire-config/ 
-
 ARG BUILD_CONFIG
 ARG DATE 
 ARG VERSION

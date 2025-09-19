@@ -33,7 +33,6 @@ EOF
 
 
 
-COPY ./container/pipewire-config/ /pipewire-config/ 
 COPY ./container/config.yml /local/config/go-librespot/config.yml
 COPY ./container/shared/srv/ /srv/
 COPY ./container/shared/app/ /app/
