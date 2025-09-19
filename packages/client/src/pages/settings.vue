@@ -47,15 +47,21 @@
       <tbody>
         <tr>
           <td>
-              <img src="https://raw.githubusercontent.com/badaix/snapcast/develop/doc/Snapcast.svg" style="width: 100px; height: 100px" />
+            <img
+              src="https://raw.githubusercontent.com/badaix/snapcast/develop/doc/Snapcast.svg"
+              style="width: 100px; height: 100px"
+            />
           </td>
           <td>&nbsp;</td>
           <td>
             <h3>Snapcast Server</h3>
             <v-switch v-model="settings.enableCast" label="Enable Snapcast server"></v-switch>
-            <span
+            <span>
+              Please see
+              <a target="_new" href="https://github.com/badaix/snapcast"
+                >https://github.com/badaix/snapcast</a
               >
-Please see <a target="_new" href="https://github.com/badaix/snapcast">https://github.com/badaix/snapcast</a> for documentation on Snapcast. 
+              for documentation on Snapcast.
             </span>
           </td>
         </tr>
