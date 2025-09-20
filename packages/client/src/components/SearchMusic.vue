@@ -24,6 +24,8 @@
       >I'm Feeling Lucky
     </v-btn>
     &nbsp;
+    <v-btn prepend-icon="mdi-eraser" variant="outlined" @click="reset()">Clear </v-btn>
+    &nbsp;<br />
     <span v-if="results.total == 0">No results</span>
     <span v-if="results.total == 1">1 result</span>
     <span v-if="results.total > 1">{{ results.total }} results</span>
@@ -92,6 +94,7 @@
 import { emit } from '@/composables/useeventbus'
 import { PagedItems } from '@/core/paging'
 import { vopidy } from '@/services/vopidy'
+import { useSearchStore } from '@/stores/searchstore'
 
 export default {
   name: 'SearchMusic',
@@ -108,8 +111,18 @@ export default {
     }
   },
   mounted() {
+    const store = useSearchStore()
     this.results = new PagedItems()
     this.getCatalogs()
+    this.page = store.page
+    this.pageSize = store.pageSize
+    this.pageTotal = store.pageTotal
+    this.query = store.query
+    this.catalog = store.catalog
+    if (this.pageTotal > 0) {
+      this.search()
+    }
+    p
   },
   beforeUnmount() {},
   methods: {
@@ -144,9 +157,24 @@ export default {
           this.pageTotal = res.result.pageTotal
           this.page = res.result.page
           this.results = res.result
+          const store = useSearchStore()
+          store.setQuery(this.query)
+          store.setCatalog(this.catalog)
+          store.setPage(this.page, this.pageSize, this.pageTotal)
           this.selectItem(res.result.items[0])
         }
       })
+    },
+    reset() {
+      this.results = new PagedItems()
+      this.page = 1
+      this.pageTotal = 0
+      this.query = ''
+      this.catalog = ''
+      const store = useSearchStore()
+      store.setQuery(this.query)
+      store.setCatalog(this.catalog)
+      store.setPage(this.page, this.pageSize, this.pageTotal)
     },
     selectPage(newPage) {
       if (this.results.total > 0) {
@@ -160,6 +188,10 @@ export default {
           this.pageTotal = res.result.pageTotal
           this.page = res.result.page
           this.results = res.result
+          const store = useSearchStore()
+          store.setQuery(this.query)
+          store.setCatalog(this.catalog)
+          store.setPage(this.page, this.pageSize, this.pageTotal)
         }
       })
     },
