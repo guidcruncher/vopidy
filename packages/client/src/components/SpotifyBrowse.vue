@@ -13,68 +13,72 @@
     >List</v-chip
   >
   <v-sheet v-if="displayMode == 'list'">
-    <v-list lines="two">
-      <v-list-item v-for="item in items" :key="item.id">
-        <template v-slot:prepend>
-          <v-avatar color="grey-lighten-1">
-            <v-icon color="white" v-if="tab == 'albums'">mdi-album</v-icon>
-            <v-icon color="white" v-if="tab == 'tracks'">mdi-speaker</v-icon>
-            <v-icon color="white" v-if="tab == 'playlists'">mdi-playlist-music</v-icon>
-            <v-icon color="white" v-if="tab == 'shows'">mdi-podcast</v-icon>
-            <v-icon color="white" v-if="tab == 'artists'">mdi-account-music</v-icon>
-          </v-avatar>
-        </template>
-        <v-list-item-title>{{ item.name }}</v-list-item-title>
-        <v-list-item-subtitle>
-          <span v-if="tab == 'artists' && item.genres"> {{ item.genres.join(', ') }}</span>
-          <span v-if="tab == 'shows'"> {{ item.publisher }}</span>
-          <span v-if="tab == 'playlists'">{{ item.owner }}</span>
-          <ArtistNames v-if="tab != 'playlists' && tab != 'artists'" :artists="item.artist" />
-        </v-list-item-subtitle>
-        <template v-slot:append>
-          <v-btn
-            color="grey-lighten-1"
-            icon="mdi-play"
-            v-if="tab != 'artists'"
-            variant="text"
-            @click="selectItem(item)"
-          ></v-btn>
-          <v-btn
-            color="grey-lighten-1"
-            icon="mdi-information"
-            variant="text"
-            @click="getInformation(item)"
-          ></v-btn>
-        </template>
-      </v-list-item>
-    </v-list>
+    <div :style="{ 'overflow-y': 'scroll', height: size.height }">
+      <v-list lines="two">
+        <v-list-item v-for="item in items" :key="item.id">
+          <template v-slot:prepend>
+            <v-avatar color="grey-lighten-1">
+              <v-icon color="white" v-if="tab == 'albums'">mdi-album</v-icon>
+              <v-icon color="white" v-if="tab == 'tracks'">mdi-speaker</v-icon>
+              <v-icon color="white" v-if="tab == 'playlists'">mdi-playlist-music</v-icon>
+              <v-icon color="white" v-if="tab == 'shows'">mdi-podcast</v-icon>
+              <v-icon color="white" v-if="tab == 'artists'">mdi-account-music</v-icon>
+            </v-avatar>
+          </template>
+          <v-list-item-title>{{ item.name }}</v-list-item-title>
+          <v-list-item-subtitle>
+            <span v-if="tab == 'artists' && item.genres"> {{ item.genres.join(', ') }}</span>
+            <span v-if="tab == 'shows'"> {{ item.publisher }}</span>
+            <span v-if="tab == 'playlists'">{{ item.owner }}</span>
+            <ArtistNames v-if="tab != 'playlists' && tab != 'artists'" :artists="item.artist" />
+          </v-list-item-subtitle>
+          <template v-slot:append>
+            <v-btn
+              color="grey-lighten-1"
+              icon="mdi-play"
+              v-if="tab != 'artists'"
+              variant="text"
+              @click="selectItem(item)"
+            ></v-btn>
+            <v-btn
+              color="grey-lighten-1"
+              icon="mdi-information"
+              variant="text"
+              @click="getInformation(item)"
+            ></v-btn>
+          </template>
+        </v-list-item>
+      </v-list>
+    </div>
   </v-sheet>
   <v-sheet v-if="displayMode == 'grid'" ref="el">
-    <div class="wrapgrid">
-      <div v-for="(item, index) in items" class="cell">
-        <center>
-          <ScaledImage
-            :src="item.image"
-            size="lg"
-            v-if="tab != 'tracks'"
-            @click="getInformation(item)"
-            v-bind:responsive="false"
-          />
-          <ScaledImage
-            :src="item.image"
-            size="lg"
-            v-else
-            @click="selectItem(item)"
-            v-bind:responsive="false"
-          />
-          <div
-            @click="selectItem(item)"
-            class="text-caption"
-            style="height: 40px; overflow: hidden"
-          >
-            {{ item.name }}
-          </div>
-        </center>
+    <div :style="{ 'overflow-y': 'scroll', height: size.height }">
+      <div class="wrapgrid">
+        <div v-for="(item, index) in items" class="cell">
+          <center>
+            <ScaledImage
+              :src="item.image"
+              size="lg"
+              v-if="tab != 'tracks'"
+              @click="getInformation(item)"
+              v-bind:responsive="false"
+            />
+            <ScaledImage
+              :src="item.image"
+              size="lg"
+              v-else
+              @click="selectItem(item)"
+              v-bind:responsive="false"
+            />
+            <div
+              @click="selectItem(item)"
+              class="text-caption"
+              style="height: 40px; overflow: hidden"
+            >
+              {{ item.name }}
+            </div>
+          </center>
+        </div>
       </div>
     </div>
   </v-sheet>
@@ -83,7 +87,7 @@
 </template>
 <style>
 .v-list {
-  height: 90 %;
+  height: 90%;
   overflow-y: auto;
 }
 .wrapgrid {
@@ -112,8 +116,13 @@ const { drawer, profileImage, displayMode } = storeToRefs(uiStateStore)
 const el = useTemplateRef('el')
 useResizeObserver(el, (entries) => {
   const entry = entries[0]
-  const { width, height } = entry.contentRect
+  let { width, height } = entry.contentRect
   emit('sb-col-change', width)
+  if (height == 0) {
+    height = window.innerHeight
+  }
+  height = window.innerHeight
+  emit('resized', { width: width, height: (height - 250).toString() + 'px' })
 })
 </script>
 <script lang="ts">
@@ -127,6 +136,7 @@ export default {
       cols: 4,
       tab: 'albums',
       items: [],
+      size: { width: '100%', height: '100%' },
     }
   },
   mounted() {
@@ -134,7 +144,9 @@ export default {
     on('sb-col-change', (col) => {
       this.cols = col
     })
-
+    on('resized', (size) => {
+      this.size = size
+    })
     if (this.tab) {
       this.showInfo = false
       this.refreshTab()
@@ -142,6 +154,7 @@ export default {
   },
   beforeUnmount() {
     off('sb-col-change')
+    off('resized')
   },
   methods: {
     refreshTab() {

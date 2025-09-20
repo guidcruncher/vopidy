@@ -23,61 +23,65 @@
     </div>
   </div>
   <v-sheet v-if="displayMode == 'list'">
-    <v-list lines="two">
-      <v-list-item
-        v-for="item in items"
-        :key="item.id"
-        :subtitle="item.artist"
-        :title="item.name"
-        @click="selectItem(item)"
-      >
-        <template v-slot:prepend>
-          <v-avatar color="grey-lighten-1" v-if="item.itemType == 'dir'">
-            <v-icon color="white">mdi-folder</v-icon>
-          </v-avatar>
-          <v-avatar color="grey-lighten-1" v-if="item.itemType == 'file'">
-            <v-icon color="white">mdi-speaker</v-icon>
-          </v-avatar>
-        </template>
+    <div :style="{ 'overflow-y': 'scroll', height: size.height }">
+      <v-list lines="two">
+        <v-list-item
+          v-for="item in items"
+          :key="item.id"
+          :subtitle="item.artist"
+          :title="item.name"
+          @click="selectItem(item)"
+        >
+          <template v-slot:prepend>
+            <v-avatar color="grey-lighten-1" v-if="item.itemType == 'dir'">
+              <v-icon color="white">mdi-folder</v-icon>
+            </v-avatar>
+            <v-avatar color="grey-lighten-1" v-if="item.itemType == 'file'">
+              <v-icon color="white">mdi-speaker</v-icon>
+            </v-avatar>
+          </template>
 
-        <template v-slot:append>
-          <v-btn
-            color="grey-lighten-1"
-            icon="mdi-play"
-            variant="text"
-            v-if="item.itemType == 'file'"
-            @click="selectItem(item)"
-          ></v-btn>
-        </template>
-      </v-list-item>
-    </v-list>
+          <template v-slot:append>
+            <v-btn
+              color="grey-lighten-1"
+              icon="mdi-play"
+              variant="text"
+              v-if="item.itemType == 'file'"
+              @click="selectItem(item)"
+            ></v-btn>
+          </template>
+        </v-list-item>
+      </v-list>
+    </div>
   </v-sheet>
 
   <v-sheet v-if="displayMode == 'grid'" ref="el">
-    <div class="wrapgrid">
-      <div v-for="(item, index) in items" class="cell">
-        <center>
-          <img
-            src="/images/foldericon.webp"
-            style="width: 150px; height: 150px"
-            @click="selectItem(item)"
-            v-if="item.itemType == 'dir'"
-          />
-          <ScaledImage
-            :src="item.image"
-            size="lg"
-            @click="selectItem(item)"
-            v-if="item.itemType == 'file'"
-            v-bind:responsive="false"
-          />
-          <div
-            @click="selectItem(item)"
-            class="text-caption"
-            style="height: 40px; overflow: hidden"
-          >
-            {{ item.name }}
-          </div>
-        </center>
+    <div :style="{ 'overflow-y': 'scroll', height: size.height }">
+      <div class="wrapgrid">
+        <div v-for="(item, index) in items" class="cell">
+          <center>
+            <img
+              src="/images/foldericon.webp"
+              style="width: 150px; height: 150px"
+              @click="selectItem(item)"
+              v-if="item.itemType == 'dir'"
+            />
+            <ScaledImage
+              :src="item.image"
+              size="lg"
+              @click="selectItem(item)"
+              v-if="item.itemType == 'file'"
+              v-bind:responsive="false"
+            />
+            <div
+              @click="selectItem(item)"
+              class="text-caption"
+              style="height: 40px; overflow: hidden"
+            >
+              {{ item.name }}
+            </div>
+          </center>
+        </div>
       </div>
     </div>
   </v-sheet>
@@ -113,9 +117,11 @@ const { drawer, profileImage, displayMode } = storeToRefs(uiStateStore)
 const el = useTemplateRef('el')
 useResizeObserver(el, (entries) => {
   const entry = entries[0]
-  const { width, height } = entry.contentRect
+  let { width, height } = entry.contentRect
   let computed = width
   emit('ti-col-change', computed)
+  height = window.innerHeight
+  emit('tiresized', { width: width, height: (height - 250).toString() + 'px' })
 })
 </script>
 <script lang="ts">
@@ -125,11 +131,21 @@ export default {
   name: 'FileBrowse',
   props: {},
   data() {
-    return { gridwidth: 400, dir: '.', items: [], breadcrumbs: [] }
+    return {
+      gridwidth: 400,
+      dir: '.',
+      items: [],
+      breadcrumbs: [],
+      size: { width: '100%', height: '100%' },
+    }
   },
   mounted() {
     on('ti-col-change', (value) => {
       this.gridwidth = value
+    })
+
+    on('tiresized', (size) => {
+      this.size = size
     })
 
     if (this.breadcrumbs.length == 0) {
@@ -140,6 +156,7 @@ export default {
   },
   beforeUnmount() {
     off('ti-col-change')
+    off('tiresized')
   },
   methods: {
     loadBreadCrumb(item) {

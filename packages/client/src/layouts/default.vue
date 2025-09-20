@@ -7,19 +7,21 @@
       theme="dark"
       :permanent="windowSize.x > 384"
     >
-      <v-list density="compact" item-props :items="items" nav v-once />
+      <div>
+        <v-list density="compact" item-props :items="items" nav v-once />
 
-      <v-list-item
-        class="ma-2"
-        link
-        nav
-        prepend-icon="mdi-cog-outline"
-        to="settings"
-        title="Settings"
-      />
-      <div class="text-caption pa-2">
-        Version {{ buildVersion.version }}<br />
-        Build {{ buildDate }}
+        <v-list-item
+          class="ma-2"
+          link
+          nav
+          prepend-icon="mdi-cog-outline"
+          to="settings"
+          title="Settings"
+        />
+        <div class="text-caption pa-2">
+          Version {{ buildVersion.version }}<br />
+          Build {{ buildDate }}
+        </div>
       </div>
     </v-navigation-drawer>
 

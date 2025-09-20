@@ -442,13 +442,12 @@ export class Spotify implements IMediaPlayer {
     }
   }
 
-  public async getPlaylists(nocache: boolean = false) {
+  public async getPlaylists(nocache: boolean = false, offset: number = 0, limit: number = 20) {
     const accessToken = await getAccessTokenOnly()
-    let offset = 0
     const data = []
 
     do {
-      const url = `https://api.spotify.com/v1/me/playlists?offset=${offset}&limit=20&fields=items(uri),items(owner)(display_name),items(images),items(name),items(owner),items(type),next,offset,limit,total`
+      const url = `https://api.spotify.com/v1/me/playlists?offset=${offset}&limit=${limit}&fields=items(uri),items(owner)(display_name),items(images),items(name),items(owner),items(type),next,offset,limit,total`
       let res = {}
 
       if (nocache) {
@@ -546,14 +545,13 @@ export class Spotify implements IMediaPlayer {
     return root
   }
 
-  public async getAlbums() {
+  public async getAlbums(offset: number = 0, limit: number = 20) {
     const accessToken = await getAccessTokenOnly()
-    let offset = 0
     const index = 0
     const data = []
 
     do {
-      const url = `https://api.spotify.com/v1/me/albums?offset=${offset}&limit=20&fields=items(album)(uri),items(album)(images),items(album)(name),items(album)(artists),items(album)(popularity),items(album)(type),next,offset,limit,total`
+      const url = `https://api.spotify.com/v1/me/albums?offset=${offset}&limit=${limit}&fields=items(album)(uri),items(album)(images),items(album)(name),items(album)(artists),items(album)(popularity),items(album)(type),next,offset,limit,total`
       const res = await _fetchCache(url, {
         method: "GET",
         headers: { Authorization: `Bearer ${accessToken}` },
@@ -661,13 +659,12 @@ export class Spotify implements IMediaPlayer {
     return data
   }
 
-  public async getShows() {
+  public async getShows(offset: number = 0, limit: number = 20) {
     const accessToken = await getAccessTokenOnly()
-    let offset = 0
     const data = []
 
     do {
-      const url = `https://api.spotify.com/v1/me/shows?offset=${offset}&limit=20&fields=next,offset,limit,total,items(show)(uri),items(show)(images),items(show)(name),items(show)(publisher),items(show)(description),items(show)(type)`
+      const url = `https://api.spotify.com/v1/me/shows?offset=${offset}&limit=${limit}&fields=next,offset,limit,total,items(show)(uri),items(show)(images),items(show)(name),items(show)(publisher),items(show)(description),items(show)(type)`
       const res = await _fetchCache(url, {
         method: "GET",
         headers: { Authorization: `Bearer ${accessToken}` },
@@ -767,13 +764,12 @@ export class Spotify implements IMediaPlayer {
     return item
   }
 
-  public async getTracks() {
+  public async getTracks(offset: number = 0, limit: number = 20) {
     const accessToken = await getAccessTokenOnly()
-    let offset = 0
     const data = []
 
     do {
-      const url = `https://api.spotify.com/v1/me/tracks?offset=${offset}&limit=20&fields=next,offset,limit,total,items(track)(uri),items(track)(album)(images),items(track)(is_playable),items(track)(name),items(track)(album)(name),items(track)(artists),items(track)(popularity),items(track)(type)`
+      const url = `https://api.spotify.com/v1/me/tracks?offset=${offset}&limit=${limit}&fields=next,offset,limit,total,items(track)(uri),items(track)(album)(images),items(track)(is_playable),items(track)(name),items(track)(album)(name),items(track)(artists),items(track)(popularity),items(track)(type)`
       const res = await _fetchCache(url, {
         method: "GET",
         headers: { Authorization: `Bearer ${accessToken}` },
@@ -862,13 +858,12 @@ export class Spotify implements IMediaPlayer {
     return data
   }
 
-  public async getNewAlbums() {
+  public async getNewAlbums(offset: number = 0, limit: number = 50) {
     const accessToken = await getAccessTokenOnly()
-    let offset = 0
     const index = 0
     const data = []
 
-    const url = `https://api.spotify.com/v1/browse/new-releases?offset=${offset}&limit=50&fields=albums(items)(uri),albums(items)(images),albums(items)(name),albums(items)(artists),albums(items)(popularity),albums(items)(type),next,offset,limit,total`
+    const url = `https://api.spotify.com/v1/browse/new-releases?offset=${offset}&limit=${limit}&fields=albums(items)(uri),albums(items)(images),albums(items)(name),albums(items)(artists),albums(items)(popularity),albums(items)(type),next,offset,limit,total`
     const res = await _fetchCache(url, {
       method: "GET",
       headers: { Authorization: `Bearer ${accessToken}` },
@@ -899,9 +894,7 @@ export class Spotify implements IMediaPlayer {
       data.push(item)
     }
 
-    return data.sort((a, b) => {
-      return a.toString().localeCompare(b.name)
-    })
+    return data
   }
 
   private extractId(id: string) {
@@ -954,16 +947,15 @@ export class Spotify implements IMediaPlayer {
     return data
   }
 
-  public async getArtistAlbums(id: string) {
+  public async getArtistAlbums(id: string, offset: number = 0, limit: number = 50) {
     if (!id || id == "") {
       return []
     }
     const accessToken = await getAccessTokenOnly()
-    let offset = 0
     const index = 0
     const data = []
 
-    const url = `https://api.spotify.com/v1/artists/${this.extractId(id)}/albums?offset=${offset}&limit=50&fields=next,offset,limit,total,items(uri),items(images),items(name),items(artists),items(popularity),items(type),items(album_type)`
+    const url = `https://api.spotify.com/v1/artists/${this.extractId(id)}/albums?offset=${offset}&limit=${limit}&fields=next,offset,limit,total,items(uri),items(images),items(name),items(artists),items(popularity),items(type),items(album_type)`
     const res = await _fetchCache(url, {
       method: "GET",
       headers: { Authorization: `Bearer ${accessToken}` },

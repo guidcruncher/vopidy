@@ -54,23 +54,25 @@
   </v-sheet>
 
   <v-sheet v-if="displayMode == 'grid'" ref="el">
-    <div class="wrapgrid">
-      <div v-for="(item, index) in items" class="cell">
-        <center>
-          <ScaledImage
-            :src="item.image"
-            size="lg"
-            @click="selectItem(item)"
-            v-bind:responsive="false"
-          />
-          <div
-            @click="selectItem(item)"
-            class="text-caption"
-            style="height: 40px; overflow: hidden"
-          >
-            {{ item.name }}
-          </div>
-        </center>
+    <div :style="{ 'overflow-y': 'scroll', height: size.height }">
+      <div class="wrapgrid">
+        <div v-for="(item, index) in items" class="cell">
+          <center>
+            <ScaledImage
+              :src="item.image"
+              size="lg"
+              @click="selectItem(item)"
+              v-bind:responsive="false"
+            />
+            <div
+              @click="selectItem(item)"
+              class="text-caption"
+              style="height: 40px; overflow: hidden"
+            >
+              {{ item.name }}
+            </div>
+          </center>
+        </div>
       </div>
     </div>
   </v-sheet>
@@ -106,9 +108,11 @@ const { drawer, profileImage, displayMode } = storeToRefs(uiStateStore)
 const el = useTemplateRef('el')
 useResizeObserver(el, (entries) => {
   const entry = entries[0]
-  const { width, height } = entry.contentRect
+  let { width, height } = entry.contentRect
   let computed = width
   emit('ti-col-change', computed)
+  height = window.innerHeight
+  emit('tiresized', { width: width, height: (height - 250).toString() + 'px' })
 })
 </script>
 <script lang="ts">
@@ -118,19 +122,22 @@ export default {
   name: 'RadioBrowserBrowse',
   props: {},
   data() {
-    return { gridwidth: 400, items: [], breadcrumbs: [] }
+    return { gridwidth: 400, items: [], breadcrumbs: [], size: { width: '100%', height: '100%' } }
   },
   mounted() {
     on('ti-col-change', (value) => {
       this.gridwidth = value
     })
-
+    on('tiresized', (size) => {
+      this.size = size
+    })
     if (this.breadcrumbs.length == 0) {
       this.breadcrumbs.push({ type: '', name: 'By Location', id: '' })
     }
     this.loadItems(this.breadcrumbs[this.breadcrumbs.length - 1])
   },
   beforeUnmount() {
+    off('tiresized')
     off('ti-col-change')
   },
   methods: {

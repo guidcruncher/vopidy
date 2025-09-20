@@ -1,21 +1,23 @@
 <template>
   <v-card ref="el">
-    <div class="pa-2">
-      <v-row no-gutters class="icon-histcols">
-        <v-col v-for="(item, index) in items">
-          <div style="padding: 2px">
-            <center>
-              <ScaledImage
-                :src="item.image"
-                size="lg"
-                @click="selectItem(item)"
-                v-bind:responsive="false"
-              />
-              <span class="text-caption">{{ item.name }}</span>
-            </center>
-          </div>
-        </v-col>
-      </v-row>
+    <div :style="{ 'overflow-y': 'scroll', height: size.height }">
+      <div class="pa-2">
+        <v-row no-gutters class="icon-histcols">
+          <v-col v-for="(item, index) in items">
+            <div style="padding: 2px">
+              <center>
+                <ScaledImage
+                  :src="item.image"
+                  size="lg"
+                  @click="selectItem(item)"
+                  v-bind:responsive="false"
+                />
+                <span class="text-caption">{{ item.name }}</span>
+              </center>
+            </div>
+          </v-col>
+        </v-row>
+      </div>
     </div>
   </v-card>
 </template>
@@ -30,11 +32,13 @@ import { emit, off, on } from '@/composables/useeventbus'
 const el = useTemplateRef('el')
 useResizeObserver(el, (entries) => {
   const entry = entries[0]
-  const { width, height } = entry.contentRect
+  let { width, height } = entry.contentRect
   let computed = Math.floor(width / 170)
   if (computed < 1) {
     computed = 1
   }
+  height = window.innerHeight
+  emit('histresized', { width: width, height: (height - 250).toString() + 'px' })
   emit('hist-col-change', computed)
 })
 </script>
@@ -47,15 +51,19 @@ export default {
   name: 'History',
   props: {},
   data() {
-    return { items: [], cols: 4 }
+    return { items: [], cols: 4, size: { width: '100%', height: '100%' } }
   },
   mounted() {
     on('hist-col-change', (col) => {
       this.cols = col
     })
+    on('histresized', (size) => {
+      this.size = size
+    })
     this.getHistory()
   },
   beforeUnmount() {
+    off('histresized')
     off('hist-col-change')
   },
   methods: {

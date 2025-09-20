@@ -1,4 +1,5 @@
 import { _fetchCache } from "@/core/http"
+import { logger } from "@/core/logger"
 import { PagedItems } from "@/core/paging"
 import { WsClientStore } from "@/core/wsclientstore"
 import { db } from "@/services/db"
@@ -6,16 +7,58 @@ import { Mixer } from "@/services/mixer"
 import * as dns from "dns"
 import * as util from "util"
 
+const OneHourAgo = (date) => {
+  const hour = 1000 * 60 * 60
+  const hourago = Date.now() - hour
+
+  return date <= hourago
+}
+
 const resolveSrv = util.promisify(dns.resolveSrv)
 
+const badHosts = []
 const getBaseUrl = async () => {
-  const hosts = (await resolveSrv("_api._tcp.radio-browser.info"))
+  let index = badHosts.findIndex((item) => OneHourAgo(item.date))
+  while (index != -1) {
+    badHosts.splice(index, 1)
+    index = badHosts.findIndex((item) => OneHourAgo(item.date))
+  }
+
+  let host = ""
+  let hosts = (await resolveSrv("_api._tcp.radio-browser.info"))
     .sort()
     .map((host) => `https://${host.name}`)
+    .filter((host) => !badHosts.some((h) => h["host"] === host))
 
-  const index = Math.floor(Math.random() * hosts.length)
+  while (hosts.length > 0) {
+    index = Math.floor(Math.random() * hosts.length)
+    host = hosts[index]
+    const bad = badHosts.some((h) => h["host"] === host)
+    try {
+      logger.warn(`${host} of ${hosts.length}`)
+      const res = await fetch(host)
 
-  return hosts[index]
+      if (res.ok) {
+        break
+        return host
+      }
+
+      badHosts.push({ date: Date.now(), host: host })
+      hosts = (await resolveSrv("_api._tcp.radio-browser.info"))
+        .sort()
+        .map((host) => `https://${host.name}`)
+        .filter((host) => !badHosts.some((h) => h["host"] === host))
+      host = ""
+    } catch (err) {
+      badHosts.push({ date: Date.now(), host: host })
+      hosts = (await resolveSrv("_api._tcp.radio-browser.info"))
+        .sort()
+        .map((host) => `https://${host.name}`)
+        .filter((host) => !badHosts.some((h) => h["host"] === host))
+      host = ""
+    }
+  }
+  return host
 }
 
 export class RadioBrowser {
@@ -31,6 +74,7 @@ export class RadioBrowser {
     })
 
     if (!res) {
+      badHosts.push({ date: Date.now(), host: baseUrl })
       return []
     }
     let value = res.map((t) => {
@@ -59,6 +103,7 @@ export class RadioBrowser {
     })
 
     if (!res) {
+      badHosts.push({ date: Date.now(), host: baseUrl })
       return []
     }
     let value = res.map((t) => {
@@ -90,6 +135,7 @@ export class RadioBrowser {
     })
 
     if (!res) {
+      badHosts.push({ date: Date.now(), host: baseUrl })
       return []
     }
 
@@ -128,6 +174,7 @@ export class RadioBrowser {
     })
 
     if (!res) {
+      badHosts.push({ date: Date.now(), host: baseUrl })
       return view
     }
 
@@ -183,6 +230,7 @@ export class RadioBrowser {
     })
 
     if (!res) {
+      badHosts.push({ date: Date.now(), host: baseUrl })
       return undefined
     }
 

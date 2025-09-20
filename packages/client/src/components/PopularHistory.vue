@@ -1,21 +1,23 @@
 <template>
   <v-card ref="el">
-    <div class="pa-2">
-      <v-row no-gutters class="icon-pophistcols">
-        <v-col v-for="(item, index) in items">
-          <div style="padding: 2px">
-            <center>
-              <ScaledImage
-                :src="item.image"
-                size="lg"
-                @click="selectItem(item)"
-                v-bind:responsive="false"
-              />
-              <span class="text-caption">{{ item.name }} ({{ item.total }})</span>
-            </center>
-          </div>
-        </v-col>
-      </v-row>
+    <div :style="{ 'overflow-y': 'scroll', height: size.height }">
+      <div class="pa-2">
+        <v-row no-gutters class="icon-pophistcols">
+          <v-col v-for="(item, index) in items">
+            <div style="padding: 2px">
+              <center>
+                <ScaledImage
+                  :src="item.image"
+                  size="lg"
+                  @click="selectItem(item)"
+                  v-bind:responsive="false"
+                />
+                <span class="text-caption">{{ item.name }} ({{ item.total }})</span>
+              </center>
+            </div>
+          </v-col>
+        </v-row>
+      </div>
     </div>
   </v-card>
 </template>
@@ -30,12 +32,14 @@ import { emit, off, on } from '@/composables/useeventbus'
 const el = useTemplateRef('el')
 useResizeObserver(el, (entries) => {
   const entry = entries[0]
-  const { width, height } = entry.contentRect
+  let { width, height } = entry.contentRect
   let computed = Math.floor(width / 170)
   if (computed < 1) {
     computed = 1
   }
   emit('pophist-col-change', computed)
+  height = window.innerHeight
+  emit('popresized', { width: width, height: (height - 250).toString() + 'px' })
 })
 </script>
 <script lang="ts">
@@ -47,15 +51,19 @@ export default {
   name: 'PopularHistory',
   props: {},
   data() {
-    return { items: [], cols: 4 }
+    return { items: [], cols: 4, size: { width: '100%', height: '100%' } }
   },
   mounted() {
     on('pophist-col-change', (col) => {
       this.cols = col
     })
+    on('popresized', (size) => {
+      this.size = size
+    })
     this.getHistory()
   },
   beforeUnmount() {
+    off('popresized')
     off('pophist-col-change')
   },
   methods: {

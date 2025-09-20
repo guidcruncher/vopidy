@@ -27,9 +27,7 @@ export default {
       if (localStorage.getItem('vopidy.id')) {
         useUiStateStore().setProfileImage()
       }
-      setTimeout(() => {
-        this.appLoading = false
-      }, 3000)
+      this.appLoading = false
     })
   },
   beforeUnmount() {},
