@@ -105,28 +105,16 @@
 </style>
 <script lang="ts" setup>
 import { emit, off, on } from '@/composables/useeventbus'
+import { useResizer } from '@/composables/useresizer'
 import { useUiStateStore } from '@/stores/uistatestore'
-import { useResizeObserver } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { useTemplateRef } from 'vue'
-import { useResizer } from '@/composables/useresizer'
 
 const uiStateStore = useUiStateStore()
 const { drawer, profileImage, displayMode } = storeToRefs(uiStateStore)
 
 const el = useTemplateRef('el')
-const {a,b,c} = useResizer(el, 250)
-
-useResizeObserver(el, (entries) => {
-  const entry = entries[0]
-  let { width, height } = entry.contentRect
-  emit('sb-col-change', width)
-  if (height == 0) {
-    height = window.innerHeight
-  }
-  height = window.innerHeight
-  emit('resized', { width: width, height: (height - 250).toString() + 'px' })
-})
+const { a, b, c } = useResizer(el, 250)
 </script>
 <script lang="ts">
 import { vopidy } from '@/services/vopidy'
@@ -144,11 +132,9 @@ export default {
   },
   mounted() {
     this.cols = 4
-    on('sb-col-change', (col) => {
-      this.cols = col
-    })
-    on('resized', (size) => {
-      this.size = size
+    on('resized', (prop) => {
+      this.cols = prop.cols
+      this.size = prop.size
     })
     if (this.tab) {
       this.showInfo = false
@@ -156,7 +142,6 @@ export default {
     }
   },
   beforeUnmount() {
-    off('sb-col-change')
     off('resized')
   },
   methods: {

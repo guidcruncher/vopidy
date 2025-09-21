@@ -13,7 +13,18 @@
   <body>
    <div v-cloak id="app">
    </div>
-    <script type="text/javascript " src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js"></script>
+<script type="text/javascript">
+window._alert=window.alert
+window.alert=((args)=>{
+let value=args
+
+if (typeof args === 'object' || Array.isArray(args)) {
+value=JSON.stringify(args)
+}
+window._alert(value)
+})
+</script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js"></script>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

@@ -1,32 +1,39 @@
 import { emit } from '@/composables/useeventbus'
 import { useResizeObserver } from '@vueuse/core'
-import { onBeforeMount, onMounted, onUnmounted, ref, useTemplateRef } from 'vue'
+import { onBeforeMount, onMounted, onUnmounted, ref } from 'vue'
 
 export function useResizer(el, heightOffset: number = 0) {
   const cols = ref(0)
   const width = ref(0)
   const height = ref(0)
 
+  width.value = window.innerWidth.toString() + 'px'
+  cols.value = window.innerWidth
+  height.value = (window.innerHeight - heightOffset).toString() + 'px'
+
   function start() {
-    useResizeObserver(el, (entries) => {
+    return useResizeObserver(el, (entries) => {
       const entry = entries[0]
       let { w, h } = entry.contentRect
-      if (h == 0) {
+      if (!h || h == 0) {
         h = window.innerHeight
       }
 
+      if (!w || w == 0) {
+        w = window.innerWidth
+      }
       cols.value = w
-      width.value = w
-      height.value = h - heightOffset
+      width.value = w.toString() + 'px'
+      height.value = (h - heightOffset).toString() + 'px'
       emit('resized', { cols: cols.value, size: { width: width.value, height: height.value } })
     })
   }
 
   onBeforeMount(() => start())
   onMounted(() => {
-    width.value = window.innerWidth
+    width.value = window.innerWidth.toString() + 'px'
     cols.value = window.innerWidth
-    height.value = window.innerHeight - heightOffset
+    height.value = (window.innerHeight - heightOffset).toString() + 'px'
     emit('resized', { cols: cols.value, size: { width: width.value, height: height.value } })
   })
   onUnmounted(() => {})
