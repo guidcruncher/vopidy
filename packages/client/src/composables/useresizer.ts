@@ -8,7 +8,7 @@ export function useResizer(el, heightOffset: number = 0) {
   const height = ref(0)
 
   width.value = window.innerWidth.toString() + 'px'
-  cols.value = window.innerWidth
+  cols.value = Math.ceil(window.innerWidth / 170)
   height.value = (window.innerHeight - heightOffset).toString() + 'px'
 
   function start() {
@@ -22,7 +22,7 @@ export function useResizer(el, heightOffset: number = 0) {
       if (!w || w == 0) {
         w = window.innerWidth
       }
-      cols.value = w
+      cols.value = Math.ceil(w / 170)
       width.value = w.toString() + 'px'
       height.value = (h - heightOffset).toString() + 'px'
       emit('resized', { cols: cols.value, size: { width: width.value, height: height.value } })
@@ -32,7 +32,7 @@ export function useResizer(el, heightOffset: number = 0) {
   onBeforeMount(() => start())
   onMounted(() => {
     width.value = window.innerWidth.toString() + 'px'
-    cols.value = window.innerWidth
+    cols.value = Math.ceil(window.innerWidth / 170)
     height.value = (window.innerHeight - heightOffset).toString() + 'px'
     emit('resized', { cols: cols.value, size: { width: width.value, height: height.value } })
   })

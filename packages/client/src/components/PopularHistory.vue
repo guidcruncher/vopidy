@@ -29,23 +29,19 @@
 </style>
 <script lang="ts" setup>
 import { emit, off, on } from '@/composables/useeventbus'
+import { useResizer } from '@/composables/useresizer'
+import { useUiStateStore } from '@/stores/uistatestore'
+import { storeToRefs } from 'pinia'
+import { useTemplateRef } from 'vue'
+
+const uiStateStore = useUiStateStore()
+const { drawer, profileImage, displayMode } = storeToRefs(uiStateStore)
+
 const el = useTemplateRef('el')
-useResizeObserver(el, (entries) => {
-  const entry = entries[0]
-  let { width, height } = entry.contentRect
-  let computed = Math.floor(width / 170)
-  if (computed < 1) {
-    computed = 1
-  }
-  emit('pophist-col-change', computed)
-  height = window.innerHeight
-  emit('popresized', { width: width, height: (height - 250).toString() + 'px' })
-})
+const { a, b, c } = useResizer(el, 250)
 </script>
 <script lang="ts">
 import { vopidy } from '@/services/vopidy'
-import { useResizeObserver } from '@vueuse/core'
-import { useTemplateRef } from 'vue'
 
 export default {
   name: 'PopularHistory',
@@ -54,17 +50,14 @@ export default {
     return { items: [], cols: 4, size: { width: '100%', height: '100%' } }
   },
   mounted() {
-    on('pophist-col-change', (col) => {
-      this.cols = col
-    })
-    on('popresized', (size) => {
-      this.size = size
+    on('resized', (prop) => {
+      this.cols = prop.cols
+      this.size = prop.size
     })
     this.getHistory()
   },
   beforeUnmount() {
-    off('popresized')
-    off('pophist-col-change')
+    off('resized')
   },
   methods: {
     selectItem(item) {

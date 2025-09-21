@@ -105,24 +105,16 @@
 }
 </style>
 <script lang="ts" setup>
-import { emit, off, on } from '@/composables/useeventbus'
+import { off, on } from '@/composables/useeventbus'
+import { useResizer } from '@/composables/useresizer'
 import { useUiStateStore } from '@/stores/uistatestore'
-import { useResizeObserver } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { useTemplateRef } from 'vue'
-
 const uiStateStore = useUiStateStore()
 const { drawer, profileImage, displayMode } = storeToRefs(uiStateStore)
 
 const el = useTemplateRef('el')
-useResizeObserver(el, (entries) => {
-  const entry = entries[0]
-  let { width, height } = entry.contentRect
-  let computed = width
-  emit('ti-col-change', computed)
-  height = window.innerHeight
-  emit('tiresized', { width: width, height: (height - 250).toString() + 'px' })
-})
+const { a, b, c } = useResizer(el, 250)
 </script>
 <script lang="ts">
 import { vopidy } from '@/services/vopidy'
@@ -140,12 +132,9 @@ export default {
     }
   },
   mounted() {
-    on('ti-col-change', (value) => {
-      this.gridwidth = value
-    })
-
-    on('tiresized', (size) => {
-      this.size = size
+    on('resized', (prop) => {
+      this.cols = prop.cols
+      this.size = prop.size
     })
 
     if (this.breadcrumbs.length == 0) {
@@ -155,8 +144,7 @@ export default {
     this.loadItems(this.dir)
   },
   beforeUnmount() {
-    off('ti-col-change')
-    off('tiresized')
+    off('resized')
   },
   methods: {
     loadBreadCrumb(item) {

@@ -87,7 +87,7 @@
 <style>
 .wrapgrid {
   display: block;
-  width: v-bind('gridwidth');
+  width: v-bind('size.width');
   position: relative;
 }
 .cell {
@@ -103,24 +103,16 @@
 }
 </style>
 <script lang="ts" setup>
-import { emit, off, on } from '@/composables/useeventbus'
+import { off, on } from '@/composables/useeventbus'
+import { useResizer } from '@/composables/useresizer'
 import { useUiStateStore } from '@/stores/uistatestore'
-import { useResizeObserver } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { useTemplateRef } from 'vue'
-
 const uiStateStore = useUiStateStore()
 const { drawer, profileImage, displayMode } = storeToRefs(uiStateStore)
 
 const el = useTemplateRef('el')
-useResizeObserver(el, (entries) => {
-  const entry = entries[0]
-  let { width, height } = entry.contentRect
-  let computed = width
-  emit('ti-col-change', computed)
-  height = window.innerHeight
-  emit('tiresized', { width: width, height: (height - 250).toString() + 'px' })
-})
+const { a, b, c } = useResizer(el, 250)
 </script>
 <script lang="ts">
 import { vopidy } from '@/services/vopidy'
@@ -129,23 +121,27 @@ export default {
   name: 'TuneinBrowse',
   props: {},
   data() {
-    return { gridwidth: 400, items: [], breadcrumbs: [], size: { width: '100%', height: '100%' } }
+    return {
+      cols: 4,
+      gridwidth: 400,
+      items: [],
+      breadcrumbs: [],
+      size: { width: '100%', height: '100%' },
+    }
   },
   mounted() {
-    on('ti-col-change', (value) => {
-      this.gridwidth = value
+    on('resized', (prop) => {
+      this.cols = prop.cols
+      this.size = prop.size
     })
-    on('tiresized', (size) => {
-      this.size = size
-    })
+
     if (this.breadcrumbs.length == 0) {
       this.breadcrumbs.push({ text: 'By Location', type: 'link', id: 'r0' })
     }
     this.loadItems(this.breadcrumbs[this.breadcrumbs.length - 1].id)
   },
   beforeUnmount() {
-    off('tiresized')
-    off('ti-col-change')
+    off('resized')
   },
   methods: {
     loadItems(id) {
