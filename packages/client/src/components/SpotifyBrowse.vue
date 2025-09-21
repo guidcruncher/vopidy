@@ -109,11 +109,14 @@ import { useUiStateStore } from '@/stores/uistatestore'
 import { useResizeObserver } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { useTemplateRef } from 'vue'
+import { useResizer } from '@/composables/useresizer'
 
 const uiStateStore = useUiStateStore()
 const { drawer, profileImage, displayMode } = storeToRefs(uiStateStore)
 
 const el = useTemplateRef('el')
+const {a,b,c} = useResizer(el, 250)
+
 useResizeObserver(el, (entries) => {
   const entry = entries[0]
   let { width, height } = entry.contentRect
