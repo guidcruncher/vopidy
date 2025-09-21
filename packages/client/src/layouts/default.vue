@@ -6,6 +6,7 @@
       image="@/assets/images/55535.webp"
       theme="dark"
       :permanent="windowSize.x > 384"
+      v-if="!isMobile"
     >
       <div>
         <v-list density="compact" item-props :items="items" nav v-once />
@@ -13,7 +14,7 @@
     </v-navigation-drawer>
 
     <v-app-bar border="b" class="ps-4" flat>
-      <v-app-bar-nav-icon @click="uiStateStore.toggleDrawer()" />
+      <v-app-bar-nav-icon @click="uiStateStore.toggleDrawer()" v-if="!isMobile" />
 
       <v-app-bar-title>Vopidy</v-app-bar-title>
 
@@ -22,14 +23,10 @@
           <v-avatar color="surface-light" v-once :image="profileImage" size="32" />
 
           <v-menu activator="parent" v-once>
-            <v-list density="compact" nav>
-              <v-list-item>
-                <CompactPlayerControl />
-              </v-list-item>
-
-              <v-list-item append-icon="mdi-cog-outline" link to="settings" title="Settings" />
-
-              <v-list-item append-icon="mdi-logout" link title="Logout" @click="logout()" />
+            <v-list density="compact" item-props :items="items" nav v-once v-if="isMobile" />
+            <v-list density="compact" item-props nav v-once>
+              <v-list-item prepend-icon="mdi-cog-outline" link to="settings" title="Settings" />
+              <v-list-item prepend-icon="mdi-logout" link title="Logout" @click="logout()" />
             </v-list>
           </v-menu>
         </v-btn>
@@ -69,6 +66,11 @@ export default {
     return {
       windowSize: { x: 0, y: 300 },
     }
+  },
+  computed: {
+    isMobile() {
+      return this.windowSize.x <= 390
+    },
   },
   mounted() {
     this.onResize()
