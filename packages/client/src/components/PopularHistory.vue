@@ -1,30 +1,40 @@
 <template>
   <v-card ref="el">
     <div :style="{ 'overflow-y': 'scroll', height: size.height }">
-      <div class="pa-2">
-        <v-row no-gutters class="icon-pophistcols">
-          <v-col v-for="(item, index) in items">
-            <div style="padding: 2px">
-              <center>
-                <ScaledImage
-                  :src="item.image"
-                  size="lg"
-                  @click="selectItem(item)"
-                  v-bind:responsive="false"
-                />
-                <span class="text-caption">{{ item.name }} ({{ item.total }})</span>
-              </center>
+      <div class="wrapgrid">
+        <div v-for="(item, index) in items" class="cell">
+          <center>
+            <ScaledImage
+              :src="item.image"
+              size="lg"
+              @click="selectItem(item)"
+              v-bind:responsive="false"
+            />
+            <div
+              @click="selectItem(item)"
+              class="text-caption"
+              style="height: 40px; overflow: hidden"
+            >
+              {{ item.name }}
             </div>
-          </v-col>
-        </v-row>
+          </center>
+        </div>
       </div>
     </div>
   </v-card>
 </template>
 <style>
-.icon-pophistcols {
-  display: grid;
-  grid-template-columns: repeat(v-bind('cols'), 1fr);
+.wrapgrid {
+  display: block;
+  width: v-bind('gridwidth');
+  position: relative;
+}
+.cell {
+  display: inline-block;
+  position: relative;
+  width: 150px;
+  height: 150px;
+  margin: 6px;
 }
 </style>
 <script lang="ts" setup>
@@ -38,7 +48,7 @@ const uiStateStore = useUiStateStore()
 const { drawer, profileImage, displayMode } = storeToRefs(uiStateStore)
 
 const el = useTemplateRef('el')
-const { a, b, c } = useResizer(el, 250)
+const { a, b, c } = useResizer(el, 230)
 </script>
 <script lang="ts">
 import { vopidy } from '@/services/vopidy'
