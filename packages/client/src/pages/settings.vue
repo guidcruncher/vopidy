@@ -68,6 +68,7 @@
       </tbody>
     </table>
   </div>
+  <div class="pa-2">Version {{ buildVersion.version }}, Built on {{ buildDate }}</div>
   <div class="pa-2">
     <v-btn @click="saveSettings">Save configuration</v-btn>
   </div>
@@ -79,6 +80,7 @@
 <script lang="ts">
 import { getLocale, getTimezone } from '@/services/locales'
 import { vopidy } from '@/services/vopidy'
+import buildVersion from '@/version.json'
 
 export default {
   name: 'settings',
@@ -90,9 +92,14 @@ export default {
       iceserver: '',
       clockType: { value: 'none', title: 'None' },
       daytime: [],
+      buildDate: '-',
     }
   },
   mounted() {
+    this.buildDate = new Intl.DateTimeFormat(this.resolveLocale(), {
+      dateStyle: 'short',
+      timeStyle: 'long',
+    }).format(new Date(parseInt(buildVersion.buildDate) * 1000))
     vopidy('core.config-get', []).then((res) => {
       if (res.ok) {
         this.clockType = res.result.clockType
@@ -106,6 +113,17 @@ export default {
   },
   beforeUnmount() {},
   methods: {
+    resolveLocale() {
+      const intl = window.Intl
+      if (intl !== undefined) {
+        return intl.NumberFormat().resolvedOptions().locale
+      }
+      const languages = navigator.languages as string[] | undefined
+      if (languages !== undefined && languages.length > 0) {
+        return languages[0]
+      }
+      return navigator.language ?? 'en-US'
+    },
     saveSettings() {
       vopidy('core.config-get', []).then((res) => {
         let config: any = {}
