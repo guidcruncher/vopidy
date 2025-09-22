@@ -22,7 +22,7 @@ if [ -f "$VOPIDY_CONFIG/vopidy-config.json" ]; then
 fi
 
   if [ "$cast" == "true" ]; then
-    export ENABLE_SERVICES=go-librespot,snapserver
+    export ENABLE_SERVICES=go-librespot,snapserver,snapclient
   else
     export ENABLE_SERVICES=go-librespot
   fi

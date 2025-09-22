@@ -1,7 +1,7 @@
 import { percentToVolume, PulseAudio, volumeToPercent } from "pulseaudio.js"
 
 export class Pulseaudio {
-  playbackSink = "alsa-sink"
+  playbackSink = "snapcast-sink"
 
   public async getSinkInfo(sink: string = "") {
     const pa = await this.getServer()
