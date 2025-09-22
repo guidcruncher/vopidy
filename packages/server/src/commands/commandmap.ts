@@ -129,6 +129,11 @@ export const CommandMap = {
     params: ["source", "item"],
     help: "Add a new bookmark",
   },
+  "bookmarks.delete": {
+    import: "bookmarks-delete",
+    params: ["source", "id"],
+    help: "Delete a bookmark",
+  },
   "search.keyword": {
     import: "search-keyword",
     params: ["catalog", "query", "offset", "limit"],

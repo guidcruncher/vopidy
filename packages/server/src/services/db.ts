@@ -85,6 +85,13 @@ export class db {
     return await db.getBookmark(source, item)
   }
 
+  public static async deleteBookmark(source, id) {
+    const dbc = await db.getDb()
+    await dbc.run("DELETE FROM bookmarks WHERE source = ? AND uri = ?", source, id)
+    await dbc.close()
+    return await db.getBookmark(source, item)
+  }
+
   public static async getBookmarks() {
     const dbc = await db.getDb()
     let res = await dbc.all(
