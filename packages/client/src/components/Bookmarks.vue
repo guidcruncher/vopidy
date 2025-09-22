@@ -11,6 +11,14 @@
               v-bind:responsive="false"
               padding="1"
             />
+            <center v-if="mode == 'editor'">
+              <v-btn
+                @click="deleteItem(item)"
+                icon="mdi-delete-forever"
+                variant="outlined"
+                density="comfortable"
+              />
+            </center>
           </div>
         </v-slide-group-item>
       </v-slide-group>
@@ -25,7 +33,7 @@ import { vopidy } from '@/services/vopidy'
 
 export default {
   name: 'Bookmarks',
-  props: {},
+  props: { mode: { type: String, default: 'view' } },
   data() {
     return { bookmarks: [] }
   },
@@ -42,6 +50,11 @@ export default {
     selectItem(item) {
       vopidy('player.play', [item.source, item.id]).then((res) => {
         emit('vopidy.track-changed')
+      })
+    },
+    deleteItem(item) {
+      vopidy('bookmarks.delete', [item.source, item.id]).then((res) => {
+        this.getBookmarks()
       })
     },
     getBookmarks() {
