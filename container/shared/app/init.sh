@@ -15,11 +15,11 @@ mkdir -p \
 /local/state/vopidy/cache \
 /tmp \
 
-cast="false"
+cast="true"
 codec="flac"
 
 if [ -f "$VOPIDY_CONFIG/vopidy-config.json" ]; then
-  cast="$(cat $VOPIDY_CONFIG/vopidy-config.json | jq '.enableCast' -r)"
+  #cast="$(cat $VOPIDY_CONFIG/vopidy-config.json | jq '.enableCast' -r)"
   codec="$(cat $VOPIDY_CONFIG/vopidy-config.json | jq '.snapcastCodec' -r)"
 fi
 
