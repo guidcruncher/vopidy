@@ -56,6 +56,13 @@
           <td>
             <h3>Snapcast Server</h3>
             <v-switch v-model="settings.enableCast" label="Enable Snapcast server"></v-switch>
+
+<v-select
+  label="Audio codec"
+  :items="['flac', 'ogg', 'opus', 'pcm']"
+  v-model="settings.snapcastCodec"
+></v-select>
+
             <span>
               Please see
               <a target="_new" href="https://github.com/badaix/snapcast"
