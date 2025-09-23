@@ -91,6 +91,9 @@ const server = serve(
   },
   (info) => {
     logger.debug(`Server is running on http://localhost:${info.port}`)
+    if (process.send) {
+      process.send("ready")
+    }
   },
 )
 
