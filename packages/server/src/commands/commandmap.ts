@@ -17,7 +17,17 @@ export const CommandMap = {
   },
   "snapcast.status": {
     import: "snapcast-status",
-    help: "",
+    help: "Get the current Snapcast Server state",
+  },
+  "snapcast.setvolume": {
+    import: "snapcast-setvolume",
+    help: "Set the Snapcast Client volume leve]",
+    params: ["id", "muted", "level"],
+  },
+  "snapcast.setclientname": {
+    import: "snapcast-setclientname",
+    help: "Rename a given Snapcast Client",
+    params: ["id", "name"],
   },
   "tts.speak": {
     import: "tts-speak",
