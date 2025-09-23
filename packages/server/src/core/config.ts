@@ -18,6 +18,7 @@ export class Config {
   public timezone: string = "UTC"
   public locale: string = "en-US"
   public clockType: string = "analog"
+  public snapcastCodec: string = "flac"
 
   public static isNight(): boolean {
     const config = Config.load()
@@ -98,3 +99,4 @@ export const ApplyConfig = async (o: Config, n: Config) => {
     }
   }
 }
+

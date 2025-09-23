@@ -16,7 +16,7 @@ export const execute: JsonRpcCommand = async (message: JsonRpcMessage) => {
   newCfg.timezone = message.params["config"].timezone
   newCfg.locale = message.params["config"].locale
   newCfg.clockType = message.params["config"].clockType
-  newCfg.snapcastCodec = message.params["snapcastCodec"]
+  newCfg.snapcastCodec = message.params["config"].snapcastCodec
 
   ConfigWriter(newCfg)
   await ApplyConfig(cfg, newCfg)
