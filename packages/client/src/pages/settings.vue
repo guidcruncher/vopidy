@@ -68,10 +68,10 @@
       </tbody>
     </table>
   </div>
-<div class="pa-2">
-<h3>Delete Bookmarks</h3>
-<Bookmarks mode="editor" />
-</div>
+  <div class="pa-2">
+    <h3>Delete Bookmarks</h3>
+    <Bookmarks mode="editor" />
+  </div>
   <div class="pa-2">Version {{ buildVersion.version }}, Built on {{ buildDate }}</div>
   <div class="pa-2">
     <v-btn @click="saveSettings">Save configuration</v-btn>

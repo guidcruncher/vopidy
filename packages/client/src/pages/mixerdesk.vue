@@ -2,6 +2,7 @@
   <PageTitle title="Mixer Desk" />
   <Equaliser />
   <VolumeMixer />
+  <SnapcastVolume />
 </template>
 
 <script lang="ts" setup>

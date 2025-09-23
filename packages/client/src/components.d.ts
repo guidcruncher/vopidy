@@ -30,6 +30,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     ScaledImage: typeof import('./components/ScaledImage.vue')['default']
     SearchMusic: typeof import('./components/SearchMusic.vue')['default']
+    SnapcastVolume: typeof import('./components/SnapcastVolume.vue')['default']
     SpotifyArtist: typeof import('./components/SpotifyArtist.vue')['default']
     SpotifyArtistDetail: typeof import('./components/SpotifyArtistDetail.vue')['default']
     SpotifyBrowse: typeof import('./components/SpotifyBrowse.vue')['default']

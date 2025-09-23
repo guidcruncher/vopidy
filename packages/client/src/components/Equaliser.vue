@@ -80,6 +80,8 @@ export default {
         if (res.ok) {
           this.mixer = res.result
           this.ready = true
+        } else {
+          this.canMix = false
         }
       })
     },

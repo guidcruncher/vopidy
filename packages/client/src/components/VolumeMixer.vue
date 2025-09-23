@@ -1,5 +1,6 @@
 <template>
   <div class="pa-2" v-if="canMix">
+    <h3>Master Volume</h3>
     <center>
       <v-slider
         min="0"
@@ -7,22 +8,30 @@
         show-ticks
         tick-size="1"
         persistent-hint
-        hint="Adjust volume level"
         :disabled="!canMix"
         step="1"
         thumb-label
         v-model="volume"
         @end="setVolume"
-      ></v-slider>
+      >
+        <template v-slot:prepend>
+          <v-btn
+            v-if="!muted"
+            icon="mdi-volume-mute"
+            variant="outlined"
+            density="compact"
+            @click="mute()"
+          ></v-btn>
+          <v-btn
+            v-if="muted"
+            icon="mdi-volume-high"
+            variant="outlined"
+            density="compact"
+            @click="unmute()"
+          ></v-btn>
+        </template>
+      </v-slider>
     </center>
-  </div>
-  <div class="pa-2" v-if="canMix">
-    <v-btn v-if="!muted" prepend-icon="mdi-volume-mute" variant="outlined" @click="mute()"
-      >Mute</v-btn
-    >&nbsp;
-    <v-btn v-if="muted" prepend-icon="mdi-volume-high" variant="outlined" @click="unmute()"
-      >Un-Mute</v-btn
-    >&nbsp;
   </div>
 </template>
 <style></style>
