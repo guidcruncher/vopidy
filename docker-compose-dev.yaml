@@ -26,6 +26,8 @@ services:
       args:
         DATE: ${DATE}
         VERSION: ${VERSION}-development
+      tags:
+        - guidcruncher/vopidy:develop
     expose:
       - 3004:3004
     environment:
