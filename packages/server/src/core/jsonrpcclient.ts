@@ -1,20 +1,27 @@
 import { logger } from "@/core/logger"
 
-export class jsonrpcclient {
+export class JsonRpcClient {
   private static randomInt(max: number = 65535) {
     const min = Math.ceil(1)
     max = Math.floor(max)
     return Math.floor(Math.random() * (max - min + 1)) + min
   }
 
-  public static async request(method: string, params: any) {
+  public static async request(method: string, params: any = undefined) {
     let res: any = {}
-    const id = randomInt()
-    const body = {
+    const id = JsonRpcClient.randomInt()
+    let body = {
       id: id,
       jsonrpc: "2.0",
       method: method,
-      params: params,
+    }
+    if (params) {
+      body = {
+        id: id,
+        jsonrpc: "2.0",
+        method: method,
+        params: params,
+      }
     }
 
     try {

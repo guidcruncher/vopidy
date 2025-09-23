@@ -15,6 +15,10 @@ export const CommandMap = {
     params: ["config"],
     help: " Saves the current config",
   },
+  "snapcast.status": {
+    import: "snapcast-status",
+    help: "",
+  },
   "tts.speak": {
     import: "tts-speak",
     params: ["text", "lang"],
