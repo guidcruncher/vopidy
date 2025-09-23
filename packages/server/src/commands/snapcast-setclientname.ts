@@ -5,7 +5,7 @@ import { JsonRpcMessage } from "@/rpc/jsonrpcmessage"
 export const execute: JsonRpcCommand = async (message: JsonRpcMessage) => {
   return await JsonRpcClient.request("Client.SetName", {
     id: message.params["id"],
-    name: nessage.params["name"],
+    name: message.params["name"],
   })
 }
 

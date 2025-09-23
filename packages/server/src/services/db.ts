@@ -89,7 +89,7 @@ export class db {
     const dbc = await db.getDb()
     await dbc.run("DELETE FROM bookmarks WHERE source = ? AND uri = ?", source, id)
     await dbc.close()
-    return await db.getBookmark(source, item)
+    return await db.getBookmarks()
   }
 
   public static async getBookmarks() {

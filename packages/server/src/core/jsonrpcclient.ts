@@ -10,7 +10,7 @@ export class JsonRpcClient {
   public static async request(method: string, params: any = undefined) {
     let res: any = {}
     const id = JsonRpcClient.randomInt()
-    let body = {
+    let body: any = {
       id: id,
       jsonrpc: "2.0",
       method: method,
@@ -48,7 +48,7 @@ export class JsonRpcClient {
       } catch {
         errorRes = {}
       }
-      const err: HttpResponse = {
+      const err = {
         status: res.status,
         statusText: errorRes.message ?? res.statusText,
         ok: res.ok,
