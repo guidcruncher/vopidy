@@ -18,7 +18,7 @@ export class jsonrpcclient {
     }
 
     try {
-      res = await fetch("http://127.0.0.1:1070/jsonrpc", {
+      res = await fetch("http://127.0.0.1:1780/jsonrpc", {
         method: "POST",
         body: JSON.stringify(body),
       })
