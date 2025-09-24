@@ -6,7 +6,7 @@
         max="100"
         show-ticks
         tick-size="1"
-        max-width="250"
+        max-width="270"
         :disabled="!canMix"
         step="1"
         thumb-label

@@ -38,3 +38,5 @@ fi
   else
     export ENABLE_SERVICES=go-librespot
   fi
+
+envsubst < /local/.envbase >/local/.env
