@@ -7,7 +7,6 @@
 // Plugins
 import { registerPlugins } from '@/plugins'
 import { VopidyEventBus } from '@/services/vopidyeventbus'
-import * as Sentry from '@sentry/vue'
 import router from './router'
 
 // Components
@@ -26,14 +25,6 @@ import '@/assets/global.css'
 import 'unfonts.css'
 
 const app = createApp(App)
-
-Sentry.init({
-  app,
-  dsn: 'https://87482ea9693af1a871f0e941438ec2a1@o4510027576377344.ingest.de.sentry.io/4510027582668880',
-  // Setting this option to true will send default PII data to Sentry.
-  // For example, automatic IP address collection on events
-  sendDefaultPii: true,
-})
 
 //app.config.errorHandler = (err, instance, info) => {
 //  console.error('Error:', err)
