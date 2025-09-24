@@ -90,8 +90,4 @@ export const ApplyConfig = async (o: Config, n: Config) => {
     await pm2.exec(false, n.enableRequestCache ? "start" : "stop", ["memcached"])
   }
 
-  if (o.snapcastCodec != n.snapcastCodec) {
-    await pm2.killCast()
-    await pm2.exec(true, "restart", ["snapserver", "snapclient"])
-  }
 }

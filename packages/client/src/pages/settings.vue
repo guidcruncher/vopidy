@@ -85,7 +85,8 @@
                       <a target="_new" href="https://github.com/badaix/snapcast"
                         >https://github.com/badaix/snapcast</a
                       >
-                      for documentation on Snapcast.
+                      for documentation on Snapcast.<br /><br/>
+Changes will not take affect until the Container is restarted.
                     </span>
                   </td>
                 </tr>
