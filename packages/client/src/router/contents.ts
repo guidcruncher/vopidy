@@ -5,24 +5,16 @@ import * as discover from '@/pages/discover.vue'
 import * as index from '@/pages/index.vue'
 import * as library from '@/pages/library.vue'
 import * as mixerdesk from '@/pages/mixerdesk.vue'
-import * as nowplaying from '@/pages/nowplaying.vue'
 import * as queue from '@/pages/queue.vue'
 import * as search from '@/pages/search.vue'
 import * as streams from '@/pages/streams.vue'
 
 export const contents = [
   {
-    title: 'Welcome',
-    prependIcon: 'mdi-home-variant-outline',
-    to: '/',
-    component: index,
-    link: true,
-  },
-  {
     title: 'Now Playing',
     prependIcon: 'mdi-speaker',
-    to: 'nowplaying',
-    component: nowplaying,
+    to: '/',
+    component: index,
     link: true,
   },
   {

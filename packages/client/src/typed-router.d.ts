@@ -25,7 +25,6 @@ declare module 'vue-router/auto-routes' {
     '/discover': RouteRecordInfo<'/discover', '/discover', Record<never, never>, Record<never, never>>,
     '/library': RouteRecordInfo<'/library', '/library', Record<never, never>, Record<never, never>>,
     '/mixerdesk': RouteRecordInfo<'/mixerdesk', '/mixerdesk', Record<never, never>, Record<never, never>>,
-    '/nowplaying': RouteRecordInfo<'/nowplaying', '/nowplaying', Record<never, never>, Record<never, never>>,
     '/queue': RouteRecordInfo<'/queue', '/queue', Record<never, never>, Record<never, never>>,
     '/search': RouteRecordInfo<'/search', '/search', Record<never, never>, Record<never, never>>,
     '/settings': RouteRecordInfo<'/settings', '/settings', Record<never, never>, Record<never, never>>,
@@ -70,10 +69,6 @@ declare module 'vue-router/auto-routes' {
     }
     'src/pages/mixerdesk.vue': {
       routes: '/mixerdesk'
-      views: never
-    }
-    'src/pages/nowplaying.vue': {
-      routes: '/nowplaying'
       views: never
     }
     'src/pages/queue.vue': {
