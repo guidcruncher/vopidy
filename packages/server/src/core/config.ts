@@ -18,6 +18,8 @@ export class Config {
   public locale: string = "en-US"
   public clockType: string = "analog"
   public snapcastCodec: string = "flac"
+  public snapcastChunkMs: number = 26
+  public snapcastBuffer: number = 1000
 
   public static isNight(): boolean {
     const config = Config.load()

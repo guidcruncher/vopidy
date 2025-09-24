@@ -21,17 +21,11 @@ codec="flac"
 if [ -f "$VOPIDY_CONFIG/vopidy-config.json" ]; then
   #cast="$(cat $VOPIDY_CONFIG/vopidy-config.json | jq '.enableCast' -r)"
   codec="$(cat $VOPIDY_CONFIG/vopidy-config.json | jq '.snapcastCodec' -r)"
+  export SNAPSERVER_CHUNK_MS="$(cat $VOPIDY_CONFIG/vopidy-config.json | jq '.snapcastChunkMs' -r)"
+  export SNAPSERVER_BUFFER="$(cat $VOPIDY_CONFIG/vopidy-config.json | jq '.snapcastBuffer' -r)"
 fi
 
 export SNAPSERVER_CODEC="$codec"
-
-if [ "$SNAPSERVER_CODEC" == 'flac' ]; then
-  export SNAPSERVER_CHUNK_MS=26
-  export SNAPSERVER_BUFFER=1000
-else
-  export SNAPSERVER_CHUNK_MS=20
-  export SNAPSERVER_BUFFER=1000
-fi
 
   if [ "$cast" == "true" ]; then
     export ENABLE_SERVICES=go-librespot,snapserver,snapclient
