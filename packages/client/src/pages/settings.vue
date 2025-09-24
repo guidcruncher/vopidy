@@ -79,15 +79,21 @@
                       :items="['flac', 'ogg', 'opus', 'pcm']"
                       v-model="settings.snapcastCodec"
                     ></v-select>
-<v-text-field label="Read chunk size (ms)" v-model="settings.snapcastChunkMs" ></v-text-field>
-<v-text-field label="End-to-end latency (ms)" v-model="settings.snapcastBuffer"></v-text-field>
+                    <v-text-field
+                      label="Read chunk size (ms)"
+                      v-model="settings.snapcastChunkMs"
+                    ></v-text-field>
+                    <v-text-field
+                      label="End-to-end latency (ms)"
+                      v-model="settings.snapcastBuffer"
+                    ></v-text-field>
                     <span>
                       Please see
                       <a target="_new" href="https://github.com/badaix/snapcast"
                         >https://github.com/badaix/snapcast</a
                       >
-                      for documentation on Snapcast.<br /><br/>
-Changes will not take affect until the Container is restarted.
+                      for documentation on Snapcast.<br /><br />
+                      Changes will not take affect until the Container is restarted.
                     </span>
                   </td>
                 </tr>

@@ -91,5 +91,4 @@ export const ApplyConfig = async (o: Config, n: Config) => {
     logger.debug(`enableRequestCache changed to ${n.enableRequestCache}`)
     await pm2.exec(false, n.enableRequestCache ? "start" : "stop", ["memcached"])
   }
-
 }
