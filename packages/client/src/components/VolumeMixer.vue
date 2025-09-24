@@ -7,7 +7,6 @@
         max="100"
         show-ticks
         tick-size="1"
-        persistent-hint
         :disabled="!canMix"
         step="1"
         thumb-label
@@ -65,24 +64,17 @@ export default {
   methods: {
     mute() {
       vopidy(`mixer.mute`, []).then((res) => {
-        if (res.ok) {
-          this.getVolume()
-          this.muted = true
-        }
+        this.muted = true
       })
     },
     unmute() {
       vopidy(`mixer.unmute`, []).then((res) => {
-        if (res.ok) {
-          this.getVolume()
-          this.muted = false
-        }
+        this.muted = false
       })
     },
     setVolume() {
       vopidy(`mixer.setvolume`, [this.volume]).then((res) => {
         if (res.ok) {
-          this.muted = false
         }
       })
     },

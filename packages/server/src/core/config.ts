@@ -95,4 +95,3 @@ export const ApplyConfig = async (o: Config, n: Config) => {
     await pm2.exec(true, "restart", ["snapserver", "snapclient"])
   }
 }
-

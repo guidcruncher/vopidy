@@ -35,20 +35,6 @@
           <td>
             <v-btn
               color="deep-purple-darken-4"
-              icon="mdi-volume-medium"
-              v-if="muted"
-              @click="mixerOp('unmute')"
-            />
-            <v-btn
-              color="deep-purple-darken-4"
-              icon="mdi-volume-mute"
-              v-if="!muted"
-              @click="mixerOp('mute')"
-            />
-          </td>
-          <td>
-            <v-btn
-              color="deep-purple-darken-4"
               icon="mdi-bookmark-plus-outline"
               :disabled="!hastrack"
               @click="addBookmark()"

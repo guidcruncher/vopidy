@@ -6,15 +6,30 @@
         max="100"
         show-ticks
         tick-size="1"
-        persistent-hint
         max-width="250"
-        hint="Adjust volume level"
         :disabled="!canMix"
         step="1"
         thumb-label
         v-model="volume"
         @end="setVolume"
-      ></v-slider>
+      >
+        <template v-slot:prepend>
+          <v-btn
+            v-if="!muted"
+            icon="mdi-volume-mute"
+            variant="outlined"
+            density="compact"
+            @click="mute()"
+          ></v-btn>
+          <v-btn
+            v-if="muted"
+            icon="mdi-volume-high"
+            variant="outlined"
+            density="compact"
+            @click="unmute()"
+          ></v-btn>
+        </template>
+      </v-slider>
     </center>
   </div>
 </template>
@@ -49,16 +64,12 @@ export default {
   methods: {
     mute() {
       vopidy(`mixer.mute`, []).then((res) => {
-        if (res.ok) {
-          this.getVolume()
-        }
+        this.muted = true
       })
     },
     unmute() {
       vopidy(`mixer.unmute`, []).then((res) => {
-        if (res.ok) {
-          this.getVolume()
-        }
+        this.muted = false
       })
     },
     setVolume() {
