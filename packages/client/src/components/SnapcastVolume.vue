@@ -1,6 +1,6 @@
 <template>
   <div class="pa-2">
-    <h3>Snapcast Client Volumes</h3>
+    <h3>Snapcast Client Volume</h3>
     <v-sheet v-for="group in groups" class="pa-2 rounded" border="primary">
       {{ group.name }}
       <div v-for="item in group.clients" :key="item.id">
