@@ -38,6 +38,21 @@
                 @click="createPartyList(detail)"
                 >Create Party</v-btn
               >
+              &nbsp;
+              <v-btn
+                v-if="!following"
+                variant="outlined"
+                prepend-icon="mdi-bookmark-plus"
+                @click="changefollowing(true)"
+                >Follow</v-btn
+              >
+              <v-btn
+                v-if="following"
+                variant="outlined"
+                prepend-icon="mdi-bookmark-minus"
+                @click="changefollowing(false)"
+                >Unfollow</v-btn
+              >
             </td>
           </tr>
         </tbody>
@@ -137,6 +152,7 @@ export default {
   name: 'SpotifyArtistDetail',
   data() {
     return {
+      following: false,
       windowSize: { x: 0, y: 300 },
       offset: 0,
       limit: 10,
@@ -158,6 +174,9 @@ export default {
     this.onResize()
     on('showartistdetail', (id) => {
       this.id = id
+      vopidy('spotify.doesfollow', [this.id.split(':')[1], this.id]).then((res) => {
+        this.following = res
+      })
       this.loadData({ done: () => {} })
       this.showDialog = true
     })
@@ -312,6 +331,17 @@ export default {
         .sort((a, b) => a.sort - b.sort)
         .map(({ value }) => value)
       return shuffled
+    },
+    changefollowing(state) {
+      if (state) {
+        vopidy('spotify.follow', [this.id.split(':')[1], this.id]).then((res) => {
+          this.following = true
+        })
+      } else {
+        vopidy('spotify.unfollow', [this.id.split(':')[1], this.id]).then((res) => {
+          this.following = false
+        })
+      }
     },
   },
 }

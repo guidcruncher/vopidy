@@ -47,7 +47,7 @@ export class http {
     try {
       res = await fetch(req)
     } catch (err) {
-      logger.error("fetch error", err)
+      logger.error(`fetch error in ${req.method} ${req.url}`, err)
       const exerr: HttpResponse = {
         status: 500,
         statusText: err.message,
@@ -245,7 +245,19 @@ export const _fetchCache = async (url, opts: any = {}) => {
 
   const data = await CacheManager.get(hash)
   if (!data) {
-    const res = await fetch(url, opts)
+    try {
+      const res = await fetch(url, opts)
+    } catch (err) {
+      logger.error(`fetch error in ${req.method} ${req.url}`, err)
+      const exerr: HttpResponse = {
+        status: 500,
+        statusText: err.message,
+        ok: false,
+        response: {},
+      }
+      return exerr
+    }
+
     if (!res.ok) {
       logger.error("Fetch Error - not ok - " + JSON.stringify(res))
       return undefined

@@ -21,10 +21,26 @@
             <td align="left">
               <h4><ArtistNames :artists="detail.artist" /></h4>
             </td>
+            <td>
+              &nbsp;
+              <v-btn
+                v-if="!following"
+                variant="outlined"
+                prepend-icon="mdi-bookmark-plus"
+                @click="changefollowing(true)"
+                >Follow</v-btn
+              >
+              <v-btn
+                v-if="following"
+                variant="outlined"
+                prepend-icon="mdi-bookmark-minus"
+                @click="changefollowing(false)"
+                >Unfollow</v-btn
+              >
+            </td>
           </tr>
         </tbody>
       </table>
-
       <v-sheet>
         <v-tabs v-model="tab" bg-color="bg-purple-darken-2">
           <v-tab value="albums">Albums</v-tab>
@@ -109,7 +125,7 @@ export default {
     },
   },
   data() {
-    return { detail: {}, showDialog: false, tab: 'albums' }
+    return { following: false, detail: {}, showDialog: false, tab: 'albums' }
   },
   mounted() {
     this.loadItem(this.id)
@@ -120,6 +136,11 @@ export default {
       if (id == '') {
         return
       }
+
+      vopidy('spotify.doesfollow', [this.id.split(':')[1], this.id]).then((res) => {
+        this.following = res
+      })
+
       const method = `spotify.artist`
       vopidy(method, [id]).then((res) => {
         if (res.ok) {
@@ -130,6 +151,17 @@ export default {
     },
     selectItem(item) {
       vopidy('player.play', ['spotify', item.id]).then((res) => {})
+    },
+    changefollowing(state) {
+      if (state) {
+        vopidy('spotify.follow', [this.id.split(':')[1], this.id]).then((res) => {
+          this.following = true
+        })
+      } else {
+        vopidy('spotify.unfollow', [this.id.split(':')[1], this.id]).then((res) => {
+          this.following = false
+        })
+      }
     },
   },
 }

@@ -361,6 +361,7 @@ export class Spotify implements IMediaPlayer {
         break
     }
 
+    logger.warn(id, url)
     const res = await _fetchCache(url, {
       method: "GET",
       headers: { Authorization: `Bearer ${accessToken}` },
