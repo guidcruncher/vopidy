@@ -4,7 +4,7 @@ import { Spotify } from "@/services/spotify"
 
 export const execute: JsonRpcCommand = async (message: JsonRpcMessage) => {
   const spotifyClient = new Spotify()
-  let res = await spotifyClient.saveToLibary(message.params["id"])
+  let res = await spotifyClient.saveToLibrary(message.params["id"])
   return res
 }
 
