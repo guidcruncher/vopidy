@@ -345,7 +345,7 @@ export class Spotify implements IMediaPlayer {
     const parts = id.split(":")
     switch (parts[1]) {
       case "track":
-        url = `https://api.spotify.com/v1/tracks/${parts[2]}?fields=uri,album(images),is_playable,name,artists,album(name),popularity,type `
+        url = `https://api.spotify.com/v1/tracks/${parts[2]}?fields=uri,album(images),is_playable,name,artists,album(name),album(uri),popularity,type `
         break
       case "album":
         url = `https://api.spotify.com/v1/albums/${parts[2]}?fields=uri,images,name,artists,popularity,type`
@@ -354,7 +354,7 @@ export class Spotify implements IMediaPlayer {
         url = `https://api.spotify.com/v1/shows/${parts[2]}?fields=uri,images,name,publisher,description,type`
         break
       case "episode":
-        url = `https://api.spotify.com/v1/episodes/${parts[2]}?fields=uri,images,show(name),name,show(publisher),type`
+        url = `https://api.spotify.com/v1/episodes/${parts[2]}?fields=uri,images,show(name),name,show(publisher),show(uri),type`
         break
       case "playlist":
         url = `https://api.spotify.com/v1/playlists/${parts[2]}?fields=uri,images,name,owner,type`
@@ -377,6 +377,7 @@ export class Spotify implements IMediaPlayer {
     switch (parts[1]) {
       case "track":
         return {
+          context: value.album.uri,
           id: value.uri,
           image: this.getImageUrl(value.album.images),
           is_playable: value.is_playable,
@@ -393,6 +394,7 @@ export class Spotify implements IMediaPlayer {
         break
       case "album":
         return {
+          context: value.uri,
           id: value.uri,
           image: this.getImageUrl(value.images),
           name: value.name,
@@ -408,6 +410,7 @@ export class Spotify implements IMediaPlayer {
         break
       case "show":
         return {
+          context: value.uri,
           id: value.uri,
           image: this.getImageUrl(value.images),
           name: value.name,
@@ -420,6 +423,7 @@ export class Spotify implements IMediaPlayer {
         break
       case "playlist":
         return {
+          context: value.uri,
           id: value.uri,
           image: this.getImageUrl(value.images),
           name: value.name,
@@ -430,6 +434,7 @@ export class Spotify implements IMediaPlayer {
         break
       case "episode":
         return {
+          context: value.show.uri,
           id: value.uri,
           image: this.getImageUrl(value.images),
           album: value.show.nane,
@@ -519,6 +524,7 @@ export class Spotify implements IMediaPlayer {
     for (let i = 0; i < jsondata.items.length; i++) {
       const value = jsondata.items[i]
       const item: any = {
+        context: uri,
         id: value.track.uri,
         image: value.track.album ? this.getImageUrl(value.track.album.images) : "",
         album: value.track.album ? value.track.album.name : "",
@@ -642,6 +648,7 @@ export class Spotify implements IMediaPlayer {
       }
       tracks.items.forEach((track) => {
         data.items.push({
+          context: uri,
           id: track.uri,
           is_playable: track.is_playable,
           name: track.name,
@@ -707,7 +714,7 @@ export class Spotify implements IMediaPlayer {
     }
     const accessToken = await getAccessTokenOnly()
 
-    const url = `https://api.spotify.com/v1/tracks/${this.extractId(id)}?fields=uri,album(images),is_playable,name,album(name),artists,popularity,type`
+    const url = `https://api.spotify.com/v1/tracks/${this.extractId(id)}?fields=uri,album(images),is_playable,name,album(name),artists,popularity,album(uri),type`
     const res = await _fetchCache(url, {
       method: "GET",
       headers: { Authorization: `Bearer ${accessToken}` },
@@ -720,6 +727,7 @@ export class Spotify implements IMediaPlayer {
       return {}
     }
     const item: any = {
+      context: value.album.uri,
       id: value.uri,
       image: value.album.images ? this.getImageUrl(value.album.images) : "",
       album: value.album.name,
@@ -741,7 +749,7 @@ export class Spotify implements IMediaPlayer {
     }
     const accessToken = await getAccessTokenOnly()
 
-    const url = `https://api.spotify.com/v1/episodes/${this.extractId(id)}?fields=uri,images,show(name),name,show(publisher),type`
+    const url = `https://api.spotify.com/v1/episodes/${this.extractId(id)}?fields=uri,images,show(name),name,show(publisher),show(uri),type`
     const res = await _fetchCache(url, {
       method: "GET",
       headers: { Authorization: `Bearer ${accessToken}` },
@@ -754,6 +762,7 @@ export class Spotify implements IMediaPlayer {
       return {}
     }
     const item: any = {
+      context: value.show.uri,
       id: value.uri,
       image: value.images ? this.getImageUrl(value.images) : "",
       album: value.show.name,
@@ -1013,6 +1022,7 @@ export class Spotify implements IMediaPlayer {
     for (let i = 0; i < jsondata.items.length; i++) {
       const value = jsondata.items[i]
       const item: any = {
+        context: id,
         id: value.uri,
         image: value.images ? this.getImageUrl(value.images) : "",
         name: value.name,

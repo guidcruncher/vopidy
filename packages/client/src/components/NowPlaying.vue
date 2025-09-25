@@ -1,6 +1,6 @@
 <template>
   <center>
-    <ScaledImage :src="status.track.image" size="xxl" padding="5" />
+    <ScaledImage :src="status.track.image" size="xxl" padding="5" @click="viewDetail()" />
     <h2 v-if="status.track">{{ status.track.name }}</h2>
     <h3 v-if="status.track && status.track.nowplaying">
       {{ status.track.nowplaying.streamTitle }}
@@ -27,6 +27,8 @@
       </template></v-slider
     >
   </center>
+
+  <SpotifyItemDetail />
 </template>
 <style></style>
 <script lang="ts" setup></script>
@@ -139,6 +141,17 @@ export default {
     off('player-command')
   },
   methods: {
+    viewDetail() {
+      if (this.status.track) {
+        switch (this.status.source) {
+          case 'spotify':
+            if (this.status.track.context) {
+              emit('showitemdetail', this.status.track.context)
+            }
+            break
+        }
+      }
+    },
     performSeek(position) {
       if (this.status && this.status.source) {
         vopidy('player.seek', [this.status.source, Math.ceil(position)]).then((res) => {
