@@ -3,6 +3,7 @@ import { Config, ConfigWriter } from "@/core/config"
 import { logger } from "@/core/logger"
 import { ProcessLauncher } from "@/core/processlauncher"
 import { loadScheduler } from "@/core/scheduler"
+import { SnapServer } from "@/core/snapserver"
 import { auth } from "@/routes/auth"
 import { httprpc, setupWebsocket } from "@/routes/jsonrpc"
 import { OpenApiDoc } from "@/routes/openapidoc"
@@ -19,6 +20,8 @@ import * as fs from "fs"
 import * as path from "path"
 
 ProcessLauncher.start()
+SnapServer.start()
+
 const cfg = Config.load()
 ConfigWriter(cfg)
 

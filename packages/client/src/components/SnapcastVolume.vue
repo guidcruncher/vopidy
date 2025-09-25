@@ -14,6 +14,7 @@
           thumb-label
           :label="item.config.name"
           v-model="item.config.volume.percent"
+          :disabled="!item.connected"
           @end="setVolume(item.id, item.config.volume.percent)"
         >
           <template v-slot:prepend>

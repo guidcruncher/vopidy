@@ -1,4 +1,5 @@
 import { logger } from "@/core/logger"
+import { SnapServer } from "@/core/snapserver"
 import { WsClientStore } from "@/core/wsclientstore"
 import { db } from "@/services/db"
 import { FFplay } from "@/services/ffplay"
@@ -22,6 +23,8 @@ export class ProcessLauncher {
       ProcessLauncher.clientSocket.close()
       ProcessLauncher.clientSocket = undefined
     }
+
+    SnapServer.close()
 
     FFplay.shutdown()
 
