@@ -122,7 +122,7 @@ export default {
     if (this.pageTotal > 0) {
       this.search()
     }
-    p
+
   },
   beforeUnmount() {},
   methods: {

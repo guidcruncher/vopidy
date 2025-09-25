@@ -1206,7 +1206,7 @@ export class Spotify implements IMediaPlayer {
     const url = `https://api.spotify.com/v1/me/${segments[1]}s`
     res = await _fetch(url, {
       method: "PUT",
-      headers: { Authorization: `Bearer ${accessToken}` },
+      headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
       body: body,
     })
 
@@ -1232,7 +1232,7 @@ export class Spotify implements IMediaPlayer {
     const url = `https://api.spotify.com/v1/me/${segments[1]}s`
     res = await _fetch(url, {
       method: "DELETE",
-      headers: { Authorization: `Bearer ${accessToken}` },
+      headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
       body: { ids: [getId()] },
     })
 
@@ -1280,7 +1280,7 @@ export class Spotify implements IMediaPlayer {
     const url = `https://api.spotify.com/v1/me/following?type=${type}&ids=${getId()}`
     res = await _fetch(url, {
       method: "PUT",
-      headers: { Authorization: `Bearer ${accessToken}` },
+      headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
     })
 
     await CacheManager.flush()
@@ -1302,7 +1302,7 @@ export class Spotify implements IMediaPlayer {
     const url = `https://api.spotify.com/v1/me/following?type=${type}&ids=${getId()}`
     res = await _fetch(url, {
       method: "DELETE",
-      headers: { Authorization: `Bearer ${accessToken}` },
+      headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
     })
 
     await CacheManager.flush()
