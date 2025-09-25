@@ -53,28 +53,28 @@ export default {
   mounted() {
     this.getStatus()
 
-    on('snapcast.client.onconnect', (data) => {
+    on('vopidy.snapcast.client.onconnect', (data) => {
       this.getStatus()
     })
-    on('snapcast.client.ondisconnect', (data) => {
+    on('vopidy.snapcast.client.ondisconnect', (data) => {
       this.getStatus()
     })
-    on('snapcast.client.onvolumechanged', (data) => {
+    on('vopidy.snapcast.client.onvolumechanged', (data) => {
       this.getStatus()
     })
-    on('snapcast.client.onnamechanged', (data) => {
+    on('vopidy.snapcast.client.onnamechanged', (data) => {
       this.getStatus()
     })
-    on('snapcast.group.onnamechanged', (data) => {
+    on('vopidy.snapcast.group.onnamechanged', (data) => {
       this.getStatus()
     })
   },
   beforeUnmount() {
-    off('snapcast.client.onconnect')
-    off('snapcast.client.ondisconnect')
-    off('snapcast.client.onvolumechanged')
-    off('snapcast.client.onnamechanged')
-    off('snapcast.group.onnamechanged')
+    off('vopidy.snapcast.client.onconnect')
+    off('vopidy.snapcast.client.ondisconnect')
+    off('vopidy.snapcast.client.onvolumechanged')
+    off('vopidy.snapcast.client.onnamechanged')
+    off('vopidy.snapcast.group.onnamechanged')
   },
   methods: {
     getStatus() {
