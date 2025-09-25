@@ -1198,11 +1198,13 @@ export class Spotify implements IMediaPlayer {
     const getId = () => {
       return segments.length == 3 ? segments[2] : id
     }
+    const body = {ids:[ getId()]}
+logger.warn(body)
     const url = `https://api.spotify.com/v1/me/${segments[1]}s`
     res = await _fetch(url, {
       method: "PUT",
       headers: { Authorization: `Bearer ${accessToken}` },
-      body: { ids: [getId()] },
+      body: body,
     })
 
     return res
