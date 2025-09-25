@@ -113,7 +113,7 @@ export class ProcessLauncher {
       process.on("SIGUSR1", ProcessLauncher.exitHandler.bind(null, { exit: true }))
       process.on("SIGUSR2", ProcessLauncher.exitHandler.bind(null, { exit: true }))
       // catches uncaught exceptions
-      process.on("uncaughtException", ProcessLauncher.exitHandler.bind(null, { exit: true }))
+      //process.on("uncaughtException", ProcessLauncher.exitHandler.bind(null, { exit: true }))
       console.log("Initialisation finished")
       return true
     })

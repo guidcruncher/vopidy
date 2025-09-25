@@ -7,8 +7,7 @@ export class JsonRpcClient {
     return Math.floor(Math.random() * (max - min + 1)) + min
   }
 
-  public static async request(method: string, params: any = undefined) {
-    let res: any = {}
+  public static getMessage(method: string, params: any = undefined) {
     const id = JsonRpcClient.randomInt()
     let body: any = {
       id: id,
@@ -23,6 +22,13 @@ export class JsonRpcClient {
         params: params,
       }
     }
+    return body
+  }
+
+  public static async request(method: string, params: any = undefined) {
+    let res: any = {}
+    const id = JsonRpcClient.randomInt()
+    let body = JsonRpcClient.getMessage(method, params)
 
     try {
       res = await fetch("http://127.0.0.1:1780/jsonrpc", {

@@ -1,4 +1,5 @@
 import { logger } from "@/core/logger"
+import { SnapServer } from "@/core/snapserver"
 import { WsClientStore } from "@/core/wsclientstore"
 import { Equaliser } from "@/services/equaliser"
 import { FFplay } from "@/services/ffplay"
@@ -209,6 +210,7 @@ export class Mixer {
       res = { muted: paState.mute, volume: volume }
     }
 
+    SnapServer.setTrack(res.track)
     return res
   }
 

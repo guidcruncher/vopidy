@@ -1,4 +1,5 @@
 import { logger } from "@/core/logger"
+import { SnapServer } from "@/core/snapserver"
 import { JsonRpcEvent } from "@/rpc/jsonrpcevent"
 
 export class WsClientStore {
@@ -22,6 +23,9 @@ export class WsClientStore {
   }
 
   public static broadcast(json) {
+    if (json.type == "track-changed") {
+      SnapServer.setTrack(json.data)
+    }
     WsClientStore.ensureStore()
     const ev = new JsonRpcEvent()
     ev.event = json.type
