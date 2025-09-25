@@ -211,10 +211,12 @@ export const _fetch = async (url, opts: any = {}) => {
 
   if (!res.ok) {
     let errorRes: any = {}
+    let text = ""
     try {
-      errorRes = await res.json()
-    } catch {
-      errorRes = {}
+      text = await res.text()
+      errorRes = JSON.parse(text)
+    } catch (err) {
+      errorRes = { status: 500, message: text }
     }
     const err: HttpResponse = {
       status: res.status,
@@ -244,18 +246,13 @@ export const _fetchCache = async (url, opts: any = {}) => {
   const hash = crypto.createHash("sha256").update(key).digest("hex")
 
   const data = await CacheManager.get(hash)
+  let res: any = {}
   if (!data) {
     try {
-      const res = await fetch(url, opts)
+      res = await fetch(url, opts)
     } catch (err) {
-      logger.error(`fetch error in ${req.method} ${req.url}`, err)
-      const exerr: HttpResponse = {
-        status: 500,
-        statusText: err.message,
-        ok: false,
-        response: {},
-      }
-      return exerr
+      logger.error(`fetch error in ${opts.method} ${url}`, err)
+      return undefined
     }
 
     if (!res.ok) {

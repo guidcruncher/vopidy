@@ -1186,6 +1186,72 @@ export class Spotify implements IMediaPlayer {
     return status
   }
 
+  public async saveToLibrary(id: string) {
+    let accessToken = await getAccessTokenOnly()
+    let res: any = {}
+    let segments = id.split(":")
+
+    if (segments[1] == "artist") {
+      return await this.follow(segments[1], id)
+    }
+
+    const getId = () => {
+      return segments.length == 3 ? segments[2] : id
+    }
+    const url = `https://api.spotify.com/v1/me/${segments[1]}s`
+    res = await _fetch(url, {
+      method: "PUT",
+      headers: { Authorization: `Bearer ${accessToken}` },
+      body: { ids: [getId()] },
+    })
+
+    return res
+  }
+
+  public async removeFromLibrary(id: string) {
+    let accessToken = await getAccessTokenOnly()
+    let res: any = {}
+    let segments = id.split(":")
+    if (segments[1] == "artist") {
+      return await this.unfollow(segments[1], id)
+    }
+    const getId = () => {
+      return segments.length == 3 ? segments[2] : id
+    }
+    const url = `https://api.spotify.com/v1/me/${segments[1]}s`
+    res = await _fetch(url, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${accessToken}` },
+      body: { ids: [getId()] },
+    })
+    return res
+  }
+
+  public async inLibrary(id: string) {
+    let accessToken = await getAccessTokenOnly()
+    let res: any = {}
+    let segments = id.split(":")
+
+    if (segments[1] == "artist") {
+      return await this.doesFollow(segments[1], id)
+    }
+
+    const getId = () => {
+      return segments.length == 3 ? segments[2] : id
+    }
+    const url = `https://api.spotify.com/v1/me/${segments[1]}s/contains?ids=${getId()}`
+    res = await _fetch(url, {
+      method: "GET",
+      headers: { Authorization: `Bearer ${accessToken}` },
+    })
+    if (res) {
+      return res[0]
+    } else {
+      logger.error("No valid response received", res)
+    }
+    return false
+  }
+
   public async follow(type: string, id: string) {
     let accessToken = await getAccessTokenOnly()
     let res: any = {}
@@ -1231,9 +1297,12 @@ export class Spotify implements IMediaPlayer {
       headers: { Authorization: `Bearer ${accessToken}` },
     })
 
-    if (res.ok) {
-      return res.response[0]
+    if (res) {
+      return res[0]
+    } else {
+      logger.error("No valid response received", res)
     }
+
     return false
   }
 }

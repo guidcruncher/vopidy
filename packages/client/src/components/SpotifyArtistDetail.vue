@@ -175,7 +175,7 @@ export default {
     on('showartistdetail', (id) => {
       this.id = id
       vopidy('spotify.doesfollow', [this.id.split(':')[1], this.id]).then((res) => {
-        this.following = res
+        this.following = res.result.following
       })
       this.loadData({ done: () => {} })
       this.showDialog = true

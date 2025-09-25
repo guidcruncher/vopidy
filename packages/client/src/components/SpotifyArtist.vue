@@ -138,7 +138,7 @@ export default {
       }
 
       vopidy('spotify.doesfollow', [this.id.split(':')[1], this.id]).then((res) => {
-        this.following = res
+        this.following = res.result.following
       })
 
       const method = `spotify.artist`

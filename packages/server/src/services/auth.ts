@@ -19,6 +19,7 @@ export const spotifyScopes: string[] = [
   "user-read-recently-played",
   "user-follow-read",
   "user-library-read",
+  "user-library-modify",
   "user-top-read",
 ]
 

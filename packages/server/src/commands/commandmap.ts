@@ -106,6 +106,9 @@ export const CommandMap = {
   "spotify.doesfollow": { import: "spotify-doesfollow", params: ["type", "id"], help: "" },
   "spotify.follow": { import: "spotify-follow", params: ["type", "id"], help: "" },
   "spotify.unfollow": { import: "spotify-unfollow", params: ["type", "id"] },
+  "spotify.library.contains": { import: "spotify-library-contains", params: ["id"], help: "" },
+  "spotify.library.add": { import: "spotify-library-add", params: ["id"], help: "" },
+  "spotify.library.remove": { import: "spotify-library-remove", params: ["id"] },
   "spotify.artist.tracks": {
     import: "spotify-artist-tracks",
     params: ["id"],
