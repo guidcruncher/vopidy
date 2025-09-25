@@ -1291,7 +1291,7 @@ export class Spotify implements IMediaPlayer {
     const getId = () => {
       return segments.length == 3 ? segments[2] : id
     }
-    const url = `https://api.spotify.com/v1/me/following/contains?type=${type}&ids=${getId()}`
+    const url = `https://api.spotify.com/v1/me/following/contains?type=${segments[1] ? segments[1] : "artist"}&ids=${getId()}`
     res = await _fetch(url, {
       method: "GET",
       headers: { Authorization: `Bearer ${accessToken}` },

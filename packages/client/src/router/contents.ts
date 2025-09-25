@@ -67,7 +67,7 @@ export const contents = [
     link: true,
   },
   {
-    title: 'Library',
+    title: 'Local files',
     prependIcon: 'mdi-folder-music-outline',
     to: 'library',
     component: library,

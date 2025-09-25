@@ -1,5 +1,5 @@
 <template>
-  <PageTitle title="Library Browse" />
+  <PageTitle title="Local file Browse" />
   <FileBrowse />
 </template>
 

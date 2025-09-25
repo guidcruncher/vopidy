@@ -30,6 +30,21 @@
                 @click="createPlaylist(detail)"
                 >Add to Playlist</v-btn
               >
+              &nbsp;
+              <v-btn
+                v-if="!inLibrary"
+                variant="outlined"
+                prepend-icon="mdi-bookmark-plus"
+                @click="changeLibrary(true)"
+                >Add to Library</v-btn
+              >
+              <v-btn
+                v-if="inLibrary"
+                variant="outlined"
+                prepend-icon="mdi-bookmark-minus"
+                @click="changeLibrary(false)"
+                >Remove from Library</v-btn
+              >
             </td>
           </tr>
         </tbody>
@@ -105,6 +120,7 @@ export default {
       offset: 0,
       limit: 10,
       ready: false,
+      inLibrary: false,
       showCreatePl: false,
       items: [] as any,
       page: 1,
@@ -125,6 +141,9 @@ export default {
       this.items = []
       this.detail = {}
       this.id = id
+      vopidy('spotify.library.contains', [this.id]).then((res) => {
+        this.inLibrary = res.result.exists
+      })
       this.showDialog = true
       this.loadData({ done: () => {} })
     })
@@ -210,6 +229,17 @@ export default {
         this.plUris = uris
         this.showCreatePl = true
       })
+    },
+    changeLibrary(state) {
+      if (state) {
+        vopidy('spotify.library.add', [this.id]).then((res) => {
+          this.inLibrary = true
+        })
+      } else {
+        vopidy('spotify.library.remove', [this.id]).then((res) => {
+          this.inLibrary = false
+        })
+      }
     },
   },
 }
