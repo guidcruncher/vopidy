@@ -65,12 +65,16 @@ export default {
     on('snapcast.client.onnamechanged', (data) => {
       this.getStatus()
     })
+    on('snapcast.group.onnamechanged', (data) => {
+      this.getStatus()
+    })
   },
   beforeUnmount() {
     off('snapcast.client.onconnect')
     off('snapcast.client.ondisconnect')
     off('snapcast.client.onvolumechanged')
     off('snapcast.client.onnamechanged')
+    off('snapcast.group.onnamechanged')
   },
   methods: {
     getStatus() {
