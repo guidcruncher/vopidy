@@ -21,7 +21,7 @@ export class SnapServer {
           json.data = {}
         }
         let message: any = {}
-        message.type = json.method.toLowerCase()
+        message.type = `snapcast.${json.method.toLowerCase()}`
         message.data = json.params ?? {}
         message.data.source = "snapserver"
         logger.trace(`Incoming Snapserver event ${event.data}`)

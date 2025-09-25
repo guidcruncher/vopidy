@@ -41,6 +41,7 @@
 <style></style>
 <script lang="ts" setup></script>
 <script lang="ts">
+import { off, on } from '@/composables/useeventbus'
 import { vopidy } from '@/services/vopidy'
 
 export default {
@@ -50,30 +51,43 @@ export default {
     return { groups: [] }
   },
   mounted() {
-    vopidy('snapcast.status', []).then((res) => {
-      if (res.result.ok) {
-        this.groups = res.result.result.server.groups
-      }
+    this.getStatus()
+
+    on('snapcast.client.onconnect', (data) => {
+      this.getStatus()
+    })
+    on('snapcast.client.ondisconnect', (data) => {
+      this.getStatus()
+    })
+    on('snapcast.client.onvolumechanged', (data) => {
+      this.getStatus()
+    })
+    on('snapcast.client.onnamechanged', (data) => {
+      this.getStatus()
     })
   },
-  beforeUnmount() {},
+  beforeUnmount() {
+    off('snapcast.client.onconnect')
+    off('snapcast.client.ondisconnect')
+    off('snapcast.client.onvolumechanged')
+    off('snapcast.client.onnamechanged')
+  },
   methods: {
+    getStatus() {
+      vopidy('snapcast.status', []).then((res) => {
+        if (res.result.ok) {
+          this.groups = res.result.result.server.groups
+        }
+      })
+    },
     setMute(id, mute) {
       vopidy('snapcast.setvolume', { id: id, muted: mute, level: undefined }).then((res) => {
-        vopidy('snapcast.status', []).then((res) => {
-          if (res.result.ok) {
-            this.groups = res.result.result.server.groups
-          }
-        })
+        this.getStatus()
       })
     },
     setVolume(id, level) {
       vopidy('snapcast.setvolume', { id: id, mute: undefined, level: level }).then((res) => {
-        vopidy('snapcast.status', []).then((res) => {
-          if (res.result.ok) {
-            this.groups = res.result.result.server.groups
-          }
-        })
+        this.getStatus()
       })
     },
   },
