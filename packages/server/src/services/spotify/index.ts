@@ -1195,11 +1195,14 @@ export class Spotify implements IMediaPlayer {
       return await this.follow(segments[1], id)
     }
 
+    if (await this.inLibrary(id)) {
+      return true
+    }
+
     const getId = () => {
       return segments.length == 3 ? segments[2] : id
     }
-    const body = {ids:[ getId()]}
-logger.warn(body)
+    const body = { ids: [getId()] }
     const url = `https://api.spotify.com/v1/me/${segments[1]}s`
     res = await _fetch(url, {
       method: "PUT",
@@ -1207,6 +1210,7 @@ logger.warn(body)
       body: body,
     })
 
+    await CacheManager.flush()
     return res
   }
 
@@ -1217,6 +1221,11 @@ logger.warn(body)
     if (segments[1] == "artist") {
       return await this.unfollow(segments[1], id)
     }
+
+    if (!(await this.inLibrary(id))) {
+      return true
+    }
+
     const getId = () => {
       return segments.length == 3 ? segments[2] : id
     }
@@ -1226,6 +1235,8 @@ logger.warn(body)
       headers: { Authorization: `Bearer ${accessToken}` },
       body: { ids: [getId()] },
     })
+
+    await CacheManager.flush()
     return res
   }
 
@@ -1262,12 +1273,17 @@ logger.warn(body)
       return segments.length == 3 ? segments[2] : id
     }
 
+    if (await this.doesFollow(type, id)) {
+      return true
+    }
+
     const url = `https://api.spotify.com/v1/me/following?type=${type}&ids=${getId()}`
     res = await _fetch(url, {
       method: "PUT",
       headers: { Authorization: `Bearer ${accessToken}` },
     })
 
+    await CacheManager.flush()
     return res.ok
   }
 
@@ -1275,6 +1291,11 @@ logger.warn(body)
     let accessToken = await getAccessTokenOnly()
     let res: any = {}
     let segments = id.split(":")
+
+    if (!(await this.doesFollow(type, id))) {
+      return true
+    }
+
     const getId = () => {
       return segments.length == 3 ? segments[2] : id
     }
@@ -1283,6 +1304,8 @@ logger.warn(body)
       method: "DELETE",
       headers: { Authorization: `Bearer ${accessToken}` },
     })
+
+    await CacheManager.flush()
     return res.ok
   }
 
