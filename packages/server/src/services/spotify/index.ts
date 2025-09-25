@@ -1203,11 +1203,10 @@ export class Spotify implements IMediaPlayer {
       return segments.length == 3 ? segments[2] : id
     }
     const body = { ids: [getId()] }
-    const url = `https://api.spotify.com/v1/me/${segments[1]}s`
+    const url = `https://api.spotify.com/v1/me/${segments[1]}s?ids=${getId()}`
     res = await _fetch(url, {
       method: "PUT",
       headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
-      body: body,
     })
 
     await CacheManager.flush()
@@ -1229,11 +1228,10 @@ export class Spotify implements IMediaPlayer {
     const getId = () => {
       return segments.length == 3 ? segments[2] : id
     }
-    const url = `https://api.spotify.com/v1/me/${segments[1]}s`
+    const url = `https://api.spotify.com/v1/me/${segments[1]}s?ids=${getId()}`
     res = await _fetch(url, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
-      body: { ids: [getId()] },
     })
 
     await CacheManager.flush()
