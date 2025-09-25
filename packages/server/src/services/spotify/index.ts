@@ -1184,4 +1184,55 @@ export class Spotify implements IMediaPlayer {
     let status: any = await this.getStatus()
     return status
   }
+
+  public async follow(type: string, id: string) {
+    let accessToken = await getAccessTokenOnly()
+    let res: any = {}
+    let segments = id.split(":")
+    const getId = () => {
+      return segments.length == 3 ? segments[2] : id
+    }
+
+    const url = `https://api.spotify.com/v1/me/following?type=${type}&ids=${getId()}`
+    res = await _fetch(url, {
+      method: "PUT",
+      headers: { Authorization: `Bearer ${accessToken}` },
+    })
+
+    return res.ok
+  }
+
+  public async unfollow(type: string, id: string) {
+    let accessToken = await getAccessTokenOnly()
+    let res: any = {}
+    let segments = id.split(":")
+    const getId = () => {
+      return segments.length == 3 ? segments[2] : id
+    }
+    const url = `https://api.spotify.com/v1/me/following?type=${type}&ids=${getId()}`
+    res = await _fetch(url, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${accessToken}` },
+    })
+    return res.ok
+  }
+
+  public async doesFollow(type: string, id: string) {
+    let accessToken = await getAccessTokenOnly()
+    let res: any = {}
+    let segments = id.split(":")
+    const getId = () => {
+      return segments.length == 3 ? segments[2] : id
+    }
+    const url = `https://api.spotify.com/v1/me/following/contains?type=${type}&ids=${getId()}`
+    res = await _fetch(url, {
+      method: "GET",
+      headers: { Authorization: `Bearer ${accessToken}` },
+    })
+
+    if (res.ok) {
+      return res.response[0]
+    }
+    return false
+  }
 }

@@ -103,6 +103,9 @@ export const CommandMap = {
   "spotify.tracks": { import: "spotify-tracks", help: "Get Spotify saved tracks" },
   "spotify.queue": { import: "spotify-queue", help: "Get Spotify playback queue" },
   "spotify.describe": { import: "spotify-describe", params: ["id"], help: "Get Spotify item" },
+  "spotify.doesfollow": { import: "spotify-doesfollow", params: ["type", "id"], help: "" },
+  "spotify.follow": { import: "spotify-follow", params: ["type", "id"], help: "" },
+  "spotify.unfollow": { import: "spotify-unfollow", params: ["type", "id"] },
   "spotify.artist.tracks": {
     import: "spotify-artist-tracks",
     params: ["id"],

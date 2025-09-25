@@ -15,6 +15,7 @@ export const spotifyScopes: string[] = [
   "playlist-read-private",
   "playlist-modify-public",
   "playlist-modify-private",
+  "user-follow-modify",
   "user-read-recently-played",
   "user-follow-read",
   "user-library-read",
