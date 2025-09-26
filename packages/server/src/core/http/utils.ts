@@ -17,11 +17,16 @@ export interface BodyTransform {
 
 export class Body {
   static json(data: any): BodyTransform {
-    return { body: JSON.stringify(data), contentType: "application/json" }
+    return { body: JSON.stringify(data), contentType: "application/xml" }
   }
 
   static urlEncoded(params: URLSearchParams): BodyTransform {
     return { body: params.toString(), contentType: "application/x-www-form-urlencoded" }
+  }
+
+  static xmlEncoded(xml: Document): BodyTransform {
+    const s = new XMLSerializer()
+    return { body: s.serializeToString(xml), contentType: "text/xml" }
   }
 
   static empty(): BodyTransform {

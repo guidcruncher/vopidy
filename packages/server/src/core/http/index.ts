@@ -1,5 +1,7 @@
 import { HttpClient } from "@/core/http/httpclient"
-import { Body } from "@/core/http/utils"
+import { Body as body } from "@/core/http/utils"
+
+export class Body extends body {}
 
 export class Http {
   // Standard GET request
