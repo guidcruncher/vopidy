@@ -142,7 +142,10 @@ export default {
   },
   methods: {
     viewDetail() {
-      if (this.status.track) {
+      if (!this.status) {
+        return
+      }
+      if (this.status.track && this.status.source) {
         switch (this.status.source) {
           case 'spotify':
             if (this.status.track.context) {
