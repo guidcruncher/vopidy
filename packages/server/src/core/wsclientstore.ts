@@ -1,5 +1,4 @@
 import { logger } from "@/core/logger"
-import { SnapServer } from "@/core/snapserver"
 import { JsonRpcEvent } from "@/rpc/jsonrpcevent"
 
 export class WsClientStore {
