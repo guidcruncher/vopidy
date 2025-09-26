@@ -12,7 +12,7 @@
     <v-slider
       max-width="270"
       @end="performSeek"
-      v-if="position.duration != 0"
+      v-if="(position.duration ?? 0) != 0"
       min="0"
       step="1"
       thumb-label

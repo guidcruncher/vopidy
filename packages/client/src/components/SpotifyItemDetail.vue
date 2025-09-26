@@ -53,6 +53,7 @@
       <v-sheet>
         <v-infinite-scroll
           v-if="ready"
+          mode="manual"
           :height="windowSize.y"
           v-resize="onResize"
           :items="items"

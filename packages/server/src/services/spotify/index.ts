@@ -243,7 +243,7 @@ export class Spotify implements IMediaPlayer {
     return await this.getStatus()
   }
 
-  private async getCurrentTrackPosition() {
+  private async getCurrentTrackPosition(uri: string) {
     const accessToken = await getAccessTokenOnly()
     let data: any = {}
     const url = `https://api.spotify.com/v1/me/player?fields=item(duration_ms),progress_ms`
@@ -255,6 +255,9 @@ export class Spotify implements IMediaPlayer {
       return {}
     }
 
+    if (!res.item) {
+      return { duration: 0, progress: res.progress_ms }
+    }
     const state = { duration: res.item.duration_ms, progress: res.progress_ms }
     return state
   }
@@ -287,7 +290,10 @@ export class Spotify implements IMediaPlayer {
       }
 
       json.duration = json.track.duration
-      json.position = await this.getCurrentTrackPosition()
+      json.position = await this.getCurrentTrackPosition(json.track.id)
+      if ((json.position.duration ?? 0) == 0) {
+        json.position.duration = json.duration
+      }
 
       json.track = track
       json.source = "spotify"
