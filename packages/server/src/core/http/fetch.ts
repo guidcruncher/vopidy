@@ -53,12 +53,12 @@ export class NoCacheFetch implements Fetch {
 
 export class CachedFetch {
   public async execute(req: Request, auth?: Authorization): Promise<HttpResponse> {
-    const key = url + ":" + (Auth.getProfile().id ?? "")
+    const key = req.url + ":" + (Auth.getProfile().id ?? "")
     const hash = crypto.createHash("sha256").update(key).digest("hex")
 
     const cached = await CacheManager.get(hash)
     if (cached) {
-      logger.trace(`Cache hit: ${url}`)
+      logger.trace(`Cache hit: ${req.url}`)
       const cachedResponse: HttpResponse = {
         status: 200,
         statusText: "OK",

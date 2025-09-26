@@ -1,4 +1,5 @@
-import { Body, HttpClient } from "@/core/http/httpclient"
+import { HttpClient } from "@/core/http/httpclient"
+import { Body } from "@/core/http/utils"
 
 export class Http {
   // Standard GET request
@@ -6,7 +7,7 @@ export class Http {
     if (useCache) {
       return await HttpClient.Cached().get(url)
     }
-    return await HttpClient.NoCached().get(url)
+    return await HttpClient.NoCache().get(url)
   }
 
   // Standard POST request
@@ -18,7 +19,7 @@ export class Http {
       body = Body.urlEncoded(data)
     }
 
-    return await HttpClient.NoCached().post(url, body)
+    return await HttpClient.NoCache().post(url, body)
   }
 
   // Standard PUT request
@@ -30,16 +31,16 @@ export class Http {
       body = Body.urlEncoded(data)
     }
 
-    return await HttpClient.NoCached().put(url, body)
+    return await HttpClient.NoCache().put(url, body)
   }
 
   // Standard DELETE request
   public static async delete(url: string) {
-    return await HttpClient.NoCached().del(url)
+    return await HttpClient.NoCache().delete(url)
   }
 
   // Proxy GET request (e.g., from a web server)
   public static async proxy(context: any, url: string) {
-    return await HttpClient.NoCached().proxy(context, url)
+    return await HttpClient.NoCache().proxy(context, url)
   }
 }
