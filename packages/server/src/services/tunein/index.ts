@@ -1,4 +1,4 @@
-import { _fetchCache, http } from "@/core/http"
+import { Http } from "@/core/http/"
 import { PagedItems } from "@/core/paging"
 import { WsClientStore } from "@/core/wsclientstore"
 import { db } from "@/services/db"
@@ -7,7 +7,7 @@ import { Mixer } from "@/services/mixer"
 export class TuneIn {
   public async categories() {
     const url = `http://opml.radiotime.com/?render=json`
-    const res = await http.get(url)
+    const res = await Http.get(url, true)
     if (!res.ok) {
       return undefined
     }
@@ -55,7 +55,7 @@ export class TuneIn {
     params.append("render", "json")
     params.append("id", id)
     const url = `http://opml.radiotime.com/browse.ashx?${params.toString()}`
-    const res = await http.get(url)
+    const res = await Http.get(url, true)
     if (!res.ok) {
       return undefined
     }
@@ -73,7 +73,7 @@ export class TuneIn {
     params.append("render", "json")
     params.append("id", id)
     const url = `http://opml.radiotime.com/describe.ashx?${params.toString()}`
-    const res = await http.get(url)
+    const res = await Http.get(url, true)
     if (!res.ok) {
       return undefined
     }
@@ -101,7 +101,7 @@ export class TuneIn {
     const url = `http://opml.radiotime.com/tune.ashx?${params.toString()}`
     const item = await this.describe(id)
 
-    const res = await http.get(url)
+    const res = await Http.get(url, false)
     if (!res.ok) {
       return undefined
     }
@@ -130,16 +130,14 @@ export class TuneIn {
     params.append("query", query)
     const url = "https://api.tunein.com/profiles?" + params.toString()
     view.query = query
-    const res = await _fetchCache(url, {
-      method: "GET",
-    })
+    const res = await Http.get(url, true)
 
-    if (!res) {
+    if (!res.ok) {
       return view
     }
 
     let items = []
-    for (const item of res.Items) {
+    for (const item of res.response.Items) {
       if (item.ContainerType == "Stations") {
         item.Children.forEach((json) => {
           const track = {
@@ -165,5 +163,4 @@ export class TuneIn {
     view.calculatePaging()
     return view
   }
-  p
 }

@@ -1,7 +1,8 @@
 import { HttpClient } from "@/core/http/httpclient"
-import { Body as body } from "@/core/http/utils"
+import { Authorization as authorization, Body as body } from "@/core/http/utils"
 
 export class Body extends body {}
+export class Authorization extends authorization {}
 
 export class Http {
   // Standard GET request
@@ -44,5 +45,59 @@ export class Http {
   // Proxy GET request (e.g., from a web server)
   public static async proxy(context: any, url: string) {
     return await HttpClient.NoCache().proxy(context, url)
+  }
+}
+
+export class HttpAuth {
+  // Standard GET request
+  public static async get(url: string, auth: Authorization, useCache: boolean = false) {
+    if (useCache) {
+      return await HttpClient.Cached().get(url, auth)
+    }
+    return await HttpClient.NoCache().get(url, auth)
+  }
+
+  // Standard POST request
+  public static async post(
+    url: string,
+    data: any,
+    contentType: "json" | "urlencoded" = "json",
+    auth: Authorization,
+  ) {
+    let body
+    if (contentType === "json") {
+      body = Body.json(data)
+    } else {
+      body = Body.urlEncoded(data)
+    }
+
+    return await HttpClient.NoCache().post(url, body, auth)
+  }
+
+  // Standard PUT request
+  public static async put(
+    url: string,
+    data: any,
+    contentType: "json" | "urlencoded" = "json",
+    auth: Authorization,
+  ) {
+    let body
+    if (contentType === "json") {
+      body = Body.json(data)
+    } else {
+      body = Body.urlEncoded(data)
+    }
+
+    return await HttpClient.NoCache().put(url, body, auth)
+  }
+
+  // Standard DELETE request
+  public static async delete(url: string, auth: Authorization) {
+    return await HttpClient.NoCache().delete(url, auth)
+  }
+
+  // Proxy GET request (e.g., from a web server)
+  public static async proxy(context: any, url: string, auth: Authorization) {
+    return await HttpClient.NoCache().proxy(context, url, auth)
   }
 }
