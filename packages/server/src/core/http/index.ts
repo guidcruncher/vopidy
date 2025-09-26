@@ -1,12 +1,12 @@
-import { Body, FetchCache, HttpClient } from "@/core/http/httpclient"
+import { Body, HttpClient } from "@/core/http/httpclient"
 
 export class Http {
   // Standard GET request
   public static async get(url: string, useCache: boolean = false) {
     if (useCache) {
-      return await FetchCache.fetch(url)
+      return await HttpClient.Cached().get(url)
     }
-    return await HttpClient.get(url)
+    return await HttpClient.NoCached().get(url)
   }
 
   // Standard POST request
@@ -17,7 +17,8 @@ export class Http {
     } else {
       body = Body.urlEncoded(data)
     }
-    return await HttpClient.post(url, body)
+
+    return await HttpClient.NoCached().post(url, body)
   }
 
   // Standard PUT request
@@ -28,16 +29,17 @@ export class Http {
     } else {
       body = Body.urlEncoded(data)
     }
-    return await HttpClient.put(url, body)
+
+    return await HttpClient.NoCached().put(url, body)
   }
 
   // Standard DELETE request
-  public static async del(url: string) {
-    return await HttpClient.del(url)
+  public static async delete(url: string) {
+    return await HttpClient.NoCached().del(url)
   }
 
   // Proxy GET request (e.g., from a web server)
   public static async proxy(context: any, url: string) {
-    return await HttpClient.proxy(context, url)
+    return await HttpClient.NoCached().proxy(context, url)
   }
 }
