@@ -23,9 +23,6 @@ export class WsClientStore {
   }
 
   public static broadcast(json) {
-    if (json.type == "track-changed") {
-      SnapServer.setTrack(json.data)
-    }
     WsClientStore.ensureStore()
     const ev = new JsonRpcEvent()
     ev.event = json.type
