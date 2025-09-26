@@ -17,7 +17,7 @@ export interface BodyTransform {
 
 export class Body {
   static json(data: any): BodyTransform {
-    return { body: JSON.stringify(data), contentType: "application/xml" }
+    return { body: JSON.stringify(data), contentType: "application/json" }
   }
 
   static urlEncoded(params: URLSearchParams): BodyTransform {
