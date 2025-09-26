@@ -125,6 +125,9 @@ export class HttpClient {
     )
   }
 
+  static async del(url: string, auth?: Authorization) {
+    return await HttpClient.delete(url, auth)
+  }
   static async proxy(context: Context, url: string, auth?: Authorization) {
     const uri = new URL(context.req.url)
     const req = new Request(url, {

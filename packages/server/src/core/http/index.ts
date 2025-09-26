@@ -1,6 +1,6 @@
-import { Body, FetchCache, HttpClient } from "@/core/httpclient"
+import { Body, FetchCache, HttpClient } from "@/core/http/httpclient"
 
-export class HttpFacade {
+export class Http {
   // Standard GET request
   public static async get(url: string, useCache: boolean = false) {
     if (useCache) {
