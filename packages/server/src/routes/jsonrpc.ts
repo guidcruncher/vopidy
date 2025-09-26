@@ -27,11 +27,10 @@ export const setupWebsocket = (app) => {
       return {
         onOpen: (event, ws) => {
           const rawWs = ws
-          logger.warn(`*** Incoming socket connection`)
+          logger.trace(`*** Incoming socket connection`)
           WsClientStore.add(rawWs)
         },
         onMessage: async (event, ws) => {
-          //logger.trace(`*** Incoming message ${event.data}`)
           const res = await JsonRpcProcessor(event.data)
           if (res) {
             ws.send(JSON.stringify(res))

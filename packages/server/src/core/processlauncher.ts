@@ -42,7 +42,7 @@ export class ProcessLauncher {
         json.data = {}
       }
 
-      logger.trace(`Incoming Librespot event ${event.data}`)
+      logger.trace(`Incoming Librespot message "${json.type}"`)
       json.data.source = "spotify"
       switch (json.type) {
         case "playing":

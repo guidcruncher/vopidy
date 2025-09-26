@@ -1,4 +1,3 @@
-import { JsonRpcClient } from "@/core/jsonrpcclient"
 import { logger } from "@/core/logger"
 import { WsClientStore } from "@/core/wsclientstore"
 
@@ -10,22 +9,6 @@ export class SnapServer {
       SnapServer.clientSocket.close()
       SnapServer.clientSocket = undefined
     }
-  }
-
-  public static setTrack(track: any) {
-    let data: any = { artist: [], album: "", name: "", title: "" }
-
-    if (track) {
-      data = {
-        artist: track.artist,
-        album: track.album ?? "",
-        name: track.nowplaying ? track.nowplaying.streamTitle : track.name,
-        title: track.name ?? "",
-      }
-    }
-
-    let message = JsonRpcClient.getMessage("Stream.SetProperty", { id: "Vopidy", metadata: data })
-    return SnapServer.clientSocket.send(JSON.stringify(message))
   }
 
   public static start() {
@@ -41,8 +24,10 @@ export class SnapServer {
         message.type = `snapcast.${json.method.toLowerCase()}`
         message.data = json.params ?? {}
         message.data.source = "snapserver"
-        logger.trace(`Incoming Snapserver event ${event.data}`)
+        logger.trace(`Incoming Snapserver message "${json.method}"`)
         WsClientStore.broadcast(message)
+      } else {
+        logger.trace(`Ignoring Snapserver message "${json.method ?? event.data}"`)
       }
     })
   }
