@@ -57,9 +57,16 @@ export class SpotifyPlayer {
     return await Http.post(url, Body.empty())
   }
 
-  async seek(position: number) {
-    const url = `${process.env.GOLIBRESPOT_API}/player/seek`
-    return await Http.post(url, Body.json({ position_ms: position }))
+  public async seek(position: number) {
+    const url = `${await this.getLocalApi()}/player/seek`
+    const body = { position: position * 1000, relative: false }
+    const res = await HttpAuth.post(url, Body.json(body), await this.getAuthHeaders())
+    WsClientStore.broadcast({
+      type: "track-seeked",
+      data: { position: position, source: "spotify" },
+    })
+    let status: any = await this.getStatus()
+    return status
   }
 
   public async getStatus() {
