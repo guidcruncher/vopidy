@@ -173,10 +173,10 @@ export class Spotify implements IMediaPlayer {
     return url
   }
 
-  public async playTrackFile(filename: string) {
+  public async play(filename: string) {
     return await this.playTrack(filename)
   }
-  public async playTrackUrl(url: string) {
+  public async play(url: string) {
     return await this.playTrack(url)
   }
 

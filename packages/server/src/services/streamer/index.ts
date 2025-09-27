@@ -25,7 +25,7 @@ export class Streamer {
     const mpdClient = Mixer.getMediaPlayer()
     let item: any = await this.describe(id)
     await db.addToPlaybackHistory("stream", item)
-    let res = await mpdClient.playTrackUrl(item.url)
+    let res = await mpdClient.play(item.url)
     Mixer.savePlaybackTrack("stream", id)
 
     WsClientStore.broadcast({

@@ -21,7 +21,7 @@ export class Mpd implements IMediaPlayer {
     return await mpdapi.connect(config)
   }
 
-  public async playTrackFile(filename: string) {
+  public async play(filename: string) {
     try {
       if (fs.existsSync(filename)) {
         await this.setMpdOutput()
@@ -39,7 +39,7 @@ export class Mpd implements IMediaPlayer {
         logger.error(`Playback error, file not found or unavailable ${filename}`)
       }
     } catch (err) {
-      logger.error("Error in playTrackFile", err)
+      logger.error("Error in play", err)
     }
     return await this.getStatus()
   }
@@ -77,7 +77,7 @@ export class Mpd implements IMediaPlayer {
     return true
   }
 
-  public async playTrackUrl(url: string) {
+  public async play(url: string) {
     try {
       logger.trace(`Playing ${url}`)
       await this.setMpdOutput()
@@ -91,7 +91,7 @@ export class Mpd implements IMediaPlayer {
         WsClientStore.broadcast({ type: "playing", data: { source: "mpd" } })
       }
     } catch (err) {
-      logger.error("Error in playTrackUrl", err)
+      logger.error("Error in play", err)
     }
     return await this.getStatus()
   }

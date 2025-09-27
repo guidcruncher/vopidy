@@ -1,3 +1,4 @@
+import { logger } from "@/core/logger"
 import { Authorization, HttpAuth } from "@/core/http"
 import { getAccessTokenOnly } from "@/services/auth"
 

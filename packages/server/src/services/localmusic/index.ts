@@ -37,7 +37,7 @@ export class LocalMusic {
       if (fss.existsSync(filename)) {
         const mpdClient = Mixer.getMediaPlayer()
         Mixer.savePlaybackTrack("library", id)
-        await mpdClient.playTrackFile(filename)
+        await mpdClient.play(filename)
         db.addToPlaybackHistory("library", item)
         WsClientStore.broadcast({ type: "track-changed", data: item })
         return item

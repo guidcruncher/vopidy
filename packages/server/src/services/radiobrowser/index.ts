@@ -250,7 +250,7 @@ export class RadioBrowser {
     if (item) {
       const mpdClient = Mixer.getMediaPlayer()
       Mixer.savePlaybackTrack("radiobrowser", id)
-      await mpdClient.playTrackUrl(item.url)
+      await mpdClient.play(item.url)
       db.addToPlaybackHistory("radiobrowser", item)
       WsClientStore.broadcast({ type: "track-changed", data: item })
       return item

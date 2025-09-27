@@ -1,3 +1,4 @@
+import { logger } from "@/core/logger"
 import { HttpAuth, HttpResponse } from "@/core/http/"
 import { SpotifyAuth } from "./spotifyauth"
 import {

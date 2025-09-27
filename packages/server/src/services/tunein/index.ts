@@ -110,7 +110,7 @@ export class TuneIn {
     if (json.body.length > 0) {
       const mpdClient = Mixer.getMediaPlayer()
       Mixer.savePlaybackTrack("tunein", id)
-      await mpdClient.playTrackUrl(json.body[0].url)
+      await mpdClient.play(json.body[0].url)
       db.addToPlaybackHistory("tunein", item)
       WsClientStore.broadcast({ type: "track-changed", data: item })
       return item
