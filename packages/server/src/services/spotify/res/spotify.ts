@@ -58,18 +58,6 @@ export class Spotify implements IMediaPlayer {
     return await this.player.seek(position)
   }
 
-  async setVolume(volume: number) {
-    return await this.player.setVolume(volume)
-  }
-
-  async getVolume() {
-    return await this.player.getVolume()
-  }
-
-  async mute() {
-    return await this.player.mute()
-  }
-
   async getStatus() {
     return await this.player.getStatus()
   }

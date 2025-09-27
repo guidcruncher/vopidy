@@ -1,6 +1,5 @@
 export interface IMediaPlayer {
-  playTrackFile(filename: string)
-  playTrackUrl(url: string)
+  play(id: string)
   previous()
   next()
   stop()
