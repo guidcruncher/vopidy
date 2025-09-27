@@ -1,4 +1,4 @@
-import { Authorization, HttpAuth } from "@/core/http"
+import { Authorization, HttpAuth } from "@/core/http/"
 import { getAccessTokenOnly } from "@/services/auth"
 
 export class SpotifyAuth {
@@ -13,10 +13,10 @@ export class SpotifyAuth {
 
   public static async getProfile() {
     let accessToken = await getAccessTokenOnly()
-    return await this.getProfileByToken(accessToken)
+    return await SpotifyAuth.getProfileByToken(accessToken)
   }
 
-  public async getProfileByToken(accessToken) {
+  public static async getProfileByToken(accessToken) {
     let res: any = {}
     let count = 0
     const url = `${process.env.SPOTIFY_API}/me`

@@ -1,4 +1,4 @@
-import { Authorization, HttpAuth } from "@/core/http"
+import { Authorization, HttpAuth } from "@/core/http/"
 import { PagedItems } from "@/core/paging"
 import { getAccessTokenOnly } from "@/services/auth"
 
