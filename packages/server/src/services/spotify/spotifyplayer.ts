@@ -30,21 +30,21 @@ export class SpotifyPlayer {
 
   async pause() {
     const url = `${process.env.GOLIBRESPOT_API}/player/pause`
-    const res = await Http.put(url, Body.empty())
+    const res = await Http.post(url, Body.empty())
     WsClientStore.notify("pause", { service: "spotify" })
     return res
   }
 
   async resume() {
     const url = `${process.env.GOLIBRESPOT_API}/player/resume`
-    const res = await Http.put(url, Body.empty())
+    const res = await Http.post(url, Body.empty())
     WsClientStore.notify("resume", { service: "spotify" })
     return res
   }
 
   async stop() {
     const url = `${process.env.GOLIBRESPOT_API}/player/pause`
-    const res = await Http.put(url, Body.empty())
+    const res = await Http.post(url, Body.empty())
     WsClientStore.notify("stop", { service: "spotify" })
     return res
   }

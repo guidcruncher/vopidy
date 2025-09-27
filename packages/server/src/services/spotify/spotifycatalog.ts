@@ -93,19 +93,33 @@ export class SpotifyCatalog {
   }
 
   async describe(id: string) {
+    let url = ""
     switch (extractType(id)) {
       case "track":
-        return await this.getTrack(id)
+        url = `${process.env.SPOTIFY_API}/tracks/${extractId(id)}?fields=uri,album(images),is_playable,name,artists,album(name),album(uri),popularity,type `
+        break
       case "album":
-        return await this.getAlbum(id)
-      case "artist":
-        return await this.getArtist(id)
+        url = `${process.env.SPOTIFY_API}/albums/${extractId(id)}?fields=uri,images,name,artists,popularity,type`
+        break
       case "show":
-        return await this.getShow(id, 0, 1)
+        url = `${process.env.SPOTIFY_API}/shows/${extractId(id)}?fields=uri,images,name,publisher,description,type`
+        break
       case "episode":
-        return await this.getEpisode(id)
+        url = `${process.env.SPOTIFY_API}/episodes/${extractId(id)}?fields=uri,images,show(name),name,show(publisher),show(uri),type`
+        break
+      case "playlist":
+        url = `${process.env.SPOTIFY_API}/playlists/${extractId(id)}?fields=uri,images,name,owner,type`
+        break
     }
-    return {}
+
+    logger.warn(id, url)
+    const res = await HttpAuth.get(url, await this.getAuthHeaders(), true)
+
+    if (!res.ok) {
+      return {}
+    }
+
+    return this.toView(id, res)
   }
 
   private async getAuthHeaders() {
@@ -405,12 +419,13 @@ export class SpotifyCatalog {
   }
 
   public async getShow(id: string, offset: number, limit: number) {
-    const accessToken = await getAccessTokenOnly()
     const data = []
     const root: any = await this.describe(id)
     root.items = []
-    const url = `${process.env.SPOTIFY_API}/shows/${extractId(id)}/episodes?offset=${offset}&limit=${limit}&fields=next,offset,limit,total,items(uri),items(images),items(description),items(name),items(publisher),items(type),`
-    const res = await HttpAuth.get(url, await this.getAuthHeaders(), true)
+    const segments = id.split(":")
+    const url = `${process.env.SPOTIFY_API}/shows/${segments[2]}/episodes?offset=${offset}&limit=${limit}&fields=next,offset,limit,total,items(uri),items(images),items(description),items(name),items(publisher),items(type),`
+
+    const res = await HttpAuth.get(url, await this.getAuthHeaders())
 
     if (!res.ok) {
       return root
