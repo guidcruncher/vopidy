@@ -1,14 +1,7 @@
 import { HttpAuth, HttpResponse } from "@/core/http/"
 import { logger } from "@/core/logger"
 import { SpotifyAuth } from "./spotifyauth"
-import {
-  chunkArray,
-  extractId,
-  extractType,
-  filterImageUrl,
-  getCodeImageUrl,
-  getMarketUrlParam,
-} from "./utils"
+import { chunkArray, extractType, filterImageUrl, getCodeImageUrl } from "./utils"
 
 export class SpotifyCatalog {
   private toView(id: string, res: HttpResponse) {

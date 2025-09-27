@@ -1,13 +1,8 @@
 import { HttpAuth } from "@/core/http/"
+import { PagedItems } from "@/core/paging"
 import { SpotifyAuth } from "./spotifyauth"
-import {
-  chunkArray,
-  extractId,
-  extractType,
-  filterImageUrl,
-  getCodeImageUrl,
-  getMarketUrlParam,
-} from "./utils"
+import { SpotifyCatalog } from "./spotifycatalog"
+import { filterImageUrl, getCodeImageUrl } from "./utils"
 
 export class SpotifyLibrary {
   public async getPlaylists(nocache: boolean = false, offset: number = 0, limit: number = 20) {
@@ -50,7 +45,8 @@ export class SpotifyLibrary {
 
   public async getPlaylist(uri: string, offset: number, limit: number) {
     const segments = uri.split(":")
-    const root: any = await this.describe(uri)
+    const catalog = new SpotifyCatalog()
+    const root: any = await catalog.describe(uri)
     const data = []
 
     if (!root) {
@@ -100,7 +96,6 @@ export class SpotifyLibrary {
   }
 
   public async getAlbums(offset: number = 0, limit: number = 20) {
-    const accessToken = await getAccessTokenOnly()
     const index = 0
     const data = []
 
@@ -143,7 +138,6 @@ export class SpotifyLibrary {
   }
 
   public async getTracks(offset: number = 0, limit: number = 20) {
-    const accessToken = await getAccessTokenOnly()
     const data = []
 
     do {
@@ -185,7 +179,6 @@ export class SpotifyLibrary {
   }
 
   public async getShows(offset: number = 0, limit: number = 20) {
-    const accessToken = await getAccessTokenOnly()
     const data = []
 
     do {
@@ -224,7 +217,6 @@ export class SpotifyLibrary {
   }
 
   public async getArtists() {
-    const accessToken = await getAccessTokenOnly()
     const data = []
     let url = `${process.env.SPOTIFY_API}/me/following?type=artist`
 

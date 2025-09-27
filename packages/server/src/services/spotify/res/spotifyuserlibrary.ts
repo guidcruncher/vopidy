@@ -1,7 +1,7 @@
+import { CacheManager } from "@/core/cachemanager"
 import { Body, HttpAuth } from "@/core/http/"
 import { logger } from "@/core/logger"
 import { SpotifyAuth } from "./spotifyauth"
-import { CacheManager } from "@/core/cachemanager"
 
 export class SpotifyUserLibrary {
   public async saveToLibrary(id: string) {
