@@ -1,6 +1,7 @@
 import { logger } from "@/core/logger"
 import { Auth, spotifyScopes } from "@/services/auth"
-import { Spotify } from "@/services/spotify"
+import { LibrespotManager } from "@/services/spotify/librespotmanager"
+import { SpotifyAuth } from "@/services/spotify/spotifyauth"
 import { Hono } from "hono"
 import { HTTPException } from "hono/http-exception"
 import * as fs from "node:fs"
@@ -24,14 +25,12 @@ auth.get("/", (c) => {
 })
 
 auth.get("/profile", async (c) => {
-  const spotifyClient = new Spotify()
-  const json = await spotifyClient.getProfile()
+  const json = await SpotifyAuth.getProfile()
   return c.json(json)
 })
 
 auth.get("/profile/image", async (c) => {
-  const spotifyClient = new Spotify()
-  const json = await spotifyClient.getProfile()
+  const json = await SpotifyAuth.getProfile()
   return c.redirect(json.images[0].url, 302)
 })
 
@@ -67,9 +66,9 @@ auth.get("/callback", async (c) => {
   }
 
   // try {
+  const librespot = new LibrespotManager()
   const accessToken: any = await auth.spotifyAuthClient.getToken(options)
   auth.saveAuthState(accessToken)
-  const spotifyClient = new Spotify()
 
   global.spotifyDeviceId = ""
 
@@ -80,9 +79,9 @@ auth.get("/callback", async (c) => {
     },
   }
 
-  await spotifyClient.connectToLibRespot("Vopidy", t.access_token)
+  await librespot.connect("Vopidy", t.access_token)
   try {
-    const profile = await spotifyClient.getProfileByToken(t.access_token)
+    const profile = await SpotifyAuth.getProfileByToken(t.access_token)
     if (profile) {
       auth.saveAuthState(accessToken, profile)
       auth.saveAuthUsers(profile.id, accessToken, profile)

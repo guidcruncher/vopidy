@@ -1,4 +1,4 @@
-import { _fetchCache } from "@/core/http"
+import { Http } from "@/core/http/"
 import { logger } from "@/core/logger"
 import { PagedItems } from "@/core/paging"
 import { WsClientStore } from "@/core/wsclientstore"
@@ -36,7 +36,7 @@ const getBaseUrl = async () => {
     const bad = badHosts.some((h) => h["host"] === host)
     try {
       logger.warn(`${host} of ${hosts.length}`)
-      const res = await fetch(host)
+      const res = await Http.get(host, false)
 
       if (res.ok) {
         break
@@ -69,15 +69,13 @@ export class RadioBrowser {
     params.append("hidebroken", "true")
 
     const url = `${baseUrl}/json/countries?${params.toString()}`
-    const res = await _fetchCache(url, {
-      method: "GET",
-    })
+    const res = await Http.get(url, true)
 
-    if (!res) {
+    if (!res.ok) {
       badHosts.push({ date: Date.now(), host: baseUrl })
       return []
     }
-    let value = res.map((t) => {
+    let value = res.response.map((t) => {
       return {
         type: "country",
         id: t.iso_3166_1,
@@ -98,15 +96,13 @@ export class RadioBrowser {
     params.append("hidebroken", "true")
 
     const url = `${baseUrl}/json/states/${encodeURIComponent(country)}/?${params.toString()}`
-    const res = await _fetchCache(url, {
-      method: "GET",
-    })
+    const res = await Http.get(url, true)
 
-    if (!res) {
+    if (!res.ok) {
       badHosts.push({ date: Date.now(), host: baseUrl })
       return []
     }
-    let value = res.map((t) => {
+    let value = res.response.map((t) => {
       return {
         type: "region",
         id: t.name,
@@ -130,16 +126,14 @@ export class RadioBrowser {
     params.append("order", "name")
     params.append("hidebroken", "true")
     const url = `${baseUrl}/json/stations/bystateexact/${encodeURIComponent(code)}?${params.toString()}`
-    const res = await _fetchCache(url, {
-      method: "GET",
-    })
+    const res = await Http.get(url, true)
 
-    if (!res) {
+    if (!res.ok) {
       badHosts.push({ date: Date.now(), host: baseUrl })
       return []
     }
 
-    return res.map((json) => {
+    return res.response.map((json) => {
       return {
         id: json.stationuuid,
         image: json.favicon,
@@ -169,16 +163,14 @@ export class RadioBrowser {
       params.append(key, query[key].toString())
     }
     const url = `${baseUrl}/json/stations/search?${params.toString()}`
-    const res = await _fetchCache(url, {
-      method: "GET",
-    })
+    const res = await Http.get(url, true)
 
-    if (!res) {
+    if (!res.ok) {
       badHosts.push({ date: Date.now(), host: baseUrl })
       return view
     }
 
-    view = this.view(res, offset, limit, res.length, pageSSO)
+    view = this.view(res.response, offset, limit, res.response.length, pageSSO)
     view.calculatePaging()
     return view
   }
@@ -225,20 +217,18 @@ export class RadioBrowser {
     const params = new URLSearchParams()
     params.append("uuids", id)
     const url = `${baseUrl}/json/stations/byuuid?${params.toString()}`
-    const res = await _fetchCache(url, {
-      method: "GET",
-    })
+    const res = await Http.get(url, true)
 
-    if (!res) {
+    if (!res.ok) {
       badHosts.push({ date: Date.now(), host: baseUrl })
       return undefined
     }
 
-    if (res.length <= 0) {
+    if (res.response.length <= 0) {
       return undefined
     }
 
-    const json = res[0]
+    const json = res.response[0]
 
     return {
       id: json.stationuuid,
@@ -254,13 +244,13 @@ export class RadioBrowser {
     }
   }
 
-  public async playTrack(id: string) {
+  public async play(id: string) {
     const item = await this.describe(id)
 
     if (item) {
       const mpdClient = Mixer.getMediaPlayer()
       Mixer.savePlaybackTrack("radiobrowser", id)
-      await mpdClient.playTrackUrl(item.url)
+      await mpdClient.play(item.url)
       db.addToPlaybackHistory("radiobrowser", item)
       WsClientStore.broadcast({ type: "track-changed", data: item })
       return item

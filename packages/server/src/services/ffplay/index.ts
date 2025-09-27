@@ -46,11 +46,7 @@ export class FFplay implements IMediaPlayer {
     Mixer.removePlaybackState()
   }
 
-  public async playTrackUrl(url: string) {
-    return await this.playTrackFile(`${url}`)
-  }
-
-  public async playTrackFile(filename: string) {
+  public async play(filename: string) {
     const pidFile = "/local/state/ffplay.pid"
     let opts = ["-nodisp", "-autoexit"]
     opts.unshift(filename)
@@ -77,7 +73,7 @@ export class FFplay implements IMediaPlayer {
       FFplay.active = true
       WsClientStore.broadcast({ type: "playing", data: { source: "mpd" } })
     } catch (err) {
-      logger.error("Error in playTrackFile", err)
+      logger.error("Error in play", err)
     }
 
     return await this.getStatus()

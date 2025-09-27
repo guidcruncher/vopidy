@@ -21,11 +21,11 @@ export class Streamer {
     return item
   }
 
-  public async playTrack(id: string) {
+  public async play(id: string) {
     const mpdClient = Mixer.getMediaPlayer()
     let item: any = await this.describe(id)
     await db.addToPlaybackHistory("stream", item)
-    let res = await mpdClient.playTrackUrl(item.url)
+    let res = await mpdClient.play(item.url)
     Mixer.savePlaybackTrack("stream", id)
 
     WsClientStore.broadcast({

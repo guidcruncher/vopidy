@@ -1,4 +1,4 @@
-import { _fetchCache } from "@/core/http"
+import { Authorization, HttpAuth } from "@/core/http/"
 import { PagedItems } from "@/core/paging"
 import { getAccessTokenOnly } from "@/services/auth"
 
@@ -11,7 +11,7 @@ export class SpotifyFinder {
     market: string,
   ): Promise<PagedItems<any>> {
     let view = new PagedItems()
-    const accessToken = await getAccessTokenOnly()
+    const auth: Authorization = { type: "Bearer", value: await getAccessTokenOnly() }
     const params = new URLSearchParams()
     params.append("q", query)
     params.append("limit", limit.toString())
@@ -20,15 +20,12 @@ export class SpotifyFinder {
     params.append("type", catalog)
     const url = `https://api.spotify.com/v1/search?${params.toString()}`
     view.query = query
-    const res = await _fetchCache(url, {
-      method: "GET",
-      headers: { Authorization: `Bearer ${accessToken}` },
-    })
-    if (!res) {
+    const res = await HttpAuth.get(url, auth, true)
+    if (!res.ok) {
       return view
     }
 
-    const json = res[`${catalog.toLowerCase()}s`]
+    const json = res.response[`${catalog.toLowerCase()}s`]
 
     if (!json) {
       return view

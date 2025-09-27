@@ -28,16 +28,16 @@ export class MusicItem {
 }
 
 export class LocalMusic {
-  public async playTrack(id: string) {
+  public async play(id: string) {
     const item = await this.describe(id)
     const filename = await this.decodeId(id)
-    logger.trace(`playTrack ${filename}`)
+    logger.trace(`play ${filename}`)
 
     if (item) {
       if (fss.existsSync(filename)) {
         const mpdClient = Mixer.getMediaPlayer()
         Mixer.savePlaybackTrack("library", id)
-        await mpdClient.playTrackFile(filename)
+        await mpdClient.play(filename)
         db.addToPlaybackHistory("library", item)
         WsClientStore.broadcast({ type: "track-changed", data: item })
         return item

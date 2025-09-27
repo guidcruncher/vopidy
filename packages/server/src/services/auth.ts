@@ -1,5 +1,7 @@
 import { logger } from "@/core/logger"
-import { Spotify } from "@/services/spotify"
+import { LibrespotManager } from "@/services/spotify/librespotmanager"
+import { SpotifyAuth } from "@/services/spotify/spotifyauth"
+
 import { HTTPException } from "hono/http-exception"
 import * as fs from "node:fs"
 import * as path from "node:path"
@@ -100,7 +102,7 @@ export class Auth {
 
   public async login(id: string) {
     const filename = path.join(process.env.VOPIDY_DB.toString(), ".vopidy-users.json")
-    const spotifyClient = new Spotify()
+    const librespot = new LibrespotManager()
     let res: any = {}
 
     if (!fs.existsSync(filename)) {
@@ -117,7 +119,7 @@ export class Auth {
     this.saveAuthState(res.auth, res.profile)
 
     if (process.env.GOLIBRESPOT_CREDENTIAL_TYPE.toString() == "spotify_token") {
-      await spotifyClient.connectToLibRespotWithToken()
+      await librespot.connectWithToken()
     }
 
     return res.profile
@@ -175,8 +177,7 @@ export class Auth {
     }
 
     this.saveAuthState(json)
-    const spotifyClient = new Spotify()
-    const profile = await spotifyClient.getProfileByToken(json.access_token)
+    const profile = await SpotifyAuth.getProfileByToken(json.access_token)
     if (profile) {
       this.saveAuthUsers(profile.id, json, profile)
       this.saveAuthState(json, profile)

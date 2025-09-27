@@ -1,5 +1,4 @@
 import { logger } from "@/core/logger"
-import { SnapServer } from "@/core/snapserver"
 import { JsonRpcEvent } from "@/rpc/jsonrpcevent"
 
 export class WsClientStore {
@@ -20,6 +19,12 @@ export class WsClientStore {
   public static remove(rawWs) {
     WsClientStore.ensureStore()
     WsClientStore.wsclients = WsClientStore.wsclients.filter((client) => client !== rawWs)
+  }
+
+  public static notify(event: string, data: any) {
+    let json: any = { type: event, data: data }
+    json.data.source = json.data.service ?? "spotify"
+    return WsClientStore.broadcast(json)
   }
 
   public static broadcast(json) {

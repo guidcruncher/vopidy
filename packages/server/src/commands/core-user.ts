@@ -1,10 +1,9 @@
 import type { JsonRpcCommand } from "@/rpc/jsonrpccommandinjector"
 import { JsonRpcMessage } from "@/rpc/jsonrpcmessage"
-import { Spotify } from "@/services/spotify"
+import { SpotifyAuth } from "@/services/spotify/spotifyauth"
 
 export const execute: JsonRpcCommand = async (message: JsonRpcMessage) => {
-  const spotifyClient = new Spotify()
-  return await spotifyClient.getProfile()
+  return await SpotifyAuth.getProfile()
 }
 
 export default execute

@@ -1,9 +1,9 @@
 import type { JsonRpcCommand } from "@/rpc/jsonrpccommandinjector"
 import { JsonRpcMessage } from "@/rpc/jsonrpcmessage"
-import { Spotify } from "@/services/spotify"
+import { SpotifyCatalog } from "@/services/spotify/spotifycatalog"
 
 export const execute: JsonRpcCommand = async (message: JsonRpcMessage) => {
-  const spotifyClient = new Spotify()
+  const spotifyClient = new SpotifyCatalog()
   const offset = parseInt(message.params["offset"])
   const limit = parseInt(message.params["limit"])
   const res = await spotifyClient.getShow(message.params["id"], offset, limit)
