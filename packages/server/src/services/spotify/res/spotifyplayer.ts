@@ -1,6 +1,7 @@
-import { Body, Http, HttpAuth } from "@/core/http/"
+import { Body, Http } from "@/core/http/"
 import { logger } from "@/core/logger"
 import { WsClientStore } from "@/core/wsclientstore"
+import { db } from "@/services/db"
 import { Mixer } from "@/services/mixer"
 import { SpotifyAuth } from "./spotifyauth"
 
@@ -15,8 +16,8 @@ export class SpotifyPlayer {
       const track = await this.getTrackFromUri(uri)
       if (track) {
         await db.songs.insert(track)
-        await Mixer.setPlayerState("spotify", track.id, false)
-        WsClientStore.notify("play", { service: "spotify", uri, track })
+        await Mixer.savePlaybackTrack("spotify", uri)
+        WsClientStore.notify("track-changed", { service: "spotify", uri, track })
       }
     } catch (err) {
       logger.error("Error saving track metadata:", err)
@@ -28,7 +29,6 @@ export class SpotifyPlayer {
   async pause() {
     const url = `${process.env.GOLIBRESPOT_API}/player/pause`
     const res = await Http.put(url, Body.empty())
-    await Mixer.setPaused(true)
     WsClientStore.notify("pause", { service: "spotify" })
     return res
   }
@@ -36,7 +36,6 @@ export class SpotifyPlayer {
   async resume() {
     const url = `${process.env.GOLIBRESPOT_API}/player/resume`
     const res = await Http.put(url, Body.empty())
-    await Mixer.setPaused(false)
     WsClientStore.notify("resume", { service: "spotify" })
     return res
   }
@@ -44,7 +43,6 @@ export class SpotifyPlayer {
   async stop() {
     const url = `${process.env.GOLIBRESPOT_API}/player/pause`
     const res = await Http.put(url, Body.empty())
-    await Mixer.setStopped()
     WsClientStore.notify("stop", { service: "spotify" })
     return res
   }
@@ -72,7 +70,7 @@ export class SpotifyPlayer {
   async getVolume() {
     const url = `${process.env.GOLIBRESPOT_API}/player/volume`
     const res = await Http.get(url)
-    return res.volume_percent
+    return res.response.volume_percent
   }
 
   async mute() {
@@ -82,14 +80,6 @@ export class SpotifyPlayer {
   async getStatus() {
     const url = `${process.env.GOLIBRESPOT_API}/player/status`
     return await Http.get(url)
-  }
-
-  // helper for playTrack
-  private async getTrackFromUri(uri: string) {
-    if (!uri.startsWith("spotify:track:")) return null
-    const id = uri.split(":")[2]
-    const url = `${process.env.SPOTIFY_API}/tracks/${id}`
-    return await HttpAuth.get(url, await this.getAuthHeaders(), false)
   }
 
   private async getAuthHeaders() {

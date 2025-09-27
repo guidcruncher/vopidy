@@ -14,26 +14,12 @@ export class Http {
   }
 
   // Standard POST request
-  public static async post(url: string, data: any, contentType: "json" | "urlencoded" = "json") {
-    let body
-    if (contentType === "json") {
-      body = Body.json(data)
-    } else {
-      body = Body.urlEncoded(data)
-    }
-
+  public static async post(url: string, body: Body) {
     return await HttpClient.NoCache().post(url, body)
   }
 
   // Standard PUT request
-  public static async put(url: string, data: any, contentType: "json" | "urlencoded" = "json") {
-    let body
-    if (contentType === "json") {
-      body = Body.json(data)
-    } else {
-      body = Body.urlEncoded(data)
-    }
-
+  public static async put(url: string, body: body) {
     return await HttpClient.NoCache().put(url, body)
   }
 
@@ -58,36 +44,12 @@ export class HttpAuth {
   }
 
   // Standard POST request
-  public static async post(
-    url: string,
-    data: any,
-    contentType: "json" | "urlencoded" = "json",
-    auth: Authorization,
-  ) {
-    let body
-    if (contentType === "json") {
-      body = Body.json(data)
-    } else {
-      body = Body.urlEncoded(data)
-    }
-
+  public static async post(url: string, body: Body, auth: Authorization) {
     return await HttpClient.NoCache().post(url, body, auth)
   }
 
   // Standard PUT request
-  public static async put(
-    url: string,
-    data: any,
-    contentType: "json" | "urlencoded" = "json",
-    auth: Authorization,
-  ) {
-    let body
-    if (contentType === "json") {
-      body = Body.json(data)
-    } else {
-      body = Body.urlEncoded(data)
-    }
-
+  public static async put(url: string, Body: body, auth: Authorization) {
     return await HttpClient.NoCache().put(url, body, auth)
   }
 

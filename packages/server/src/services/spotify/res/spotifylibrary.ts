@@ -1,4 +1,5 @@
 import { HttpAuth } from "@/core/http/"
+import { SpotifyAuth } from "./spotifyauth"
 
 export class SpotifyLibrary {
   async getPlaylists(offset = 0, limit = 20) {

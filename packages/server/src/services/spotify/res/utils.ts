@@ -1,3 +1,5 @@
+import { SpotifyAuth } from "./spotifyauth"
+
 export function getCodeImageUrl(uri: string, color = "533191", whiteBar: boolean = true) {
   const barColor = whiteBar ? "white" : "black"
   const segments = uri.split(":")
@@ -10,4 +12,36 @@ export function getCodeImageUrl(uri: string, color = "533191", whiteBar: boolean
 export function extractId(id: string): string {
   if (!id) return ""
   return id.includes(":") ? id.split(":")[2] : id
+}
+
+export function extractType(id: string): string {
+  if (!id) return ""
+  return id.includes(":") ? id.split(":")[1] : id
+}
+
+export async function getMarket() {
+  const res = await SpotifyAuth.getProfile()
+  if (res.ok) {
+    return res.response.market
+  }
+  return ""
+}
+
+export async function getMarketUrlParam() {
+  const res = await SpotifyAuth.getProfile()
+  if (res.ok) {
+    return `market=${res.response.market}`
+  }
+  return ""
+}
+
+export function filterImageUrl(img: any[]) {
+  if (!img || img.length <= 0) {
+    return ""
+  }
+  const sorted = img.sort((a, b) => {
+    return b.width - a.width
+  })
+
+  return sorted[0].url
 }

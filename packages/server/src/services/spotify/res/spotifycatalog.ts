@@ -1,39 +1,992 @@
-import { HttpAuth } from "@/core/http/"
+import { HttpAuth, HttpResponse } from "@/core/http/"
 import { SpotifyAuth } from "./spotifyauth"
-import { extractId } from "./utils"
+import { extractId, extractType, filterImageUrl, getCodeImageUrl, getMarketUrlParam } from "./utils"
 
 export class SpotifyCatalog {
-  async describe(uri: string) {
-    const url = `${process.env.SPOTIFY_API}/descriptions/${encodeURIComponent(uri)}`
-    return await HttpAuth.get(url, await this.getAuthHeaders(), true)
+  private toView(id: string, res: HttpResponse) {
+    if (!res.ok) {
+      return {}
+    }
+
+    const value = res.response
+    switch (extractType(id)) {
+      case "track":
+        return {
+          context: value.album.uri,
+          id: value.uri,
+          image: filterImageUrl(value.album.images),
+          is_playable: value.is_playable,
+          name: value.name,
+          artist: value.artists
+            ? value.artists.map((t) => {
+                return { id: t.id, name: t.name }
+              })
+            : [],
+          popularity: value.popularity,
+          type: value.type,
+          barcodeUrl: getCodeImageUrl(value.uri),
+        }
+        break
+      case "album":
+        return {
+          context: value.uri,
+          id: value.uri,
+          image: filterImageUrl(value.images),
+          name: value.name,
+          artist: value.artists
+            ? value.artists.map((t) => {
+                return { id: t.id, name: t.name }
+              })
+            : [],
+          popularity: value.popularity,
+          type: value.type,
+          barcodeUrl: getCodeImageUrl(value.uri),
+        }
+        break
+      case "show":
+        return {
+          context: value.uri,
+          id: value.uri,
+          image: filterImageUrl(value.images),
+          name: value.name,
+          artist: [{ name: value.publisher }],
+          publisher: value.publisher,
+          description: value.description,
+          type: value.type,
+          barcodeUrl: getCodeImageUrl(value.uri),
+        }
+        break
+      case "playlist":
+        return {
+          context: value.uri,
+          id: value.uri,
+          image: filterImageUrl(value.images),
+          name: value.name,
+          owner: value.owner ? value.owner.display_name : "",
+          type: value.type,
+          barcodeUrl: getCodeImageUrl(value.uri),
+        }
+        break
+      case "episode":
+        return {
+          context: value.show.uri,
+          id: value.uri,
+          image: filterImageUrl(value.images),
+          album: value.show.nane,
+          name: value.name,
+          artist: [{ name: value.show.publisher }],
+          type: value.type,
+          barcodeUrl: getCodeImageUrl(value.uri),
+          publisher: value.show.publisher,
+        }
+        break
+      case "artist":
+        break
+    }
+
+    return {}
+  }
+
+  async describe(id: string) {
+    switch (extractType(id)) {
+      case "track":
+        return await this.getTrack(id)
+      case "album":
+        return await this.getAlbum(id)
+      case "artist":
+        return await this.getArtist(id)
+      case "show":
+        return await this.getShow(id)
+      case "episode":
+        return await this.getEpisode(id)
+    }
+    return {}
   }
 
   async getTrack(id: string) {
-    const url = `${process.env.SPOTIFY_API}/tracks/${extractId(id)}`
-    return await HttpAuth.get(url, await this.getAuthHeaders(), true)
+    const url = `${process.env.SPOTIFY_API}/tracks/${extractId(id)}?${await getMarketUrlParam()}`
+    return this.toView(await HttpAuth.get(url, await this.getAuthHeaders(), true))
   }
 
   async getAlbum(uri: string) {
-    const url = `${process.env.SPOTIFY_API}/albums/${extractId(uri)}`
-    return await HttpAuth.get(url, await this.getAuthHeaders(), true)
+    const url = `${process.env.SPOTIFY_API}/albums/${extractId(uri)}?${await getMarketUrlParam()}`
+    return this.toView(await HttpAuth.get(url, await this.getAuthHeaders(), true))
   }
 
   async getArtist(id: string) {
-    const url = `${process.env.SPOTIFY_API}/artists/${extractId(id)}`
-    return await HttpAuth.get(url, await this.getAuthHeaders(), true)
+    const url = `${process.env.SPOTIFY_API}/artists/${extractId(id)}?${await getMarketUrlParam()}`
+    return this.toView(await HttpAuth.get(url, await this.getAuthHeaders(), true))
   }
 
-  async getShow(id: string, offset: number, limit: number) {
-    const url = `${process.env.SPOTIFY_API}/shows/${extractId(id)}?offset=${offset}&limit=${limit}`
-    return await HttpAuth.get(url, await this.getAuthHeaders(), true)
+  async getShow(id: string) {
+    const url = `${process.env.SPOTIFY_API}/shows/${extractId(id)}?${await getMarketUrlParam()}`
+    return this.toView(await HttpAuth.get(url, await this.getAuthHeaders(), true))
   }
 
   async getEpisode(id: string) {
-    const url = `${process.env.SPOTIFY_API}/episodes/${extractId(id)}`
-    return await HttpAuth.get(url, await this.getAuthHeaders(), true)
+    const url = `${process.env.SPOTIFY_API}/episodes/${extractId(id)}?${await getMarketUrlParam()}`
+    return this.toView(await HttpAuth.get(url, await this.getAuthHeaders(), true))
   }
 
   private async getAuthHeaders() {
     return await SpotifyAuth.getAuthorization()
+  }
+
+  public async getStatus() {
+    const url = `${process.env.GOLIBRESPOT_API}/status`
+    let res: any = await http.get(url)
+    let track: any = {}
+
+    if (res.status == 204) {
+      res = await http.get(url)
+    }
+
+    if (!res.ok) {
+      logger.error(res)
+      return undefined
+    }
+
+    const json = res.response
+    if (json.track) {
+      track = await this.describe(json.track.uri)
+      json.duration = json.track.duration
+      json.position = { duration: json.duration, progress: json.progress_ms }
+      json.track = track
+      json.source = "spotify"
+      const view = {
+        output: "librespot",
+        source: json.source,
+        track: json.track,
+        playing: !json.stopped,
+        paused: json.paused,
+        volume: json.volume,
+        position: json.position,
+      }
+      return view
+    }
+  }
+
+  public async getPlaylists(nocache: boolean = false, offset: number = 0, limit: number = 20) {
+    const data = []
+
+    do {
+      const url = `${SPOTIFY_API}/me/playlists?offset=${offset}&limit=${limit}&fields=items(uri),items(owner)(display_name),items(images),items(name),items(owner),items(type),next,offset,limit,total`
+      let res = {}
+
+      res = await HttpAuth.get(url, await this.getAuthHeaders(), !nocache)
+
+      if (!res.ok) {
+        return data
+      }
+      const jsondata: any = res.response
+      if (!jsondata) {
+        return data
+        break
+      }
+      offset += jsondata.items.length
+      for (let i = 0; i < jsondata.items.length; i++) {
+        const value = jsondata.items[i]
+        const item: any = {
+          id: value.uri,
+          image: filterImageUrl(value.images),
+          name: value.name,
+          owner: value.owner ? value.owner.display_name : "",
+          type: value.type,
+          barcodeUrl: this.getCodeImageUrl(value.uri),
+        }
+        data.push(item)
+      }
+
+      if (!jsondata.next) {
+        return data
+        break
+      }
+    } while (true)
+  }
+
+  public async getPlaylist(uri: string, offset: number, limit: number) {
+    const segments = uri.split(":")
+    const root: any = await this.describe(uri)
+    const data = []
+
+    if (!root) {
+      return undefined
+    }
+
+    const url = `${SPOTIFY_API}/playlists/${segments[2]}/tracks?offset=${offset}&limit=${limit}&fields=items(track)(uri),items(track)(album)(name),items(track)(album)(images)items(track)(name),items(track)(type),items(track)(images),items(track)(artists),next,offset,limit,total`
+    const res = HttpAuth.get(url, await this.getAuthHeaders(), true)
+
+    if (!res.ok) {
+      return root
+    }
+    const jsondata = res.response
+    if (!jsondata) {
+      return root
+    }
+
+    for (let i = 0; i < jsondata.items.length; i++) {
+      const value = jsondata.items[i]
+      const item: any = {
+        context: uri,
+        id: value.track.uri,
+        image: value.track.album ? filterImageUrl(value.track.album.images) : "",
+        album: value.track.album ? value.track.album.name : "",
+        name: value.track.name,
+        type: value.track.type,
+      }
+      if (value.track.images) {
+        item.image = filterImageUrl(value.track.images)
+      }
+      if (value.track.artists) {
+        item.artist = value.track.artists.map((t) => {
+          return { id: t.id, name: t.name }
+        })
+      }
+      data.push(item)
+    }
+
+    let view = new PagedItems()
+    view.offset = offset
+    view.limit = limit
+    view.total = jsondata.total
+    view.items = data
+    view.calculatePaging()
+    root.content = view
+    return root
+  }
+
+  public async getAlbums(offset: number = 0, limit: number = 20) {
+    const accessToken = await getAccessTokenOnly()
+    const index = 0
+    const data = []
+
+    do {
+      const url = `${SPOTIFY_API}/me/albums?offset=${offset}&limit=${limit}&fields=items(album)(uri),items(album)(images),items(album)(name),items(album)(artists),items(album)(popularity),items(album)(type),next,offset,limit,total`
+      const res = HttpAuth.get(url, await this.getAuthHeaders(), true)
+
+      if (!res.ok) {
+        return data
+      }
+      const jsondata = res.response
+      if (!jsondata) {
+        return data
+        break
+      }
+      offset += jsondata.items.length
+      for (let i = 0; i < jsondata.items.length; i++) {
+        const value = jsondata.items[i].album
+        const item: any = {
+          id: value.uri,
+          image: value.images ? filterImageUrl(value.images) : "",
+          name: value.name,
+          artist: value.artists
+            ? value.artists.map((t) => {
+                return { id: t.id, name: t.name }
+              })
+            : [],
+          popularity: value.popularity,
+          type: value.type,
+          barcodeUrl: this.getCodeImageUrl(value.uri),
+        }
+        data.push(item)
+      }
+
+      if (!jsondata.next) {
+        return data
+        break
+      }
+    } while (true)
+  }
+
+  public async getAlbum(uri: string) {
+    const segs = uri.split(":")
+    const accessToken = await getAccessTokenOnly()
+    let data: any = {}
+    const url = `${SPOTIFY_API}/albums/${segs[2]}?fields=uri,images,name,artists,popularity,type,tracks(next),tracks(offset),tracks(limit),tracks(total),tracks(items)(uri),tracks(items)(album)(images),tracks(items)(is_playable),tracks(items)(name),tracks(items)(artists),tracks(items)(popularity),tracks(items)(type)`
+
+    const res = HttpAuth.get(url, await this.getAuthHeaders(), true)
+
+    if (!res.ok) {
+      return data
+    }
+    const value = res.response
+    if (!value) {
+      return data
+    }
+
+    data = {
+      id: value.uri,
+      image: value.images ? filterImageUrl(value.images) : "",
+      name: value.name,
+      artist: value.artists
+        ? value.artists.map((t) => {
+            return { id: t.id, name: t.name }
+          })
+        : [],
+      popularity: value.popularity,
+      type: value.type,
+      barcodeUrl: this.getCodeImageUrl(value.uri),
+      items: [],
+    }
+
+    let tracks = value.tracks
+    do {
+      if (!tracks || !tracks.items) {
+        const res = HttpAuth.get(tracks.next, await this.getAuthHeaders(), true)
+        if (!res.ok) {
+          break
+        }
+        const value = res.response
+        if (!value) {
+          break
+        }
+        tracks = value
+      }
+      tracks.items.forEach((track) => {
+        data.items.push({
+          context: uri,
+          id: track.uri,
+          is_playable: track.is_playable,
+          name: track.name,
+          artist: value.artists
+            ? value.artists.map((t) => {
+                return { id: t.id, name: t.name }
+              })
+            : [],
+          popularity: track.popularity,
+          type: track.type,
+        })
+      })
+
+      tracks.items = undefined
+    } while (tracks.next)
+    return data
+  }
+
+  public async getShows(offset: number = 0, limit: number = 20) {
+    const accessToken = await getAccessTokenOnly()
+    const data = []
+
+    do {
+      const url = `${SPOTIFY_API}/me/shows?offset=${offset}&limit=${limit}&fields=next,offset,limit,total,items(show)(uri),items(show)(images),items(show)(name),items(show)(publisher),items(show)(description),items(show)(type)`
+      const res = HttpAuth.get(url, await this.getAuthHeaders(), true)
+
+      if (!res.ok) {
+        return data
+      }
+      const jsondata = res.response
+      if (!jsondata) {
+        return data
+        break
+      }
+
+      offset += jsondata.items.length
+      for (let i = 0; i < jsondata.items.length; i++) {
+        const value = jsondata.items[i].show
+        const item: any = {
+          id: value.uri,
+          image: value.images ? filterImageUrl(value.images) : "",
+          name: value.name,
+          publisher: value.publisher,
+          description: value.description,
+          type: value.type,
+          barcodeUrl: this.getCodeImageUrl(value.uri),
+        }
+        data.push(item)
+      }
+
+      if (!jsondata.next) {
+        return data
+        break
+      }
+    } while (true)
+  }
+
+  public async getTrack(id: string) {
+    if (!id || id == "") {
+      return {}
+    }
+    const accessToken = await getAccessTokenOnly()
+
+    const url = `${SPOTIFY_API}/tracks/${this.extractId(id)}?fields=uri,album(images),is_playable,name,album(name),artists,popularity,album(uri),type`
+    const res = HttpAuth.get(url, await this.getAuthHeaders(), true)
+
+    if (!res.ok) {
+      return {}
+    }
+    const value = res.response
+    if (!value) {
+      return {}
+    }
+    const item: any = {
+      context: value.album.uri,
+      id: value.uri,
+      image: value.album.images ? filterImageUrl(value.album.images) : "",
+      album: value.album.name,
+      name: value.name,
+      artist: value.artists
+        ? value.artists.map((t) => {
+            return { id: t.id, name: t.name }
+          })
+        : [],
+      type: value.type,
+      barcodeUrl: this.getCodeImageUrl(value.uri),
+    }
+    return item
+  }
+
+  public async getEpisode(id: string) {
+    if (!id || id == "") {
+      return {}
+    }
+    const accessToken = await getAccessTokenOnly()
+
+    const url = `${SPOTIFY_API}/episodes/${this.extractId(id)}?fields=uri,images,show(name),name,show(publisher),show(uri),type`
+    const res = HttpAuth.get(url, await this.getAuthHeaders(), true)
+
+    if (!res.ok) {
+      return {}
+    }
+    const value = res.response
+    if (!value) {
+      return {}
+    }
+    const item: any = {
+      context: value.show.uri,
+      id: value.uri,
+      image: value.images ? filterImageUrl(value.images) : "",
+      album: value.show.name,
+      name: value.name,
+      artist: [{ name: value.show.publisher }],
+      type: value.type,
+      barcodeUrl: this.getCodeImageUrl(value.uri),
+    }
+    return item
+  }
+
+  public async getTracks(offset: number = 0, limit: number = 20) {
+    const accessToken = await getAccessTokenOnly()
+    const data = []
+
+    do {
+      const url = `${SPOTIFY_API}/me/tracks?offset=${offset}&limit=${limit}&fields=next,offset,limit,total,items(track)(uri),items(track)(album)(images),items(track)(is_playable),items(track)(name),items(track)(album)(name),items(track)(artists),items(track)(popularity),items(track)(type)`
+      const res = HttpAuth.get(url, await this.getAuthHeaders(), true)
+
+      if (!res.ok) {
+        return data
+      }
+      const jsondata = res.response
+      if (!jsondata) {
+        return data
+        break
+      }
+      offset += jsondata.items.length
+      for (let i = 0; i < jsondata.items.length; i++) {
+        const value = jsondata.items[i].track
+        const item: any = {
+          id: value.uri,
+          image: value.album.images ? filterImageUrl(value.album.images) : "",
+          album: value.album.name,
+          name: value.name,
+          artist: value.artists
+            ? value.artists.map((t) => {
+                return { id: t.id, name: t.name }
+              })
+            : [],
+          type: value.type,
+          barcodeUrl: this.getCodeImageUrl(value.uri),
+        }
+        data.push(item)
+      }
+
+      if (!jsondata.next) {
+        return data
+        break
+      }
+    } while (true)
+  }
+
+  public async getQueue() {
+    const accessToken = await getAccessTokenOnly()
+    const data = []
+
+    const url = `${SPOTIFY_API}/me/player/queue`
+    const res = HttpAuth.get(url, await this.getAuthHeaders(), true)
+
+    if (!res.ok) {
+      return data
+    }
+    const jsondata = res.response
+    if (!jsondata) {
+      return data
+    }
+
+    jsondata.queue.forEach((value) => {
+      switch (value.type) {
+        case "track":
+          data.push({
+            id: value.uri,
+            image: value.album.images ? filterImageUrl(value.album.images) : "",
+            album: value.album.name,
+            name: value.name,
+            artist: value.artists
+              ? value.artists.map((t) => {
+                  return { id: t.id, name: t.name }
+                })
+              : [],
+            type: value.type,
+            barcodeUrl: this.getCodeImageUrl(value.uri),
+          })
+          break
+        case "episode":
+          data.push({
+            id: value.uri,
+            image: value.images ? filterImageUrl(value.images) : "",
+            album: value.show.nane,
+            name: value.name,
+            artist: [{ name: value.show.publisher }],
+            type: value.type,
+            barcodeUrl: this.getCodeImageUrl(value.uri),
+          })
+      }
+    })
+
+    return data
+  }
+
+  public async getNewAlbums(offset: number = 0, limit: number = 50) {
+    const accessToken = await getAccessTokenOnly()
+    const index = 0
+    const data = []
+
+    const url = `${SPOTIFY_API}/browse/new-releases?offset=${offset}&limit=${limit}&fields=albums(items)(uri),albums(items)(images),albums(items)(name),albums(items)(artists),albums(items)(popularity),albums(items)(type),next,offset,limit,total`
+    const res = HttpAuth.get(url, await this.getAuthHeaders(), true)
+
+    if (!res.ok) {
+      return data
+    }
+    const jsondata = res.response
+    if (!jsondata) {
+      return data
+    }
+    offset += jsondata.albums.items.length
+    for (let i = 0; i < jsondata.albums.items.length; i++) {
+      const value = jsondata.albums.items[i]
+      const item: any = {
+        id: value.uri,
+        image: value.images ? filterImageUrl(value.images) : "",
+        name: value.name,
+        artist: value.artists
+          ? value.artists.map((t) => {
+              return { id: t.id, name: t.name }
+            })
+          : [],
+        popularity: value.popularity,
+        type: value.type,
+        barcodeUrl: this.getCodeImageUrl(value.uri),
+      }
+      data.push(item)
+    }
+
+    return data
+  }
+
+  public async getArtistsTopTracks(id: string) {
+    if (!id || id == "") {
+      return []
+    }
+    const accessToken = await getAccessTokenOnly()
+    const url = `${SPOTIFY_API}/artists/${this.extractId(id)}/top-tracks?fields=next,offset,limit,total,tracks(uri),tracks(album)(images),tracks(is_playable),tracks(name),tracks(artists),tracks(popularity),tracks(type)`
+    const data = []
+
+    const res = HttpAuth.get(url, await this.getAuthHeaders(), true)
+
+    if (!res.ok) {
+      return data
+    }
+    const jsondata = res.response
+    if (!jsondata) {
+      return data
+    }
+    for (let i = 0; i < jsondata.tracks.length; i++) {
+      const value = jsondata.tracks[i]
+      const item: any = {
+        id: value.uri,
+        image: value.album.images ? filterImageUrl(value.album.images) : "",
+        album: value.album.name,
+        name: value.name,
+        artist: value.artists
+          ? value.artists.map((t) => {
+              return { id: t.id, name: t.name }
+            })
+          : [],
+        type: value.type,
+        barcodeUrl: this.getCodeImageUrl(value.uri),
+      }
+      data.push(item)
+    }
+    return data
+  }
+
+  public async getArtistAlbums(id: string, offset: number = 0, limit: number = 50) {
+    if (!id || id == "") {
+      return []
+    }
+    const accessToken = await getAccessTokenOnly()
+    const index = 0
+    const data = []
+
+    const url = `${SPOTIFY_API}/artists/${this.extractId(id)}/albums?offset=${offset}&limit=${limit}&fields=next,offset,limit,total,items(uri),items(images),items(name),items(artists),items(popularity),items(type),items(album_type)`
+
+    const res = HttpAuth.get(url, await this.getAuthHeaders(), true)
+
+    if (!res.ok) {
+      return data
+    }
+    const jsondata = res.response
+    if (!jsondata) {
+      return data
+    }
+    offset += jsondata.items.length
+    for (let i = 0; i < jsondata.items.length; i++) {
+      const value = jsondata.items[i]
+      const item: any = {
+        id: value.uri,
+        image: value.images ? filterImageUrl(value.images) : "",
+        name: value.name,
+        album_type: value.album_type,
+        artist: value.artists
+          ? value.artists.map((t) => {
+              return { id: t.id, name: t.name }
+            })
+          : [],
+        popularity: value.popularity,
+        type: value.type,
+        barcodeUrl: this.getCodeImageUrl(value.uri),
+      }
+      data.push(item)
+    }
+    return data.sort((a, b) => {
+      return b.popularity - a.popularity
+    })
+  }
+
+  public async getShow(id: string, offset: number, limit: number) {
+    const accessToken = await getAccessTokenOnly()
+    const data = []
+    const root: any = await this.describe(id)
+    root.items = []
+    const segments = id.split(":")
+    const url = `${SPOTIFY_API}/shows/${segments[2]}/episodes?offset=${offset}&limit=${limit}&fields=next,offset,limit,total,items(uri),items(images),items(description),items(name),items(publisher),items(type),`
+    const res = HttpAuth.get(url, await this.getAuthHeaders(), true)
+
+    if (!res.ok) {
+      return root
+    }
+    const jsondata = res.response
+
+    offset += jsondata.items.length
+    for (let i = 0; i < jsondata.items.length; i++) {
+      const value = jsondata.items[i]
+      const item: any = {
+        context: id,
+        id: value.uri,
+        image: value.images ? filterImageUrl(value.images) : "",
+        name: value.name,
+        publisher: value.publisher,
+        description: value.description,
+        type: value.type,
+        barcodeUrl: this.getCodeImageUrl(value.uri),
+      }
+      data.push(item)
+    }
+
+    let view = new PagedItems()
+    view.offset = offset
+    view.limit = limit
+    view.total = jsondata.total
+    view.items = data
+    view.calculatePaging()
+    root.content = view
+    return root
+  }
+
+  public async getArtist(id: string) {
+    if (!id || id == "") {
+      return {}
+    }
+    const accessToken = await getAccessTokenOnly()
+    let data: any = {}
+    const url = `${SPOTIFY_API}/artists/${this.extractId(id)}`
+    const res = HttpAuth.get(url, await this.getAuthHeaders(), true)
+    if (!res.ok) {
+      return data
+    }
+    const value = res.response
+    if (!value) {
+      return data
+    }
+
+    const tracks = await this.getArtistsTopTracks(id)
+    const albums = await this.getArtistAlbums(id)
+
+    data = {
+      id: value.uri,
+      type: value.type,
+      barcodeUrl: this.getCodeImageUrl(value.uri),
+      image: value.images ? filterImageUrl(value.images) : "",
+      name: value.name,
+      popularity: value.popularity,
+      genres: value.genres,
+      href: value.href,
+      external_urls: value.external_urls,
+      tracks: tracks,
+      albums: albums,
+    }
+
+    return data
+  }
+
+  public async getArtists() {
+    const accessToken = await getAccessTokenOnly()
+    const data = []
+    let url = `${SPOTIFY_API}/me/following?type=artist`
+
+    do {
+      const res = HttpAuth.get(url, await this.getAuthHeaders(), true)
+
+      if (!res.ok) {
+        return data
+      }
+      const jsondata = res.response
+      if (!jsondata) {
+        return data
+      }
+      for (let i = 0; i < jsondata.artists.items.length; i++) {
+        const value = jsondata.artists.items[i]
+        const item: any = {
+          id: value.uri,
+          type: value.type,
+          image: value.images ? filterImageUrl(value.images) : "",
+          name: value.name,
+          popularity: value.popularity,
+          genres: value.genres,
+          href: value.href,
+          external_urls: value.external_urls,
+          barcodeUrl: this.getCodeImageUrl(value.uri),
+        }
+        data.push(item)
+      }
+      if (!jsondata.next) {
+        return data
+        break
+      }
+      url = jsondata.next
+    } while (true)
+
+    return data
+  }
+
+  private chunkArray(array, chunkSize) {
+    return Array.from({ length: Math.ceil(array.length / chunkSize) }, (_, index) =>
+      array.slice(index * chunkSize, (index + 1) * chunkSize),
+    )
+  }
+
+  public async createPlaylist(name: string, uris: string[], description: string = "") {
+    logger.log("createPlaylist")
+
+    const accessToken = await this.getAuthorization()
+    let lists = await this.getPlaylists(true)
+    let id = ""
+    let url = ""
+    let list = lists.find((l) => {
+      return l.name == name
+    })
+    if (list) {
+      id = list.id.split(":")[2]
+      logger.log(`existing list id ${id}`)
+    }
+
+    if (id == "") {
+      logger.log("creating new list")
+      const profile = await this.getProfile()
+      const data = []
+      url = `${SPOTIFY_API}/users/${profile.id}/playlists`
+      const body = {
+        name: name,
+        description: description == "" ? name : description,
+        public: false,
+      }
+
+      const res = await HttpAuth.post(url, Body.json(body), await this.getAuthHeaders())
+      let id = ""
+
+      if (res.ok) {
+        lists = await this.getPlaylists(true)
+        list = lists.find((l) => {
+          return l.name == name
+        })
+        id = list.id.split(":")[2]
+        logger.log(`created list id ${id}`)
+      }
+    }
+
+    logger.log(`list id ${id}`)
+    if (id != "") {
+      const chunks = this.chunkArray(uris, 50)
+
+      logger.log(`saving ${chunks.length} chunks`)
+      for (const chunk of chunks) {
+        let chunkurl = `${SPOTIFY_API}/playlists/${id}/tracks`
+        const chunkres = await HttpAuth.post(
+          chunkurl,
+          Body.json({ uris: chunk }),
+          await this.getAuthHeaders(),
+        )
+      }
+
+      await CacheManager.flush()
+    }
+
+    return id
+  }
+
+  public async seek(position: number) {
+    const url = `${await this.getLocalApi()}/player/seek`
+    const body = { position: position * 1000, relative: false }
+    const res = await HttpAuth.post(url, Body.json(body), await this.getAuthHeaders())
+    WsClientStore.broadcast({
+      type: "track-seeked",
+      data: { position: position, source: "spotify" },
+    })
+    let status: any = await this.getStatus()
+    return status
+  }
+
+  public async saveToLibrary(id: string) {
+    let accessToken = await getAccessTokenOnly()
+    let res: any = {}
+    let segments = id.split(":")
+
+    if (segments[1] == "artist") {
+      return await this.follow(segments[1], id)
+    }
+
+    if (await this.inLibrary(id)) {
+      return true
+    }
+
+    const getId = () => {
+      return segments.length == 3 ? segments[2] : id
+    }
+    const body = { ids: [getId()] }
+    const url = `${SPOTIFY_API}/me/${segments[1]}s?ids=${getId()}`
+
+    res = HttpAuth.put(url, Body.json(body), await this.getAuthHeaders())
+
+    await CacheManager.flush()
+    return res
+  }
+
+  public async removeFromLibrary(id: string) {
+    let accessToken = await getAccessTokenOnly()
+    let res: any = {}
+    let segments = id.split(":")
+    if (segments[1] == "artist") {
+      return await this.unfollow(segments[1], id)
+    }
+
+    if (!(await this.inLibrary(id))) {
+      return true
+    }
+
+    const getId = () => {
+      return segments.length == 3 ? segments[2] : id
+    }
+    const url = `${SPOTIFY_API}/me/${segments[1]}s?ids=${getId()}`
+    res = HttpAuth.delete(url, await this.getAuthHeaders())
+    await CacheManager.flush()
+    return res
+  }
+
+  public async inLibrary(id: string) {
+    let accessToken = await getAccessTokenOnly()
+    let res: any = {}
+    let segments = id.split(":")
+
+    if (segments[1] == "artist") {
+      return await this.doesFollow(segments[1], id)
+    }
+
+    const getId = () => {
+      return segments.length == 3 ? segments[2] : id
+    }
+    const url = `${SPOTIFY_API}/me/${segments[1]}s/contains?ids=${getId()}`
+    res = HttpAuth.get(url, await this.getAuthHeaders(), false)
+
+    if (res.ok) {
+      return res.response[0]
+    } else {
+      logger.error("No valid response received", res)
+    }
+    return false
+  }
+
+  public async follow(type: string, id: string) {
+    let accessToken = await getAccessTokenOnly()
+    let res: any = {}
+    let segments = id.split(":")
+    const getId = () => {
+      return segments.length == 3 ? segments[2] : id
+    }
+
+    if (await this.doesFollow(type, id)) {
+      return true
+    }
+
+    const url = `${SPOTIFY_API}/me/following?type=${type}&ids=${getId()}`
+    res = HttpAuth.put(url, Body.empty(), await this.getAuthHeaders())
+
+    await CacheManager.flush()
+    return res.ok
+  }
+
+  public async unfollow(type: string, id: string) {
+    let accessToken = await getAccessTokenOnly()
+    let res: any = {}
+    let segments = id.split(":")
+
+    if (!(await this.doesFollow(type, id))) {
+      return true
+    }
+
+    const getId = () => {
+      return segments.length == 3 ? segments[2] : id
+    }
+    const url = `${SPOTIFY_API}/me/following?type=${type}&ids=${getId()}`
+    res = HttpAuth.delete(url, await this.getAuthHeaders())
+
+    await CacheManager.flush()
+    return res.ok
+  }
+
+  public async doesFollow(type: string, id: string) {
+    let accessToken = await getAccessTokenOnly()
+    let res: any = {}
+    let segments = id.split(":")
+    const getId = () => {
+      return segments.length == 3 ? segments[2] : id
+    }
+    const url = `${SPOTIFY_API}/me/following/contains?type=${segments[1] ? segments[1] : "artist"}&ids=${getId()}`
+    res = HttpAuth.get(url, await this.getAuthHeaders(), false)
+
+    if (res.ok) {
+      return res[0]
+    } else {
+      logger.error("No valid response received", res)
+    }
+
+    return false
   }
 }

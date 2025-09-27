@@ -21,6 +21,12 @@ export class WsClientStore {
     WsClientStore.wsclients = WsClientStore.wsclients.filter((client) => client !== rawWs)
   }
 
+  public static notify(event: string, data: any) {
+    let json: any = { type: event, data: data }
+    json.data.source = json.data.service ?? "spotify"
+    return broadcast(json)
+  }
+
   public static broadcast(json) {
     WsClientStore.ensureStore()
     const ev = new JsonRpcEvent()
