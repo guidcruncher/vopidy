@@ -1,5 +1,13 @@
 import { HttpAuth } from "@/core/http/"
 import { SpotifyAuth } from "./spotifyauth"
+import {
+  chunkArray,
+  extractId,
+  extractType,
+  filterImageUrl,
+  getCodeImageUrl,
+  getMarketUrlParam,
+} from "./utils"
 
 export class SpotifyLibrary {
   public async getPlaylists(nocache: boolean = false, offset: number = 0, limit: number = 20) {
@@ -28,7 +36,7 @@ export class SpotifyLibrary {
           name: value.name,
           owner: value.owner ? value.owner.display_name : "",
           type: value.type,
-          barcodeUrl: this.getCodeImageUrl(value.uri),
+          barcodeUrl: getCodeImageUrl(value.uri),
         }
         data.push(item)
       }
@@ -50,7 +58,7 @@ export class SpotifyLibrary {
     }
 
     const url = `${process.env.SPOTIFY_API}/playlists/${segments[2]}/tracks?offset=${offset}&limit=${limit}&fields=items(track)(uri),items(track)(album)(name),items(track)(album)(images)items(track)(name),items(track)(type),items(track)(images),items(track)(artists),next,offset,limit,total`
-    const res = HttpAuth.get(url, await this.getAuthHeaders(), true)
+    const res = await HttpAuth.get(url, await this.getAuthHeaders(), true)
 
     if (!res.ok) {
       return root
@@ -98,7 +106,7 @@ export class SpotifyLibrary {
 
     do {
       const url = `${process.env.SPOTIFY_API}/me/albums?offset=${offset}&limit=${limit}&fields=items(album)(uri),items(album)(images),items(album)(name),items(album)(artists),items(album)(popularity),items(album)(type),next,offset,limit,total`
-      const res = HttpAuth.get(url, await this.getAuthHeaders(), true)
+      const res = await HttpAuth.get(url, await this.getAuthHeaders(), true)
 
       if (!res.ok) {
         return data
@@ -122,7 +130,7 @@ export class SpotifyLibrary {
             : [],
           popularity: value.popularity,
           type: value.type,
-          barcodeUrl: this.getCodeImageUrl(value.uri),
+          barcodeUrl: getCodeImageUrl(value.uri),
         }
         data.push(item)
       }
@@ -140,7 +148,7 @@ export class SpotifyLibrary {
 
     do {
       const url = `${process.env.SPOTIFY_API}/me/tracks?offset=${offset}&limit=${limit}&fields=next,offset,limit,total,items(track)(uri),items(track)(album)(images),items(track)(is_playable),items(track)(name),items(track)(album)(name),items(track)(artists),items(track)(popularity),items(track)(type)`
-      const res = HttpAuth.get(url, await this.getAuthHeaders(), true)
+      const res = await HttpAuth.get(url, await this.getAuthHeaders(), true)
 
       if (!res.ok) {
         return data
@@ -164,7 +172,7 @@ export class SpotifyLibrary {
               })
             : [],
           type: value.type,
-          barcodeUrl: this.getCodeImageUrl(value.uri),
+          barcodeUrl: getCodeImageUrl(value.uri),
         }
         data.push(item)
       }
@@ -182,7 +190,7 @@ export class SpotifyLibrary {
 
     do {
       const url = `${process.env.SPOTIFY_API}/me/shows?offset=${offset}&limit=${limit}&fields=next,offset,limit,total,items(show)(uri),items(show)(images),items(show)(name),items(show)(publisher),items(show)(description),items(show)(type)`
-      const res = HttpAuth.get(url, await this.getAuthHeaders(), true)
+      const res = await HttpAuth.get(url, await this.getAuthHeaders(), true)
 
       if (!res.ok) {
         return data
@@ -203,7 +211,7 @@ export class SpotifyLibrary {
           publisher: value.publisher,
           description: value.description,
           type: value.type,
-          barcodeUrl: this.getCodeImageUrl(value.uri),
+          barcodeUrl: getCodeImageUrl(value.uri),
         }
         data.push(item)
       }
@@ -221,7 +229,7 @@ export class SpotifyLibrary {
     let url = `${process.env.SPOTIFY_API}/me/following?type=artist`
 
     do {
-      const res = HttpAuth.get(url, await this.getAuthHeaders(), true)
+      const res = await HttpAuth.get(url, await this.getAuthHeaders(), true)
 
       if (!res.ok) {
         return data
@@ -241,7 +249,7 @@ export class SpotifyLibrary {
           genres: value.genres,
           href: value.href,
           external_urls: value.external_urls,
-          barcodeUrl: this.getCodeImageUrl(value.uri),
+          barcodeUrl: getCodeImageUrl(value.uri),
         }
         data.push(item)
       }

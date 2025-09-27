@@ -1,6 +1,7 @@
 import { Body, HttpAuth } from "@/core/http/"
 import { logger } from "@/core/logger"
 import { SpotifyAuth } from "./spotifyauth"
+import { CacheManager } from "@/core/cachemanager"
 
 export class SpotifyUserLibrary {
   public async saveToLibrary(id: string) {
@@ -21,7 +22,7 @@ export class SpotifyUserLibrary {
     const body = { ids: [getId()] }
     const url = `${process.env.SPOTIFY_API}/me/${segments[1]}s?ids=${getId()}`
 
-    res = HttpAuth.put(url, Body.json(body), await this.getAuthHeaders())
+    res = await HttpAuth.put(url, Body.json(body), await this.getAuthHeaders())
 
     await CacheManager.flush()
     return res
@@ -42,7 +43,7 @@ export class SpotifyUserLibrary {
       return segments.length == 3 ? segments[2] : id
     }
     const url = `${process.env.SPOTIFY_API}/me/${segments[1]}s?ids=${getId()}`
-    res = HttpAuth.delete(url, await this.getAuthHeaders())
+    res = await HttpAuth.delete(url, await this.getAuthHeaders())
     await CacheManager.flush()
     return res
   }
@@ -59,7 +60,7 @@ export class SpotifyUserLibrary {
       return segments.length == 3 ? segments[2] : id
     }
     const url = `${process.env.SPOTIFY_API}/me/${segments[1]}s/contains?ids=${getId()}`
-    res = HttpAuth.get(url, await this.getAuthHeaders(), false)
+    res = await HttpAuth.get(url, await this.getAuthHeaders(), false)
 
     if (res.ok) {
       return res.response[0]
@@ -81,7 +82,7 @@ export class SpotifyUserLibrary {
     }
 
     const url = `${process.env.SPOTIFY_API}/me/following?type=${type}&ids=${getId()}`
-    res = HttpAuth.put(url, Body.empty(), await this.getAuthHeaders())
+    res = await HttpAuth.put(url, Body.empty(), await this.getAuthHeaders())
 
     await CacheManager.flush()
     return res.ok
@@ -99,7 +100,7 @@ export class SpotifyUserLibrary {
       return segments.length == 3 ? segments[2] : id
     }
     const url = `${process.env.SPOTIFY_API}/me/following?type=${type}&ids=${getId()}`
-    res = HttpAuth.delete(url, await this.getAuthHeaders())
+    res = await HttpAuth.delete(url, await this.getAuthHeaders())
 
     await CacheManager.flush()
     return res.ok
@@ -112,7 +113,7 @@ export class SpotifyUserLibrary {
       return segments.length == 3 ? segments[2] : id
     }
     const url = `${process.env.SPOTIFY_API}/me/following/contains?type=${segments[1] ? segments[1] : "artist"}&ids=${getId()}`
-    res = HttpAuth.get(url, await this.getAuthHeaders(), false)
+    res = await HttpAuth.get(url, await this.getAuthHeaders(), false)
 
     if (res.ok) {
       return res[0]

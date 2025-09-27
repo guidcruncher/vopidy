@@ -1,4 +1,5 @@
-import { Body, Http } from "@/core/http/"
+import { SpotifyCatalog } from "./spotifycatalog"
+import { HttpAuth, Body, Http } from "@/core/http/"
 import { logger } from "@/core/logger"
 import { WsClientStore } from "@/core/wsclientstore"
 import { db } from "@/services/db"
@@ -10,12 +11,13 @@ export class SpotifyPlayer {
     const url = `${process.env.GOLIBRESPOT_API}/player/play`
     const body = { uri, skip_to_uri: "", paused: false }
     const res = await Http.post(url, Body.json(body))
+    const catalog = new SpotifyCatalog()
 
     // Track info → database
     try {
-      const track = await this.getTrackFromUri(uri)
+      const track = await catalog.getTrack(uri)
       if (track) {
-        await db.songs.insert(track)
+        db.addToPlaybackHistory("spotify", track)
         await Mixer.savePlaybackTrack("spotify", uri)
         WsClientStore.notify("track-changed", { service: "spotify", uri, track })
       }
@@ -58,7 +60,7 @@ export class SpotifyPlayer {
   }
 
   public async seek(position: number) {
-    const url = `${await this.getLocalApi()}/player/seek`
+    const url = `${process.env.GOLIBRESPOT_API}/player/seek`
     const body = { position: position * 1000, relative: false }
     const res = await HttpAuth.post(url, Body.json(body), await this.getAuthHeaders())
     WsClientStore.broadcast({
@@ -71,11 +73,11 @@ export class SpotifyPlayer {
 
   public async getStatus() {
     const url = `${process.env.GOLIBRESPOT_API}/status`
-    let res: any = await http.get(url)
+    let res: any = await Http.get(url, false)
     let track: any = {}
 
     if (res.status == 204) {
-      res = await http.get(url)
+      res = await Http.get(url, false)
     }
 
     if (!res.ok) {
@@ -83,9 +85,10 @@ export class SpotifyPlayer {
       return undefined
     }
 
+    const catalog = new SpotifyCatalog()
     const json = res.response
     if (json.track) {
-      track = await this.describe(json.track.uri)
+      track = await catalog.describe(json.track.uri)
       json.duration = json.track.duration
       json.position = { duration: json.duration, progress: json.progress_ms }
       json.track = track
