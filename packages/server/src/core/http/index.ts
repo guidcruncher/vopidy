@@ -1,5 +1,5 @@
 import { HttpClient } from "@/core/http/httpclient"
-import { Authorization, Body } from "@/core/http/utils"
+import { Authorization, BodyTransform } from "@/core/http/utils"
 
 export { Authorization, Body, BodyTransform, HttpResponse } from "@/core/http/utils"
 
@@ -13,12 +13,12 @@ export class Http {
   }
 
   // Standard POST request
-  public static async post(url: string, body: Body) {
+  public static async post(url: string, body: BodyTransform) {
     return await HttpClient.NoCache().post(url, body)
   }
 
   // Standard PUT request
-  public static async put(url: string, body: body) {
+  public static async put(url: string, body: BodyTransform) {
     return await HttpClient.NoCache().put(url, body)
   }
 
@@ -43,12 +43,12 @@ export class HttpAuth {
   }
 
   // Standard POST request
-  public static async post(url: string, body: Body, auth: Authorization) {
+  public static async post(url: string, body: BodyTransform, auth: Authorization) {
     return await HttpClient.NoCache().post(url, body, auth)
   }
 
   // Standard PUT request
-  public static async put(url: string, Body: body, auth: Authorization) {
+  public static async put(url: string, body: BodyTransform, auth: Authorization) {
     return await HttpClient.NoCache().put(url, body, auth)
   }
 

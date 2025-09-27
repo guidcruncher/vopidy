@@ -69,7 +69,6 @@ auth.get("/callback", async (c) => {
   const librespot = new LibrespotManager()
   const accessToken: any = await auth.spotifyAuthClient.getToken(options)
   auth.saveAuthState(accessToken)
-  const spotifyClient = new Spotify()
 
   global.spotifyDeviceId = ""
 

@@ -1,4 +1,4 @@
-import { Body, Http, HttpAuth } from "@/core/http/"
+import { Body, HttpAuth } from "@/core/http/"
 import { logger } from "@/core/logger"
 import { pm2 } from "@/core/pm2"
 import { Auth } from "@/services/auth"
@@ -38,12 +38,12 @@ export class LibrespotManager {
   }
 
   public async connect(name: string, accessToken: string, forceReconnect: boolean = false) {
-    let state = this.getLibrespotState()
+    let state = this.getState()
     let pstate = Mixer.getPlaybackState()
     logger.warn("Connecting to go-librespot")
     if (process.env.GOLIBRESPOT_CREDENTIAL_TYPE.toString() == "spotify_token") {
       logger.debug("Connecting via spotify token credentials")
-      await this.connectToLibRespotWithToken()
+      await this.connectWithToken()
       return "CONNECTED"
     }
 
@@ -59,7 +59,7 @@ export class LibrespotManager {
     res = await HttpAuth.put(
       url,
       Body.json({ device_ids: [state.device_id] }),
-      this.getAuthHeaders(),
+      await this.getAuthHeaders(),
     )
 
     if (!res.ok) {

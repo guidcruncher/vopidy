@@ -1,10 +1,17 @@
 import { Authorization, HttpAuth } from "@/core/http/"
 import { getAccessTokenOnly } from "@/services/auth"
+import { LibrespotManager } from "./librespotmanager"
 
 export class SpotifyAuth {
   static async getAuthorization(): Promise<Authorization> {
     const token = await this.getAccessToken()
     return { type: "Bearer", value: token }
+  }
+
+  static async login() {
+    const accessToken = await getAccessTokenOnly()
+    const librespot = new LibrespotManager()
+    return await librespot.connect("Vopidy", accessToken, true)
   }
 
   static async getAccessToken(): Promise<string> {

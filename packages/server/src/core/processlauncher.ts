@@ -4,7 +4,7 @@ import { WsClientStore } from "@/core/wsclientstore"
 import { db } from "@/services/db"
 import { FFplay } from "@/services/ffplay"
 import { Mixer } from "@/services/mixer"
-import { Spotify } from "@/services/spotify"
+import { SpotifyCatalog } from "@/services/spotify/spotifycatalog"
 import { exec } from "node:child_process"
 
 export class ProcessLauncher {
@@ -46,7 +46,7 @@ export class ProcessLauncher {
       json.data.source = "spotify"
       switch (json.type) {
         case "playing":
-          const spotifyClient = new Spotify()
+          const spotifyClient = new SpotifyCatalog()
           const parts = json.data.uri.split(":")
           let track: any = {}
           switch (parts[1]) {

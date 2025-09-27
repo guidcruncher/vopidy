@@ -24,7 +24,7 @@ export class WsClientStore {
   public static notify(event: string, data: any) {
     let json: any = { type: event, data: data }
     json.data.source = json.data.service ?? "spotify"
-    return broadcast(json)
+    return WsClientStore.broadcast(json)
   }
 
   public static broadcast(json) {
