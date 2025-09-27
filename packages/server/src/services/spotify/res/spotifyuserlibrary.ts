@@ -1,10 +1,9 @@
-import { logger } from "@/core/logger"
 import { Body, HttpAuth } from "@/core/http/"
+import { logger } from "@/core/logger"
 import { SpotifyAuth } from "./spotifyauth"
 
 export class SpotifyUserLibrary {
   public async saveToLibrary(id: string) {
-    let accessToken = await getAccessTokenOnly()
     let res: any = {}
     let segments = id.split(":")
 
@@ -29,7 +28,6 @@ export class SpotifyUserLibrary {
   }
 
   public async removeFromLibrary(id: string) {
-    let accessToken = await getAccessTokenOnly()
     let res: any = {}
     let segments = id.split(":")
     if (segments[1] == "artist") {
@@ -50,7 +48,6 @@ export class SpotifyUserLibrary {
   }
 
   public async inLibrary(id: string) {
-    let accessToken = await getAccessTokenOnly()
     let res: any = {}
     let segments = id.split(":")
 
@@ -73,7 +70,6 @@ export class SpotifyUserLibrary {
   }
 
   public async follow(type: string, id: string) {
-    let accessToken = await getAccessTokenOnly()
     let res: any = {}
     let segments = id.split(":")
     const getId = () => {
@@ -92,7 +88,6 @@ export class SpotifyUserLibrary {
   }
 
   public async unfollow(type: string, id: string) {
-    let accessToken = await getAccessTokenOnly()
     let res: any = {}
     let segments = id.split(":")
 
@@ -111,7 +106,6 @@ export class SpotifyUserLibrary {
   }
 
   public async doesFollow(type: string, id: string) {
-    let accessToken = await getAccessTokenOnly()
     let res: any = {}
     let segments = id.split(":")
     const getId = () => {

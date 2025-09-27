@@ -1,4 +1,3 @@
-import { logger } from "@/core/logger"
 import { HttpAuth } from "@/core/http/"
 import { SpotifyAuth } from "./spotifyauth"
 

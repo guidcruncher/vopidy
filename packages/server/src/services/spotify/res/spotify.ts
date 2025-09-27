@@ -1,4 +1,3 @@
-import { logger } from "@/core/logger"
 import { IMediaPlayer } from "@/services/imediaplayer"
 import { LibrespotManager } from "./librespotmanager"
 import { SpotifyAuth } from "./spotifyauth"

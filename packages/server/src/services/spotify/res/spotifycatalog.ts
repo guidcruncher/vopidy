@@ -1,5 +1,5 @@
-import { logger } from "@/core/logger"
 import { HttpAuth, HttpResponse } from "@/core/http/"
+import { logger } from "@/core/logger"
 import { SpotifyAuth } from "./spotifyauth"
 import {
   chunkArray,
