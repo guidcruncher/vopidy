@@ -1,6 +1,13 @@
 import { HttpAuth, HttpResponse } from "@/core/http/"
 import { SpotifyAuth } from "./spotifyauth"
-import { extractId, extractType, filterImageUrl, getCodeImageUrl, getMarketUrlParam } from "./utils"
+import {
+  chunkArray,
+  extractId,
+  extractType,
+  filterImageUrl,
+  getCodeImageUrl,
+  getMarketUrlParam,
+} from "./utils"
 
 export class SpotifyCatalog {
   private toView(id: string, res: HttpResponse) {
@@ -166,143 +173,11 @@ export class SpotifyCatalog {
     }
   }
 
-  public async getPlaylists(nocache: boolean = false, offset: number = 0, limit: number = 20) {
-    const data = []
-
-    do {
-      const url = `${SPOTIFY_API}/me/playlists?offset=${offset}&limit=${limit}&fields=items(uri),items(owner)(display_name),items(images),items(name),items(owner),items(type),next,offset,limit,total`
-      let res = {}
-
-      res = await HttpAuth.get(url, await this.getAuthHeaders(), !nocache)
-
-      if (!res.ok) {
-        return data
-      }
-      const jsondata: any = res.response
-      if (!jsondata) {
-        return data
-        break
-      }
-      offset += jsondata.items.length
-      for (let i = 0; i < jsondata.items.length; i++) {
-        const value = jsondata.items[i]
-        const item: any = {
-          id: value.uri,
-          image: filterImageUrl(value.images),
-          name: value.name,
-          owner: value.owner ? value.owner.display_name : "",
-          type: value.type,
-          barcodeUrl: this.getCodeImageUrl(value.uri),
-        }
-        data.push(item)
-      }
-
-      if (!jsondata.next) {
-        return data
-        break
-      }
-    } while (true)
-  }
-
-  public async getPlaylist(uri: string, offset: number, limit: number) {
-    const segments = uri.split(":")
-    const root: any = await this.describe(uri)
-    const data = []
-
-    if (!root) {
-      return undefined
-    }
-
-    const url = `${SPOTIFY_API}/playlists/${segments[2]}/tracks?offset=${offset}&limit=${limit}&fields=items(track)(uri),items(track)(album)(name),items(track)(album)(images)items(track)(name),items(track)(type),items(track)(images),items(track)(artists),next,offset,limit,total`
-    const res = HttpAuth.get(url, await this.getAuthHeaders(), true)
-
-    if (!res.ok) {
-      return root
-    }
-    const jsondata = res.response
-    if (!jsondata) {
-      return root
-    }
-
-    for (let i = 0; i < jsondata.items.length; i++) {
-      const value = jsondata.items[i]
-      const item: any = {
-        context: uri,
-        id: value.track.uri,
-        image: value.track.album ? filterImageUrl(value.track.album.images) : "",
-        album: value.track.album ? value.track.album.name : "",
-        name: value.track.name,
-        type: value.track.type,
-      }
-      if (value.track.images) {
-        item.image = filterImageUrl(value.track.images)
-      }
-      if (value.track.artists) {
-        item.artist = value.track.artists.map((t) => {
-          return { id: t.id, name: t.name }
-        })
-      }
-      data.push(item)
-    }
-
-    let view = new PagedItems()
-    view.offset = offset
-    view.limit = limit
-    view.total = jsondata.total
-    view.items = data
-    view.calculatePaging()
-    root.content = view
-    return root
-  }
-
-  public async getAlbums(offset: number = 0, limit: number = 20) {
-    const accessToken = await getAccessTokenOnly()
-    const index = 0
-    const data = []
-
-    do {
-      const url = `${SPOTIFY_API}/me/albums?offset=${offset}&limit=${limit}&fields=items(album)(uri),items(album)(images),items(album)(name),items(album)(artists),items(album)(popularity),items(album)(type),next,offset,limit,total`
-      const res = HttpAuth.get(url, await this.getAuthHeaders(), true)
-
-      if (!res.ok) {
-        return data
-      }
-      const jsondata = res.response
-      if (!jsondata) {
-        return data
-        break
-      }
-      offset += jsondata.items.length
-      for (let i = 0; i < jsondata.items.length; i++) {
-        const value = jsondata.items[i].album
-        const item: any = {
-          id: value.uri,
-          image: value.images ? filterImageUrl(value.images) : "",
-          name: value.name,
-          artist: value.artists
-            ? value.artists.map((t) => {
-                return { id: t.id, name: t.name }
-              })
-            : [],
-          popularity: value.popularity,
-          type: value.type,
-          barcodeUrl: this.getCodeImageUrl(value.uri),
-        }
-        data.push(item)
-      }
-
-      if (!jsondata.next) {
-        return data
-        break
-      }
-    } while (true)
-  }
-
   public async getAlbum(uri: string) {
     const segs = uri.split(":")
     const accessToken = await getAccessTokenOnly()
     let data: any = {}
-    const url = `${SPOTIFY_API}/albums/${segs[2]}?fields=uri,images,name,artists,popularity,type,tracks(next),tracks(offset),tracks(limit),tracks(total),tracks(items)(uri),tracks(items)(album)(images),tracks(items)(is_playable),tracks(items)(name),tracks(items)(artists),tracks(items)(popularity),tracks(items)(type)`
+    const url = `${process.env.SPOTIFY_API}/albums/${segs[2]}?fields=uri,images,name,artists,popularity,type,tracks(next),tracks(offset),tracks(limit),tracks(total),tracks(items)(uri),tracks(items)(album)(images),tracks(items)(is_playable),tracks(items)(name),tracks(items)(artists),tracks(items)(popularity),tracks(items)(type)`
 
     const res = HttpAuth.get(url, await this.getAuthHeaders(), true)
 
@@ -363,52 +238,13 @@ export class SpotifyCatalog {
     return data
   }
 
-  public async getShows(offset: number = 0, limit: number = 20) {
-    const accessToken = await getAccessTokenOnly()
-    const data = []
-
-    do {
-      const url = `${SPOTIFY_API}/me/shows?offset=${offset}&limit=${limit}&fields=next,offset,limit,total,items(show)(uri),items(show)(images),items(show)(name),items(show)(publisher),items(show)(description),items(show)(type)`
-      const res = HttpAuth.get(url, await this.getAuthHeaders(), true)
-
-      if (!res.ok) {
-        return data
-      }
-      const jsondata = res.response
-      if (!jsondata) {
-        return data
-        break
-      }
-
-      offset += jsondata.items.length
-      for (let i = 0; i < jsondata.items.length; i++) {
-        const value = jsondata.items[i].show
-        const item: any = {
-          id: value.uri,
-          image: value.images ? filterImageUrl(value.images) : "",
-          name: value.name,
-          publisher: value.publisher,
-          description: value.description,
-          type: value.type,
-          barcodeUrl: this.getCodeImageUrl(value.uri),
-        }
-        data.push(item)
-      }
-
-      if (!jsondata.next) {
-        return data
-        break
-      }
-    } while (true)
-  }
-
   public async getTrack(id: string) {
     if (!id || id == "") {
       return {}
     }
     const accessToken = await getAccessTokenOnly()
 
-    const url = `${SPOTIFY_API}/tracks/${this.extractId(id)}?fields=uri,album(images),is_playable,name,album(name),artists,popularity,album(uri),type`
+    const url = `${process.env.SPOTIFY_API}/tracks/${this.extractId(id)}?fields=uri,album(images),is_playable,name,album(name),artists,popularity,album(uri),type`
     const res = HttpAuth.get(url, await this.getAuthHeaders(), true)
 
     if (!res.ok) {
@@ -441,7 +277,7 @@ export class SpotifyCatalog {
     }
     const accessToken = await getAccessTokenOnly()
 
-    const url = `${SPOTIFY_API}/episodes/${this.extractId(id)}?fields=uri,images,show(name),name,show(publisher),show(uri),type`
+    const url = `${process.env.SPOTIFY_API}/episodes/${this.extractId(id)}?fields=uri,images,show(name),name,show(publisher),show(uri),type`
     const res = HttpAuth.get(url, await this.getAuthHeaders(), true)
 
     if (!res.ok) {
@@ -464,53 +300,11 @@ export class SpotifyCatalog {
     return item
   }
 
-  public async getTracks(offset: number = 0, limit: number = 20) {
-    const accessToken = await getAccessTokenOnly()
-    const data = []
-
-    do {
-      const url = `${SPOTIFY_API}/me/tracks?offset=${offset}&limit=${limit}&fields=next,offset,limit,total,items(track)(uri),items(track)(album)(images),items(track)(is_playable),items(track)(name),items(track)(album)(name),items(track)(artists),items(track)(popularity),items(track)(type)`
-      const res = HttpAuth.get(url, await this.getAuthHeaders(), true)
-
-      if (!res.ok) {
-        return data
-      }
-      const jsondata = res.response
-      if (!jsondata) {
-        return data
-        break
-      }
-      offset += jsondata.items.length
-      for (let i = 0; i < jsondata.items.length; i++) {
-        const value = jsondata.items[i].track
-        const item: any = {
-          id: value.uri,
-          image: value.album.images ? filterImageUrl(value.album.images) : "",
-          album: value.album.name,
-          name: value.name,
-          artist: value.artists
-            ? value.artists.map((t) => {
-                return { id: t.id, name: t.name }
-              })
-            : [],
-          type: value.type,
-          barcodeUrl: this.getCodeImageUrl(value.uri),
-        }
-        data.push(item)
-      }
-
-      if (!jsondata.next) {
-        return data
-        break
-      }
-    } while (true)
-  }
-
   public async getQueue() {
     const accessToken = await getAccessTokenOnly()
     const data = []
 
-    const url = `${SPOTIFY_API}/me/player/queue`
+    const url = `${process.env.SPOTIFY_API}/me/player/queue`
     const res = HttpAuth.get(url, await this.getAuthHeaders(), true)
 
     if (!res.ok) {
@@ -559,7 +353,7 @@ export class SpotifyCatalog {
     const index = 0
     const data = []
 
-    const url = `${SPOTIFY_API}/browse/new-releases?offset=${offset}&limit=${limit}&fields=albums(items)(uri),albums(items)(images),albums(items)(name),albums(items)(artists),albums(items)(popularity),albums(items)(type),next,offset,limit,total`
+    const url = `${process.env.SPOTIFY_API}/browse/new-releases?offset=${offset}&limit=${limit}&fields=albums(items)(uri),albums(items)(images),albums(items)(name),albums(items)(artists),albums(items)(popularity),albums(items)(type),next,offset,limit,total`
     const res = HttpAuth.get(url, await this.getAuthHeaders(), true)
 
     if (!res.ok) {
@@ -596,7 +390,7 @@ export class SpotifyCatalog {
       return []
     }
     const accessToken = await getAccessTokenOnly()
-    const url = `${SPOTIFY_API}/artists/${this.extractId(id)}/top-tracks?fields=next,offset,limit,total,tracks(uri),tracks(album)(images),tracks(is_playable),tracks(name),tracks(artists),tracks(popularity),tracks(type)`
+    const url = `${process.env.SPOTIFY_API}/artists/${this.extractId(id)}/top-tracks?fields=next,offset,limit,total,tracks(uri),tracks(album)(images),tracks(is_playable),tracks(name),tracks(artists),tracks(popularity),tracks(type)`
     const data = []
 
     const res = HttpAuth.get(url, await this.getAuthHeaders(), true)
@@ -636,7 +430,7 @@ export class SpotifyCatalog {
     const index = 0
     const data = []
 
-    const url = `${SPOTIFY_API}/artists/${this.extractId(id)}/albums?offset=${offset}&limit=${limit}&fields=next,offset,limit,total,items(uri),items(images),items(name),items(artists),items(popularity),items(type),items(album_type)`
+    const url = `${process.env.SPOTIFY_API}/artists/${this.extractId(id)}/albums?offset=${offset}&limit=${limit}&fields=next,offset,limit,total,items(uri),items(images),items(name),items(artists),items(popularity),items(type),items(album_type)`
 
     const res = HttpAuth.get(url, await this.getAuthHeaders(), true)
 
@@ -677,7 +471,7 @@ export class SpotifyCatalog {
     const root: any = await this.describe(id)
     root.items = []
     const segments = id.split(":")
-    const url = `${SPOTIFY_API}/shows/${segments[2]}/episodes?offset=${offset}&limit=${limit}&fields=next,offset,limit,total,items(uri),items(images),items(description),items(name),items(publisher),items(type),`
+    const url = `${process.env.SPOTIFY_API}/shows/${segments[2]}/episodes?offset=${offset}&limit=${limit}&fields=next,offset,limit,total,items(uri),items(images),items(description),items(name),items(publisher),items(type),`
     const res = HttpAuth.get(url, await this.getAuthHeaders(), true)
 
     if (!res.ok) {
@@ -717,7 +511,7 @@ export class SpotifyCatalog {
     }
     const accessToken = await getAccessTokenOnly()
     let data: any = {}
-    const url = `${SPOTIFY_API}/artists/${this.extractId(id)}`
+    const url = `${process.env.SPOTIFY_API}/artists/${this.extractId(id)}`
     const res = HttpAuth.get(url, await this.getAuthHeaders(), true)
     if (!res.ok) {
       return data
@@ -747,52 +541,6 @@ export class SpotifyCatalog {
     return data
   }
 
-  public async getArtists() {
-    const accessToken = await getAccessTokenOnly()
-    const data = []
-    let url = `${SPOTIFY_API}/me/following?type=artist`
-
-    do {
-      const res = HttpAuth.get(url, await this.getAuthHeaders(), true)
-
-      if (!res.ok) {
-        return data
-      }
-      const jsondata = res.response
-      if (!jsondata) {
-        return data
-      }
-      for (let i = 0; i < jsondata.artists.items.length; i++) {
-        const value = jsondata.artists.items[i]
-        const item: any = {
-          id: value.uri,
-          type: value.type,
-          image: value.images ? filterImageUrl(value.images) : "",
-          name: value.name,
-          popularity: value.popularity,
-          genres: value.genres,
-          href: value.href,
-          external_urls: value.external_urls,
-          barcodeUrl: this.getCodeImageUrl(value.uri),
-        }
-        data.push(item)
-      }
-      if (!jsondata.next) {
-        return data
-        break
-      }
-      url = jsondata.next
-    } while (true)
-
-    return data
-  }
-
-  private chunkArray(array, chunkSize) {
-    return Array.from({ length: Math.ceil(array.length / chunkSize) }, (_, index) =>
-      array.slice(index * chunkSize, (index + 1) * chunkSize),
-    )
-  }
-
   public async createPlaylist(name: string, uris: string[], description: string = "") {
     logger.log("createPlaylist")
 
@@ -812,7 +560,7 @@ export class SpotifyCatalog {
       logger.log("creating new list")
       const profile = await this.getProfile()
       const data = []
-      url = `${SPOTIFY_API}/users/${profile.id}/playlists`
+      url = `${process.env.SPOTIFY_API}/users/${profile.id}/playlists`
       const body = {
         name: name,
         description: description == "" ? name : description,
@@ -834,11 +582,11 @@ export class SpotifyCatalog {
 
     logger.log(`list id ${id}`)
     if (id != "") {
-      const chunks = this.chunkArray(uris, 50)
+      const chunks = chunkArray(uris, 50)
 
       logger.log(`saving ${chunks.length} chunks`)
       for (const chunk of chunks) {
-        let chunkurl = `${SPOTIFY_API}/playlists/${id}/tracks`
+        let chunkurl = `${process.env.SPOTIFY_API}/playlists/${id}/tracks`
         const chunkres = await HttpAuth.post(
           chunkurl,
           Body.json({ uris: chunk }),
@@ -881,7 +629,7 @@ export class SpotifyCatalog {
       return segments.length == 3 ? segments[2] : id
     }
     const body = { ids: [getId()] }
-    const url = `${SPOTIFY_API}/me/${segments[1]}s?ids=${getId()}`
+    const url = `${process.env.SPOTIFY_API}/me/${segments[1]}s?ids=${getId()}`
 
     res = HttpAuth.put(url, Body.json(body), await this.getAuthHeaders())
 
@@ -904,7 +652,7 @@ export class SpotifyCatalog {
     const getId = () => {
       return segments.length == 3 ? segments[2] : id
     }
-    const url = `${SPOTIFY_API}/me/${segments[1]}s?ids=${getId()}`
+    const url = `${process.env.SPOTIFY_API}/me/${segments[1]}s?ids=${getId()}`
     res = HttpAuth.delete(url, await this.getAuthHeaders())
     await CacheManager.flush()
     return res
@@ -922,7 +670,7 @@ export class SpotifyCatalog {
     const getId = () => {
       return segments.length == 3 ? segments[2] : id
     }
-    const url = `${SPOTIFY_API}/me/${segments[1]}s/contains?ids=${getId()}`
+    const url = `${process.env.SPOTIFY_API}/me/${segments[1]}s/contains?ids=${getId()}`
     res = HttpAuth.get(url, await this.getAuthHeaders(), false)
 
     if (res.ok) {
@@ -945,7 +693,7 @@ export class SpotifyCatalog {
       return true
     }
 
-    const url = `${SPOTIFY_API}/me/following?type=${type}&ids=${getId()}`
+    const url = `${process.env.SPOTIFY_API}/me/following?type=${type}&ids=${getId()}`
     res = HttpAuth.put(url, Body.empty(), await this.getAuthHeaders())
 
     await CacheManager.flush()
@@ -964,7 +712,7 @@ export class SpotifyCatalog {
     const getId = () => {
       return segments.length == 3 ? segments[2] : id
     }
-    const url = `${SPOTIFY_API}/me/following?type=${type}&ids=${getId()}`
+    const url = `${process.env.SPOTIFY_API}/me/following?type=${type}&ids=${getId()}`
     res = HttpAuth.delete(url, await this.getAuthHeaders())
 
     await CacheManager.flush()
@@ -978,7 +726,7 @@ export class SpotifyCatalog {
     const getId = () => {
       return segments.length == 3 ? segments[2] : id
     }
-    const url = `${SPOTIFY_API}/me/following/contains?type=${segments[1] ? segments[1] : "artist"}&ids=${getId()}`
+    const url = `${process.env.SPOTIFY_API}/me/following/contains?type=${segments[1] ? segments[1] : "artist"}&ids=${getId()}`
     res = HttpAuth.get(url, await this.getAuthHeaders(), false)
 
     if (res.ok) {

@@ -45,3 +45,9 @@ export function filterImageUrl(img: any[]) {
 
   return sorted[0].url
 }
+
+export function chunkArray(array, chunkSize) {
+  return Array.from({ length: Math.ceil(array.length / chunkSize) }, (_, index) =>
+    array.slice(index * chunkSize, (index + 1) * chunkSize),
+  )
+}

@@ -62,24 +62,38 @@ export class SpotifyPlayer {
     return await Http.post(url, Body.json({ position_ms: position }))
   }
 
-  async setVolume(volume: number) {
-    const url = `${process.env.GOLIBRESPOT_API}/player/volume`
-    return await Http.put(url, Body.json({ volume_percent: volume }))
-  }
+  public async getStatus() {
+    const url = `${process.env.GOLIBRESPOT_API}/status`
+    let res: any = await http.get(url)
+    let track: any = {}
 
-  async getVolume() {
-    const url = `${process.env.GOLIBRESPOT_API}/player/volume`
-    const res = await Http.get(url)
-    return res.response.volume_percent
-  }
+    if (res.status == 204) {
+      res = await http.get(url)
+    }
 
-  async mute() {
-    return await this.setVolume(0)
-  }
+    if (!res.ok) {
+      logger.error(res)
+      return undefined
+    }
 
-  async getStatus() {
-    const url = `${process.env.GOLIBRESPOT_API}/player/status`
-    return await Http.get(url)
+    const json = res.response
+    if (json.track) {
+      track = await this.describe(json.track.uri)
+      json.duration = json.track.duration
+      json.position = { duration: json.duration, progress: json.progress_ms }
+      json.track = track
+      json.source = "spotify"
+      const view = {
+        output: "librespot",
+        source: json.source,
+        track: json.track,
+        playing: !json.stopped,
+        paused: json.paused,
+        volume: json.volume,
+        position: json.position,
+      }
+      return view
+    }
   }
 
   private async getAuthHeaders() {
