@@ -15,7 +15,7 @@ export class SpotifyPlayer {
 
     // Track info → database
     try {
-      const track = await catalog.getTrack(uri)
+      const track = await catalog.describe(uri)
       if (track) {
         db.addToPlaybackHistory("spotify", track)
         await Mixer.savePlaybackTrack("spotify", uri)

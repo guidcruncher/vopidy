@@ -2,7 +2,7 @@ import { HttpAuth } from "@/core/http/"
 import { PagedItems } from "@/core/paging"
 import { SpotifyAuth } from "./spotifyauth"
 import { SpotifyCatalog } from "./spotifycatalog"
-import { filterImageUrl, getCodeImageUrl } from "./utils"
+import { extractId, filterImageUrl, getCodeImageUrl } from "./utils"
 
 export class SpotifyLibrary {
   public async getPlaylists(nocache: boolean = false, offset: number = 0, limit: number = 20) {
@@ -44,7 +44,6 @@ export class SpotifyLibrary {
   }
 
   public async getPlaylist(uri: string, offset: number, limit: number) {
-    const segments = uri.split(":")
     const catalog = new SpotifyCatalog()
     const root: any = await catalog.describe(uri)
     const data = []
@@ -53,7 +52,7 @@ export class SpotifyLibrary {
       return undefined
     }
 
-    const url = `${process.env.SPOTIFY_API}/playlists/${segments[2]}/tracks?offset=${offset}&limit=${limit}&fields=items(track)(uri),items(track)(album)(name),items(track)(album)(images)items(track)(name),items(track)(type),items(track)(images),items(track)(artists),next,offset,limit,total`
+    const url = `${process.env.SPOTIFY_API}/playlists/${extractId(uri)}/tracks?offset=${offset}&limit=${limit}&fields=items(track)(uri),items(track)(album)(name),items(track)(album)(images)items(track)(name),items(track)(type),items(track)(images),items(track)(artists),next,offset,limit,total`
     const res = await HttpAuth.get(url, await this.getAuthHeaders(), true)
 
     if (!res.ok) {

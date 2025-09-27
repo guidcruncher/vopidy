@@ -409,8 +409,7 @@ export class SpotifyCatalog {
     const data = []
     const root: any = await this.describe(id)
     root.items = []
-    const segments = id.split(":")
-    const url = `${process.env.SPOTIFY_API}/shows/${segments[2]}/episodes?offset=${offset}&limit=${limit}&fields=next,offset,limit,total,items(uri),items(images),items(description),items(name),items(publisher),items(type),`
+    const url = `${process.env.SPOTIFY_API}/shows/${extractId(id)}/episodes?offset=${offset}&limit=${limit}&fields=next,offset,limit,total,items(uri),items(images),items(description),items(name),items(publisher),items(type),`
     const res = await HttpAuth.get(url, await this.getAuthHeaders(), true)
 
     if (!res.ok) {
