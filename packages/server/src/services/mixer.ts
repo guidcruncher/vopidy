@@ -49,7 +49,6 @@ export class Mixer {
   }
 
   public static getMediaPlayer(): IMediaPlayer {
-    // return new Mpd()
     return FFplay.Instance
   }
 
@@ -107,19 +106,19 @@ export class Mixer {
 
     switch (source) {
       case "spotify":
-        return await spotifyClient.playTrack(`${id}`)
+        return await spotifyClient.play(`${id}`)
         break
       case "tunein":
-        return await tuneInClient.playTrack(`${id}`)
+        return await tuneInClient.play(`${id}`)
         break
       case "radiobrowser":
-        return await radioBrowserClient.playTrack(`${id}`)
+        return await radioBrowserClient.play(`${id}`)
         break
       case "stream":
-        return await streamerClient.playTrack(`${id}`)
+        return await streamerClient.play(`${id}`)
         break
       case "library":
-        return await localClient.playTrack(`${id}`)
+        return await localClient.play(`${id}`)
         break
     }
     return ""

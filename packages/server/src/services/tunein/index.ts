@@ -94,7 +94,7 @@ export class TuneIn {
     return undefined
   }
 
-  public async playTrack(id: string) {
+  public async play(id: string) {
     const params = new URLSearchParams()
     params.append("render", "json")
     params.append("id", id)

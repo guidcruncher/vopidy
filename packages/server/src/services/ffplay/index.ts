@@ -46,10 +46,6 @@ export class FFplay implements IMediaPlayer {
     Mixer.removePlaybackState()
   }
 
-  public async play(url: string) {
-    return await this.play(`${url}`)
-  }
-
   public async play(filename: string) {
     const pidFile = "/local/state/ffplay.pid"
     let opts = ["-nodisp", "-autoexit"]

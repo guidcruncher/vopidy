@@ -36,7 +36,7 @@ const getBaseUrl = async () => {
     const bad = badHosts.some((h) => h["host"] === host)
     try {
       logger.warn(`${host} of ${hosts.length}`)
-      const res = await Http.fetch(host, false)
+      const res = await Http.get(host, false)
 
       if (res.ok) {
         break
@@ -170,7 +170,7 @@ export class RadioBrowser {
       return view
     }
 
-    view = this.view(res.response, offset, limit, res.length, pageSSO)
+    view = this.view(res.response, offset, limit, res.response.length, pageSSO)
     view.calculatePaging()
     return view
   }
@@ -244,7 +244,7 @@ export class RadioBrowser {
     }
   }
 
-  public async playTrack(id: string) {
+  public async play(id: string) {
     const item = await this.describe(id)
 
     if (item) {
