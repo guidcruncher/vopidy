@@ -1,7 +1,7 @@
 import { logger } from "@/core/logger"
 import { WsClientStore } from "@/core/wsclientstore"
 import { Equaliser } from "@/services/equaliser"
-import { FFplay } from "@/services/ffplay"
+import { FFplay } from "@/services/ffplay/"
 import { IMediaPlayer } from "@/services/imediaplayer"
 import { LocalMusic } from "@/services/localmusic"
 import { Pulseaudio } from "@/services/pulseaudio"

@@ -1,247 +1,77 @@
-import { logger } from "@/core/logger"
-import { WsClientStore } from "@/core/wsclientstore"
-import { db } from "@/services/db"
+// FFplay.ts (The new entry point)
 import { IMediaPlayer } from "@/services/imediaplayer"
-import { LocalMusic } from "@/services/localmusic"
-import { Mixer } from "@/services/mixer"
-import { Pulseaudio } from "@/services/pulseaudio"
-import { RadioBrowser } from "@/services/radiobrowser"
-import { TuneIn } from "@/services/tunein"
-import { spawn, spawnSync } from "child_process"
-import * as fs from "fs"
+import { FFplayMetadata } from "./ffplaymetadata"
+import { FFplayProcessManager } from "./ffplayprocessmanager"
+import { MediaPlayerStatus, MediaPlayerStatusAggregator } from "./mediaplayerstatusaggregator"
 
 export class FFplay implements IMediaPlayer {
-  private static paused: boolean = false
-  private static active: boolean = false
-  private static proc: any = undefined
-  private static stopped: boolean = false
-  private static url: string = ""
-  private static nowplaying: string = ""
   private static _instance: FFplay
 
-  private constructor() {}
+  // New dependencies
+  private processManager: FFplayProcessManager
+  private metadataFetcher: FFplayMetadata
+  private statusAggregator: MediaPlayerStatusAggregator
 
-  public static get Instance() {
+  private constructor() {
+    this.processManager = new FFplayProcessManager()
+    this.metadataFetcher = new FFplayMetadata()
+    this.statusAggregator = new MediaPlayerStatusAggregator()
+  }
+
+  public static get Instance(): FFplay {
     return this._instance || (this._instance = new this())
   }
 
-  private tryGetProcess() {
-    const pidFile = "/local/state/ffplay.pid"
+  // --- IMediaPlayer Implementation (Proxy methods) ---
 
-    if (!fs.existsSync(pidFile)) {
-      return
-    }
-
-    const pid = fs.readFileSync(pidFile)
+  public async play(filename: string): Promise<MediaPlayerStatus> {
+    await this.processManager.play(filename)
+    // getStatus now relies on the processManager state
+    return this.getStatus()
   }
 
-  private onshutdown() {
-    if (FFplay.proc) {
-      FFplay.proc.kill("SIGKILL")
-    }
-    const pidFile = "/local/state/ffplay.pid"
-    if (fs.existsSync(pidFile)) {
-      fs.unlinkSync(pidFile)
-    }
-    Mixer.removePlaybackState()
+  public async pause(): Promise<MediaPlayerStatus> {
+    await this.processManager.pause()
+    return this.getStatus()
   }
 
-  public async play(filename: string) {
-    const pidFile = "/local/state/ffplay.pid"
-    let opts = ["-nodisp", "-autoexit"]
-    opts.unshift(filename)
-
-    try {
-      if (FFplay.active) {
-        await this.stop()
-      }
-
-      logger.debug("/usr/bin/ffplay " + opts.join(" "))
-      FFplay.proc = spawn("/usr/bin/ffplay", opts, { stdio: "ignore" })
-      fs.writeFileSync(pidFile, FFplay.proc.pid.toString())
-
-      process.on("exit", this.onshutdown)
-
-      FFplay.proc.on("exit", () => {
-        if (FFplay.active) {
-          FFplay.active = false
-          process.removeListener("exit", this.onshutdown)
-        }
-      })
-
-      FFplay.url = filename
-      FFplay.active = true
-      WsClientStore.broadcast({ type: "playing", data: { source: "mpd" } })
-    } catch (err) {
-      logger.error("Error in play", err)
-    }
-
-    return await this.getStatus()
+  public async resume(): Promise<MediaPlayerStatus> {
+    await this.processManager.resume()
+    return this.getStatus()
   }
 
-  public async pause() {
-    if (!FFplay.active) {
-      return
-    }
-    if (!FFplay.paused) {
-      FFplay.proc.kill("SIGSTOP")
-      FFplay.paused = true
-      WsClientStore.broadcast({ type: "paused", data: { source: "mpd" } })
-    }
-    return await this.getStatus()
+  public async stop(): Promise<MediaPlayerStatus> {
+    await this.processManager.stop()
+    return this.getStatus()
   }
 
-  public async resume() {
-    if (!FFplay.active) {
-      return
-    }
-    if (FFplay.paused) {
-      FFplay.proc.kill("SIGCONT")
-      FFplay.paused = false
-      WsClientStore.broadcast({ type: "playing", data: { source: "mpd" } })
-    }
-    return await this.getStatus()
+  public async getNowPlaying(): Promise<any> {
+    // Direct call to the new metadata class
+    return this.metadataFetcher.getNowPlaying(
+      this.processManager.getCurrentUrl(),
+      this.processManager.isPlayerActive(),
+    )
   }
 
-  public async stop() {
-    if (!FFplay.active) {
-      return
-    }
-    FFplay.url = ""
-    FFplay.stopped = true
-    FFplay.proc.kill("SIGKILL")
-    FFplay.active = false
-    FFplay.proc = undefined
-    WsClientStore.broadcast({ type: "stopped", data: { source: "mpd" } })
-
-    const pidFile = "/local/state/ffplay.pid"
-    if (fs.existsSync(pidFile)) {
-      fs.unlinkSync(pidFile)
-    }
-
-    return await this.getStatus()
+  public async getStatus(): Promise<MediaPlayerStatus> {
+    // Direct call to the new status class
+    return this.statusAggregator.getStatus(this.processManager, this.metadataFetcher)
   }
 
-  public static shutdown() {
-    if (!FFplay.active) {
-      return
-    }
+  // --- Static methods (now instance methods on a static facade) ---
 
-    const pidFile = "/local/state/ffplay.pid"
-    if (fs.existsSync(pidFile)) {
-      fs.unlinkSync(pidFile)
-    }
-
-    FFplay.stopped = true
-    FFplay.url = ""
-    FFplay.proc.kill("SIGKILL")
-    FFplay.active = false
-    FFplay.proc = undefined
+  public static shutdown(): void {
+    // Proxy the static call to the process manager instance
+    FFplay.Instance.processManager.shutdown()
   }
 
-  public async getNowPlaying() {
-    const info = { artist: "", title: "", streamTitle: "" }
-
-    if (!FFplay.active || FFplay.url == "") {
-      return ""
-    }
-
-    try {
-      const opts = [`${FFplay.url}`, `-show_entries`, `format_tags`]
-      const stateProc = spawnSync("/usr/bin/ffprobe", opts, { encoding: "utf-8" })
-      const res = (stateProc.stdout ?? "").toString().split("\n")
-      let title = ""
-      for (const line of res) {
-        if (line.trim().startsWith("TAG:artist=")) {
-          info.artist = line.trim().replaceAll("TAG:artist=", "")
-        }
-
-        if (line.trim().startsWith("TAG:title=")) {
-          info.title = line.trim().replaceAll("TAG:title=", "")
-        }
-
-        if (line.trim().startsWith("TAG:StreamTitle=")) {
-          info.streamTitle = line.trim().replaceAll("TAG:StreamTitle=", "")
-        }
-      }
-
-      if (FFplay.nowplaying != info.streamTitle) {
-        FFplay.nowplaying = info.streamTitle
-        WsClientStore.broadcast({
-          type: "streamtitle-changed",
-          data: { url: FFplay.url, tags: info },
-        })
-      }
-
-      return info
-    } catch (err) {
-      logger.error("Error in getNowPlaying", err)
-      if (FFplay.nowplaying != "") {
-        FFplay.nowplaying = ""
-        WsClientStore.broadcast({
-          type: "streamtitle-changed",
-          data: { url: FFplay.url, tags: info },
-        })
-      }
-      return info
-    }
-  }
-
-  public async getStatus() {
-    const paClient = new Pulseaudio()
-    let view = undefined
-    const playback = Mixer.getPlaybackState()
-    const tuneinClient = new TuneIn()
-    const radioBrowserClient = new RadioBrowser()
-    const localClient = new LocalMusic()
-    let state: any = {}
-    state.source = "mpd"
-
-    switch (playback.source) {
-      case "tunein":
-        state.track = await tuneinClient.describe(playback.uri)
-        state.source = "tunein"
-        break
-      case "stream":
-        state.track = await db.getPlaylistItem(playback.uri)
-        state.source = "stream"
-        break
-      case "radiobrowser":
-        state.track = await radioBrowserClient.describe(playback.uri)
-        state.source = "radiobrowser"
-        break
-      case "library":
-        state.track = await localClient.describe(playback.uri)
-        state.source = "library"
-        break
-    }
-
-    if (!state.track) {
-      state.track = {}
-    }
-
-    state.track.nowplaying = await this.getNowPlaying()
-
-    const vol = await paClient.getVolume()
-    view = {
-      source: state.source,
-      track: state.track,
-      playing: FFplay.active,
-      paused: FFplay.paused,
-      volume: vol,
-    }
-
-    return view
-  }
-
+  // Other IMediaPlayer methods
   public async next() {
     return this.getStatus()
   }
-
   public async previous() {
     return this.getStatus()
   }
-
   public async seek(position: number) {
     return {}
   }
