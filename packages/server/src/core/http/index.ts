@@ -1,8 +1,7 @@
 import { HttpClient } from "@/core/http/httpclient"
-import { Authorization as authorization, Body as body } from "@/core/http/utils"
+import { Authorization, Body } from "@/core/http/utils"
 
-export class Body extends body {}
-export class Authorization extends authorization {}
+export { Authorization, Body, BodyTransform, HttpResponse } from "@/core/http/utils"
 
 export class Http {
   // Standard GET request

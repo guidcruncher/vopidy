@@ -10,7 +10,7 @@ export class SpotifyLibrary {
 
     do {
       const url = `${process.env.SPOTIFY_API}/me/playlists?offset=${offset}&limit=${limit}&fields=items(uri),items(owner)(display_name),items(images),items(name),items(owner),items(type),next,offset,limit,total`
-      let res = {}
+      let res: any = {}
 
       res = await HttpAuth.get(url, await this.getAuthHeaders(), !nocache)
 

@@ -2,7 +2,7 @@ import { logger } from "@/core/logger"
 import { pm2 } from "@/core/pm2"
 import { Auth } from "@/services/auth"
 import * as fs from "fs"
-import child_process from "node:child_process"
+import { default as child_process } from "node:child_process"
 import { promisify } from "node:util"
 import * as path from "path"
 
