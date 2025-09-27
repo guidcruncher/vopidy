@@ -1,60 +1,67 @@
 import { percentToVolume, PulseAudio, volumeToPercent } from "pulseaudio.js"
+import { PulseAudioClient } from "./pulseaudioclient"
 
 export class Pulseaudio {
-  playbackSink = "snapcast-sink"
+  private client: PulseAudioClient
+  private playbackSink = "snapcast-sink"
+
+  constructor(client: PulseAudioClient = new PulseAudioClient()) {
+    this.client = client
+  }
+
+  private async execute(callback: (pa: PulseAudio) => Promise<any>): Promise<any> {
+    const pa = await this.client.connect()
+    try {
+      return await callback(pa)
+    } finally {
+      // Ensure disconnection happens even if callback throws an error
+      await this.client.disconnect(pa)
+    }
+  }
+
+  // --- Public Operations ---
 
   public async getSinkInfo(sink: string = "") {
-    const pa = await this.getServer()
-    const info = await pa.getSinkInfo(sink == "" ? this.playbackSink : sink)
-    await pa.disconnect()
-    return info
+    const targetSink = sink === "" ? this.playbackSink : sink
+    return this.execute(async (pa) => {
+      return pa.getSinkInfo(targetSink)
+    })
   }
 
-  private async getServer() {
-    const pa = new PulseAudio(undefined, undefined, "/tmp/pulse/native" as any)
-    await pa.connect()
-    return pa
+  public async getVolume(): Promise<number> {
+    return this.execute(async (pa) => {
+      const id = await pa.lookupSink(this.playbackSink)
+      const sink = await pa.getSinkInfo(id)
+      return volumeToPercent(sink.volume.current[0])
+    })
   }
 
-  public async getVolume() {
-    const pa = await this.getServer()
-    const id = await pa.lookupSink(this.playbackSink)
-    const sink = await pa.getSinkInfo(id)
-    await pa.disconnect()
-
-    let volume = volumeToPercent(sink.volume.current[0])
-    return volume
-  }
-
-  public async getVolumeLinear() {
-    const pa = await this.getServer()
-    const id = await pa.lookupSink(this.playbackSink)
-    const sink = await pa.getSinkInfo(id)
-    await pa.disconnect()
-    return sink.volume.current[0]
+  public async getVolumeLinear(): Promise<number> {
+    return this.execute(async (pa) => {
+      const id = await pa.lookupSink(this.playbackSink)
+      const sink = await pa.getSinkInfo(id)
+      return sink.volume.current[0]
+    })
   }
 
   public async setVolume(levelPercent: number) {
-    const pa = await this.getServer()
-    const res = await pa.setSinkVolume(
-      [percentToVolume(levelPercent), percentToVolume(levelPercent)],
-      this.playbackSink,
-    )
-    await pa.disconnect()
-    return res
+    return this.execute(async (pa) => {
+      return pa.setSinkVolume(
+        [percentToVolume(levelPercent), percentToVolume(levelPercent)],
+        this.playbackSink,
+      )
+    })
   }
 
   public async mute() {
-    const pa = await this.getServer()
-    const res = await pa.setSinkMute(true, this.playbackSink)
-    await pa.disconnect()
-    return res
+    return this.execute(async (pa) => {
+      return pa.setSinkMute(true, this.playbackSink)
+    })
   }
 
   public async unmute() {
-    const pa = await this.getServer()
-    const res = await pa.setSinkMute(false, this.playbackSink)
-    await pa.disconnect()
-    return res
+    return this.execute(async (pa) => {
+      return pa.setSinkMute(false, this.playbackSink)
+    })
   }
 }
