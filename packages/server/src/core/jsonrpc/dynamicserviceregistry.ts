@@ -1,4 +1,6 @@
 import { logger } from "@/core/logger"
+import * as fs from "fs"
+import * as path from "path"
 import { JsonRpcErrorCode, RpcService, ServiceModule } from "./types"
 
 type ExposedMethod = (...params: any[]) => Promise<any> | any
@@ -13,12 +15,20 @@ class DynamicServiceRegistry {
   public async loadServices(servicePaths: string[]): Promise<void> {
     if (this.loaded) return
 
-    const importPromises = servicePaths.map((path) => import(path))
+    const paths = servicePaths
+      .map((pathname) =>
+        fs
+          .readdirSync(pathname, { withFileTypes: true })
+          .map((de) => path.join(de.parentPath, de.name)),
+      )
+      .flat()
+
+    const importPromises = paths.map((path) => import(path))
     const modules = await Promise.all(importPromises)
 
     for (const mod of modules) {
-      // Assume the module exports 'default' which contains the ServiceModule structure
       const { namespace, service } = mod.default as ServiceModule
+      logger.trace(namespace, service)
       this.registerService(namespace, service)
     }
 

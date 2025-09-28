@@ -117,4 +117,3 @@ route.post("/", async (c) => {
   }
   return c.json(errorResponse, 400)
 })
-

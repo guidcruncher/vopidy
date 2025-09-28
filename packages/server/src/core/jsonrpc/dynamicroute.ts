@@ -2,6 +2,7 @@
 
 import { logger } from "@/core/logger"
 import { Hono } from "hono"
+import * as path from "path"
 import { registry } from "./dynamicserviceregistry"
 import { JsonRpcErrorCode, JsonRpcRequest, JsonRpcResponse } from "./types"
 
@@ -9,8 +10,7 @@ export const route = new Hono()
 
 // --- 1. Define Service Paths and Load ---
 // NOTE: Use relative paths that are resolvable by your runtime (e.g., Node or Bun).
-const serviceModulePaths = []
-
+const serviceModulePaths = [path.resolve(path.join(__dirname, "../../rpcservices/"))]
 // Initialize the registry asynchronously before the server starts accepting requests
 async function initialize() {
   logger.debug("Initializing RPC services via dynamic import...")
@@ -115,4 +115,3 @@ route.post("/", async (c) => {
   }
   return c.json(errorResponse, 400)
 })
-
