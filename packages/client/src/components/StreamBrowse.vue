@@ -27,6 +27,7 @@
 </style>
 <script lang="ts" setup></script>
 <script lang="ts">
+import { emit } from '@/composables/useeventbus'
 import { vopidy } from '@/services/vopidy'
 
 export default {
@@ -48,7 +49,10 @@ export default {
       })
     },
     selectItem(item) {
-      vopidy('player.play', { source: 'stream', id: item.id }).then((res) => {})
+      vopidy('player.play', { source: 'stream', id: item.id }).then((res) => {
+        emit('vopidy.track-changed')
+        emit('snackbar', { text: 'Playback started.' })
+      })
     },
   },
 }

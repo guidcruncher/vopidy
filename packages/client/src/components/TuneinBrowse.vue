@@ -103,7 +103,7 @@
 }
 </style>
 <script lang="ts" setup>
-import { off, on } from '@/composables/useeventbus'
+import { emit, off, on } from '@/composables/useeventbus'
 import { useResizer } from '@/composables/useresizer'
 import { useUiStateStore } from '@/stores/uistatestore'
 import { storeToRefs } from 'pinia'
@@ -170,7 +170,10 @@ export default {
           this.loadItems(this.breadcrumbs[this.breadcrumbs.length - 1].id)
           break
         case 'audio':
-          vopidy('player.play', { source: 'tunein', id: item.id }).then((res) => {})
+          vopidy('player.play', { source: 'tunein', id: item.id }).then((res) => {
+            emit('vopidy.track-changed')
+            emit('snackbar', { text: 'Playback started.' })
+          })
           break
       }
     },

@@ -174,7 +174,7 @@ export default {
     this.onResize()
     on('showartistdetail', (id) => {
       this.id = id
-      vopidy('spotify.doesfollow', {type:this.id.split(':')[1], id:this.id}).then((res) => {
+      vopidy('spotify.doesfollow', { type: this.id.split(':')[1], id: this.id }).then((res) => {
         this.following = res.result.following
       })
       this.loadData({ done: () => {} })
@@ -192,7 +192,7 @@ export default {
       this.windowSize = { x: window.innerWidth, y: window.innerHeight - 300 }
     },
     doCreatePl() {
-      vopidy('spotify.create-playlist', {name:this.plName, uris:this.plUris}).then((res) => {
+      vopidy('spotify.create-playlist', { name: this.plName, uris: this.plUris }).then((res) => {
         if (res.ok) {
           this.plName = ''
           this.plUris = []
@@ -207,7 +207,7 @@ export default {
     loadData({ done }) {
       const segments = this.id.split(':')
       const method = `spotify.${segments[1]}`
-      vopidy(method, {id:this.id, offset:this.offset, limit:this.limit}).then((res) => {
+      vopidy(method, { id: this.id, offset: this.offset, limit: this.limit }).then((res) => {
         if (res.ok) {
           this.detail = res.result
           if (res.result.items) {
@@ -230,7 +230,7 @@ export default {
       })
     },
     selectItem(item) {
-      vopidy('player.play', {source:'spotify', id:item.id}).then((res) => {})
+      vopidy('player.play', { source: 'spotify', id: item.id }).then((res) => {})
     },
     createPartyList(detail) {
       let uris = []
@@ -334,11 +334,11 @@ export default {
     },
     changefollowing(state) {
       if (state) {
-        vopidy('spotify.follow', {type:this.id.split(':')[1], id:this.id}).then((res) => {
+        vopidy('spotify.follow', { type: this.id.split(':')[1], id: this.id }).then((res) => {
           this.following = true
         })
       } else {
-        vopidy('spotify.unfollow', {type:this.id.split(':')[1], id:this.id}).then((res) => {
+        vopidy('spotify.unfollow', { type: this.id.split(':')[1], id: this.id }).then((res) => {
           this.following = false
         })
       }

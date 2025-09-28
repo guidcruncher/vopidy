@@ -105,7 +105,7 @@
 }
 </style>
 <script lang="ts" setup>
-import { off, on } from '@/composables/useeventbus'
+import { emit, off, on } from '@/composables/useeventbus'
 import { useResizer } from '@/composables/useresizer'
 import { useUiStateStore } from '@/stores/uistatestore'
 import { storeToRefs } from 'pinia'
@@ -181,7 +181,10 @@ export default {
           break
         case 'file':
           const dir = this.breadcrumbs.map((t) => t.name + '/')
-          vopidy('player.play', { source: 'library', id: item.id }).then((res) => {})
+          vopidy('player.play', { source: 'library', id: item.id }).then((res) => {
+            emit('vopidy.track-changed')
+            emit('snackbar', { text: 'Playback started.' })
+          })
           break
       }
     },
