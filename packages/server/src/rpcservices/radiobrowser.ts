@@ -5,10 +5,6 @@ class RadioBrowserService implements RpcService {
   public async browse(name: string) {
     const rbClient = new RadioBrowser()
 
-    if (message.params.length == 0) {
-      return []
-    }
-
     return rbClient.browse(name, 0, 0, false)
   }
 

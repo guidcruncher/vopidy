@@ -12,14 +12,10 @@ class StreamService implements RpcService {
   }
 
   public async import(url: string, text: string, name: string) {
-    if (message.params.length == 0) {
-      return []
-    }
-
     let list: any = []
     let pl: any = {}
 
-    if (urt) {
+    if (url) {
       list = await M3uFile.fromUrl(url)
     }
 

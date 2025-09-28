@@ -5,10 +5,6 @@ class TuneInService implements RpcService {
   public async browse(id: string) {
     const tuneInClient = new TuneIn()
 
-    if (message.params.length == 0) {
-      return []
-    }
-
     return await tuneInClient.browse(id)
   }
 

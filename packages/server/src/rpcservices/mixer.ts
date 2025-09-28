@@ -1,4 +1,4 @@
-import { RpcService } from "@/core/jsonrpc/types"
+import { RpcService, ServiceModule } from "@/core/jsonrpc/types"
 import { Equaliser } from "@/services/alsa/equaliser"
 import { Mixer } from "@/services/mixer/"
 
