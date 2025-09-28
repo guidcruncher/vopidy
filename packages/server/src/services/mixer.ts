@@ -8,7 +8,7 @@ import { Pulseaudio } from "@/services/pulseaudio"
 import { RadioBrowser } from "@/services/radiobrowser/"
 import { Spotify } from "@/services/spotify"
 import { Streamer } from "@/services/streamer/"
-import { TuneIn } from "@/services/tunein"
+import { TuneIn } from "@/services/tunein/"
 import * as fs from "node:fs"
 
 export class PlaybackState {

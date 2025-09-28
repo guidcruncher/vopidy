@@ -1,166 +1,57 @@
-import { Http } from "@/core/http/"
 import { PagedItems } from "@/core/paging"
-import { WsClientStore } from "@/core/wsclientstore"
-import { db } from "@/services/db"
-import { Mixer } from "@/services/mixer"
+import { TuneInApi } from "./tuneinapi"
+import { TuneInService } from "./tuneinservice"
 
+/**
+ * The TuneIn Facade provides a simplified interface to the complex TuneIn
+ * API and service layer, hiding the specifics of data fetching, parsing,
+ * and integration with application components (Mixer, DB, etc.).
+ */
 export class TuneIn {
+  private api: TuneInApi
+  private service: TuneInService
+
+  constructor() {
+    this.api = new TuneInApi()
+    this.service = new TuneInService(this.api)
+  }
+
+  /**
+   * Delegates to TuneInApi to fetch top-level categories.
+   */
   public async categories() {
-    const url = `http://opml.radiotime.com/?render=json`
-    const res = await Http.get(url, true)
-    if (!res.ok) {
-      return undefined
-    }
-    const data = []
-    for (let i = 0; i < res.response.body.length; i++) {
-      const value = res.response.body[i]
-      data.push({ text: value.text, type: value.type, url: value.URL, id: value.key })
-    }
-
-    return data
+    return this.api.getCategories()
   }
 
-  private parseItem(value) {
-    const item = { text: value.text, type: value.type, id: value.guide_id, url: "", image: "" }
-
-    if (value.guide_id) {
-      item.id = value.guide_id
-    }
-    if (value.URL) {
-      item.url = value.URL + "&render=json"
-    }
-    if (value.image) {
-      item.image = value.image
-    }
-    return item
-  }
-
-  private parseChildren(arr: any[], child: any[]) {
-    for (let i = 0; i < child.length; i++) {
-      const value = child[i]
-      if (value.element === "outline" && value.children) {
-        arr = this.parseChildren(arr, value.children)
-      } else {
-        if (value.type && value.guide_id) {
-          arr.push(this.parseItem(value))
-        }
-      }
-    }
-
-    return arr
-  }
-
+  /**
+   * Delegates to TuneInApi to browse a specific category/list ID.
+   */
   public async browse(id: string) {
-    const params = new URLSearchParams()
-    params.append("render", "json")
-    params.append("id", id)
-    const url = `http://opml.radiotime.com/browse.ashx?${params.toString()}`
-    const res = await Http.get(url, true)
-    if (!res.ok) {
-      return undefined
-    }
-
-    let data = []
-    data = this.parseChildren(data, res.response.body)
-    if (data.length == 0) {
-      return undefined
-    }
-    return data
+    return this.api.browse(id)
   }
 
-  public async describe(id: string) {
-    const params = new URLSearchParams()
-    params.append("render", "json")
-    params.append("id", id)
-    const url = `http://opml.radiotime.com/describe.ashx?${params.toString()}`
-    const res = await Http.get(url, true)
-    if (!res.ok) {
-      return undefined
-    }
-    if (res.response.body.length > 0) {
-      const json = res.response.body[0]
-      const track = {
-        id: json.guide_id,
-        image: json.logo,
-        album: json.description,
-        name: json.name,
-        artist: [{ name: json.slogan }],
-        type: "tunein",
-        source: "tunein",
-      }
-      return track
-    }
-
-    return undefined
-  }
-
+  /**
+   * Delegates to TuneInService to execute the full playback logic,
+   * which involves fetching stream URLs, starting the player, and updating state.
+   */
   public async play(id: string) {
-    const params = new URLSearchParams()
-    params.append("render", "json")
-    params.append("id", id)
-    const url = `http://opml.radiotime.com/tune.ashx?${params.toString()}`
-    const item = await this.describe(id)
-
-    const res = await Http.get(url, false)
-    if (!res.ok) {
-      return undefined
-    }
-    const json = res.response
-
-    if (json.body.length > 0) {
-      const mpdClient = Mixer.getMediaPlayer()
-      Mixer.savePlaybackTrack("tunein", id)
-      await mpdClient.play(json.body[0].url)
-      db.addToPlaybackHistory("tunein", item)
-      WsClientStore.broadcast({ type: "track-changed", data: item })
-      return item
-    }
-
-    return undefined
+    // The service handles both description and stream fetching internally
+    return this.service.play(id)
   }
 
+  /**
+   * Delegates to TuneInApi to fetch descriptive metadata for a station.
+   * This is a simple data retrieval operation.
+   */
+  public async describe(id: string) {
+    return this.api.describe(id)
+  }
+
+  /**
+   * Delegates to TuneInService to execute the search, which includes
+   * fetching, sorting, and wrapping results in a PagedItems structure.
+   */
   public async search(query: string, offset: number, limit: number): Promise<PagedItems<any>> {
-    let view = new PagedItems()
-    const params = new URLSearchParams()
-    params.append("fullTextSearch", "true")
-    params.append("formats", "mp3,aac,ogg,flash,html,hls,wma")
-    params.append("partnerId", "RadioTime")
-    params.append("itemUrlScheme", "secure")
-    params.append("reqAttempt", "1")
-    params.append("query", query)
-    const url = "https://api.tunein.com/profiles?" + params.toString()
-    view.query = query
-    const res = await Http.get(url, true)
-
-    if (!res.ok) {
-      return view
-    }
-
-    let items = []
-    for (const item of res.response.Items) {
-      if (item.ContainerType == "Stations") {
-        item.Children.forEach((json) => {
-          const track = {
-            id: json.GuideId,
-            image: json.Image,
-            album: json.Description,
-            name: json.Title,
-            artist: [{ name: json.Subtitle }],
-            nowplaying: json.Subtitle,
-            type: "tunein",
-            source: "tunein",
-          }
-          items.push(track)
-        })
-      }
-    }
-
-    view.offset = 0
-    items = items.sort((a, b) => a.name.localeCompare(b.name))
-    view.items = items
-    view.limit = view.items.length
-    view.total = view.items.length
-    view.calculatePaging()
-    return view
+    return this.service.search(query, offset, limit)
   }
 }

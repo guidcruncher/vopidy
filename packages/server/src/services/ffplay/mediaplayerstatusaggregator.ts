@@ -3,7 +3,7 @@ import { LocalMusic } from "@/services/localmusic"
 import { Mixer } from "@/services/mixer"
 import { Pulseaudio } from "@/services/pulseaudio"
 import { RadioBrowser } from "@/services/radiobrowser/"
-import { TuneIn } from "@/services/tunein"
+import { TuneIn } from "@/services/tunein/"
 import { FFplayMetadata } from "./ffplaymetadata"
 import { FFplayProcessManager } from "./ffplayprocessmanager"
 
