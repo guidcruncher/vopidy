@@ -6,7 +6,6 @@ import { ProcessLauncher } from "@/core/processlauncher"
 import { loadScheduler } from "@/core/scheduler"
 import { SnapServer } from "@/core/snapserver"
 import { auth } from "@/routes/auth"
-import { httprpc } from "@/routes/jsonrpc"
 import { OpenApiDoc } from "@/routes/openapidoc"
 import { proxyRoute } from "@/routes/proxy"
 import { serve } from "@hono/node-server"
@@ -83,8 +82,8 @@ app.get("/doc", swaggerUI({ url: "/api/doc.json" }))
 // API Route setup
 app.route("/p", proxyRoute)
 app.route("/auth", auth)
-app.route("/rpc", httprpc)
-app.route("/rpc2", JsonRpcRoute)
+// app.route("/rpc", httprpc)
+app.route("/rpc", JsonRpcRoute)
 
 const server = serve(
   {

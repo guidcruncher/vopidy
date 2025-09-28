@@ -19,6 +19,9 @@ class DynamicServiceRegistry {
       .map((pathname) =>
         fs
           .readdirSync(pathname, { withFileTypes: true })
+          .filter((file) => {
+            return [".ts", ".js"].includes(path.extname(file.name).toLowerCase())
+          })
           .map((de) => path.join(de.parentPath, de.name)),
       )
       .flat()
