@@ -9,7 +9,7 @@ class SnapcastService implements RpcService {
     })
   }
 
-  public async setovolume(id: string, level: number, muted: boolean) {
+  public async setvolume(id: string, level: number, muted: boolean) {
     if (!level) {
       return await JsonRpcClient.request("Client.SetVolume", {
         id: id,

@@ -39,16 +39,16 @@
           <router-view />
         </v-sheet>
       </div>
-      <v-snackbar
-        :timeout="2000"
-        class="elevation-24"
-        color="deep-purple-accent-4"
-        v-model="snackbar.show"
-      >
-        {{ snackbar.text }}
-      </v-snackbar>
     </v-main>
   </v-layout>
+  <v-snackbar
+    :timeout="snackbar.timeout ?? 2000"
+    class="elevation-24"
+    color="deep-purple-accent-4"
+    v-model="snackbar.show"
+  >
+    {{ snackbar.text }}
+  </v-snackbar>
 </template>
 
 <script lang="ts" setup>
