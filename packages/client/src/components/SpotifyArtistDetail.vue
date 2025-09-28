@@ -192,7 +192,7 @@ export default {
       this.windowSize = { x: window.innerWidth, y: window.innerHeight - 300 }
     },
     doCreatePl() {
-      vopidy('spotify.create-playlist', {name:this.plName, this.plUris}).then((res) => {
+      vopidy('spotify.create-playlist', {name:this.plName, uris:this.plUris}).then((res) => {
         if (res.ok) {
           this.plName = ''
           this.plUris = []
