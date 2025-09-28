@@ -1,6 +1,6 @@
 import { logger } from "@/core/logger"
 import { WsClientStore } from "@/core/wsclientstore"
-import { Mixer } from "@/services/mixer"
+import { Mixer } from "@/services/mixer/"
 import { spawn } from "child_process"
 import * as fs from "fs"
 

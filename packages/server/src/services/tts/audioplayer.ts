@@ -1,5 +1,5 @@
 import { logger } from "@/core/logger"
-import { Mixer } from "@/services/mixer"
+import { Mixer } from "@/services/mixer/"
 import { Pulseaudio } from "@/services/pulseaudio"
 import * as crypto from "crypto"
 import * as fs from "fs"

@@ -11,11 +11,11 @@ import { DeviceMapper } from "./devicemapper"
 import { PlaybackStateStore } from "./playbackstatestore"
 
 export class PlaybackController {
-  private static getMpdClient(): IMediaPlayer {
+  public static getMpdClient(): IMediaPlayer {
     return FFplay.Instance // Assuming FFplay implements IMediaPlayer and acts as the MPD client
   }
 
-  private static getSpotifyClient(): Spotify {
+  public static getSpotifyClient(): Spotify {
     return new Spotify()
   }
 

@@ -1,7 +1,7 @@
 import { logger } from "@/core/logger"
 import { WsClientStore } from "@/core/wsclientstore"
 import { db } from "@/services/db"
-import { Mixer } from "@/services/mixer"
+import { Mixer } from "@/services/mixer/"
 import * as fss from "fs" // for sync file check (play)
 import * as fs from "fs/promises" // for async file operations (browse, describe)
 import { parseFile } from "music-metadata"

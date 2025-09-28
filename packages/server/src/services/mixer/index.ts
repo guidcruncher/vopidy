@@ -1,3 +1,4 @@
+import { IMediaPlayer } from "@/services/imediaplayer"
 import { DeviceMapper } from "./devicemapper"
 import { PlaybackController } from "./playbackcontroller"
 import { PlaybackState } from "./playbackstate" // Assuming PlaybackState is imported or defined
@@ -6,6 +7,10 @@ import { VolumeController } from "./volumecontroller"
 
 export class Mixer {
   // --- Playback/Control Methods (Delegated to PlaybackController) ---
+
+  public static getMediaPlayer(): IMediaPlayer {
+    return PlaybackController.getMpdClient()
+  }
 
   public static async play(source: string, id: string): Promise<any> {
     return PlaybackController.play(source, id)

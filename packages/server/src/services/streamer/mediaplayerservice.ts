@@ -1,6 +1,6 @@
 // media-player.service.ts
 
-import { Mixer } from "@/services/mixer"
+import { Mixer } from "@/services/mixer/"
 
 /**
  * Handles interactions with the underlying media player system (MPD client via Mixer).

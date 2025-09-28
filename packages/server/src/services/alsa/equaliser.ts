@@ -1,4 +1,4 @@
-import { Mixer } from "@/services/mixer"
+import { Mixer } from "@/services/mixer/"
 import * as cp from "child_process"
 import * as fs from "node:fs"
 import * as path from "node:path"
