@@ -1,28 +1,39 @@
-import { RpcService, ServiceModule } from "@/core/jsonrpc/types"
-import { Auth } from "@/services/auth"
-import { SpotifyAuth } from "@/services/spotify/spotifyauth"
+import { RpcService } from "@/core/jsonrpc/types"
+import { Equaliser } from "@/services/alsa/equaliser"
+import { Mixer } from "@/services/mixer/"
 
 class MixerService implements RpcService {
-  public async login(id: string) {
-    const authClient = new Auth()
-    const res = await authClient.login(id)
-    await SpotifyAuth.login()
-    return res
+  public async equaliser_get() {
+    const equal = new Equaliser()
+    return equal.getMixer()
   }
 
-  public logout() {
-    const authClient = new Auth()
-    return authClient.logout()
+  public async equaliser_reset(value: number) {
+    const equal = new Equaliser()
+    return await equal.resetMixer(value)
   }
 
-  public users() {
-    const authClient = new Auth()
-    return authClient.getAuthUsers()
+  public async equaliser_set(value: any) {
+    const equal = new Equaliser()
+    return await equal.updateMixer(value)
+  }
+
+  public async mute() {
+    return Mixer.mute()
+  }
+
+  public async output() {
+    return Mixer.activeOutputDevice()
+  }
+
+  public async setvolume(level: number) {
+    return await Mixer.setVolume(level)
+  }
+
+  public async unmute() {
+    return Mixer.unmute()
   }
 }
 
 export const namespace = "mixer"
 export const service = new MixerService()
-
-const module: ServiceModule = { namespace, service }
-export default module
