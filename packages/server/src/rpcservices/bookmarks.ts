@@ -1,23 +1,23 @@
 import { RpcService, ServiceModule } from "@/core/jsonrpc/types"
-import { Auth } from "@/services/auth"
-import { SpotifyAuth } from "@/services/spotify/spotifyauth"
+import { db } from "@/services/db/"
+import { SpotifyUserLibrary } from "@/services/spotify/spotifyuserlibrary"
 
 class BookmarksService implements RpcService {
-  public async login(id: string) {
-    const authClient = new Auth()
-    const res = await authClient.login(id)
-    await SpotifyAuth.login()
-    return res
+  public async browse() {
+    return db.getBookmarks()
   }
 
-  public logout() {
-    const authClient = new Auth()
-    return authClient.logout()
+  public async create(source: string, item: any) {
+    if (source.toLowerCase() == "spotify") {
+      const spotifyClient = new SpotifyUserLibrary()
+      return spotifyClient.saveToLibrary(item.id)
+    }
+
+    return db.addBookmark(source, item)
   }
 
-  public users() {
-    const authClient = new Auth()
-    return authClient.getAuthUsers()
+  public async delete(source: string, id: string) {
+    return db.deleteBookmark(source, id)
   }
 }
 

@@ -41,7 +41,7 @@ class ServiceRegistry {
    * @param params The parameters array or object.
    */
   public async execute(method: string, params: any): Promise<any> {
-    const func = this.methods.get(method)
+    const func = this.methods.get(method.replaceAll("-", "_"))
 
     if (!func) {
       // Throw an object error for easy JSON-RPC error mapping

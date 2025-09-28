@@ -1,23 +1,70 @@
+import { CacheManager } from "@/core/cachemanager"
+import { ApplyConfig, Config, ConfigWriter } from "@/core/config"
 import { RpcService, ServiceModule } from "@/core/jsonrpc/types"
-import { Auth } from "@/services/auth"
+import { Alsa } from "@/services/alsa/"
+import { Mixer } from "@/services/mixer/"
 import { SpotifyAuth } from "@/services/spotify/spotifyauth"
+const Memcached = require("memcached")
 
 class CoreService implements RpcService {
-  public async login(id: string) {
-    const authClient = new Auth()
-    const res = await authClient.login(id)
-    await SpotifyAuth.login()
+  public async cache_flush() {
+    return CacheManager.flush()
+  }
+
+  public async cache_stats() {
+    return new Promise<any>((resolve, reject) => {
+      const memcached = new Memcached("127.0.0.1:11211")
+      memcached.stats((err, data) => {
+        if (err) {
+          reject(err)
+        } else {
+          resolve(data)
+        }
+      })
+    })
+  }
+
+  public config_get() {
+    return Config.get()
+  }
+
+  public async config_set(config: any) {
+    let cfg: Config = Config.load()
+    let newCfg: Config = JSON.parse(JSON.stringify(cfg))
+    newCfg.enableBitPerfectPlayback = config.enableBitPerfectPlayback
+    newCfg.enableRequestCache = config.enableRequestCache
+    newCfg.requestCacheLifetimeSeconds = config.requestCacheLifetimeSeconds
+    newCfg.nightStartHour = config.nightStartHour
+    newCfg.nightEndHour = config.nightEndHour
+    newCfg.announceTimeHourly = config.announceTimeHourly
+    newCfg.timezone = config.timezone
+    newCfg.locale = config.locale
+    newCfg.clockType = config.clockType
+    newCfg.snapcastCodec = config.snapcastCodec
+    newCfg.snapcastChunkMs = config.snapcastChunkMs
+    newCfg.snapcastBuffer = config.snapcastBuffer
+    ConfigWriter(newCfg)
+    await ApplyConfig(cfg, newCfg)
+    return newCfg
+  }
+
+  public ping() {
+    return "pong"
+  }
+
+  public soundcap() {
+    const alsa = new Alsa()
+    let res: any = {}
+    res = alsa.getCardInfo()
     return res
   }
 
-  public logout() {
-    const authClient = new Auth()
-    return authClient.logout()
+  public async status() {
+    return Mixer.getStatus()
   }
 
-  public users() {
-    const authClient = new Auth()
-    return authClient.getAuthUsers()
+  public async user() {
+    return SpotifyAuth.getProfile()
   }
 }
 

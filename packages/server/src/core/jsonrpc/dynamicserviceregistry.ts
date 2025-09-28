@@ -69,7 +69,7 @@ class DynamicServiceRegistry {
       throw { code: JsonRpcErrorCode.InternalError, message: "Service registry not initialized." }
     }
 
-    const func = this.methods.get(method)
+    const func = this.methods.get(method.replace("-", "_"))
 
     if (!func) {
       throw { code: JsonRpcErrorCode.MethodNotFound, message: `Method not found: ${method}` }
