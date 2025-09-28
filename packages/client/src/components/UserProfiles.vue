@@ -47,14 +47,14 @@ export default {
       window.location.href = `${window.location.protocol}//${window.location.host}/api/auth`
     },
     selectItem(item) {
-      vopidy('auth.login', [item.id]).then((res) => {
+      vopidy('auth.login', { id: item.id }).then((res) => {
         localStorage.setItem('vopidy.id', item.id)
         localStorage.removeItem('page')
         window.location.href = `${window.location.protocol}//${window.location.host}/`
       })
     },
     getUsers() {
-      vopidy('auth.users', []).then((res) => {
+      vopidy('auth.users', {}).then((res) => {
         if (res.ok) {
           this.items = res.result
         }

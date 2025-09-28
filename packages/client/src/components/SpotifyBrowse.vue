@@ -147,14 +147,14 @@ export default {
   methods: {
     refreshTab() {
       const method = `spotify.${this.tab}`
-      vopidy(method, []).then((res) => {
+      vopidy(method, {}).then((res) => {
         if (res.ok) {
           this.items = res.result
         }
       })
     },
     selectItem(item) {
-      vopidy('player.play', ['spotify', item.id]).then((res) => {
+      vopidy('player.play', { source: 'spotify', id: item.id }).then((res) => {
         emit('vopidy.track-changed')
         emit('snackbar', { text: 'Playback started.' })
       })

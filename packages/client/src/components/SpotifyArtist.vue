@@ -137,12 +137,12 @@ export default {
         return
       }
 
-      vopidy('spotify.doesfollow', [this.id.split(':')[1], this.id]).then((res) => {
+      vopidy('spotify.doesfollow', { type: this.id.split(':')[1], id: this.id }).then((res) => {
         this.following = res.result.following
       })
 
       const method = `spotify.artist`
-      vopidy(method, [id]).then((res) => {
+      vopidy(method, { id: id }).then((res) => {
         if (res.ok) {
           this.detail = res.result
           this.showDialog = true
@@ -150,15 +150,15 @@ export default {
       })
     },
     selectItem(item) {
-      vopidy('player.play', ['spotify', item.id]).then((res) => {})
+      vopidy('player.play', { source: 'spotify', id: item.id }).then((res) => {})
     },
     changefollowing(state) {
       if (state) {
-        vopidy('spotify.follow', [this.id.split(':')[1], this.id]).then((res) => {
+        vopidy('spotify.follow', { type: this.id.split(':')[1], id: this.id }).then((res) => {
           this.following = true
         })
       } else {
-        vopidy('spotify.unfollow', [this.id.split(':')[1], this.id]).then((res) => {
+        vopidy('spotify.unfollow', { type: this.id.split(':')[1], id: this.id }).then((res) => {
           this.following = false
         })
       }

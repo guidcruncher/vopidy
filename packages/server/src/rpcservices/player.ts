@@ -36,7 +36,7 @@ class PlayerService implements RpcService {
     return await Mixer.getStatus()
   }
 
-  public async seek(position: number) {
+  public async seek(source:string,position: number) {
     let state = await Mixer.seek(position)
     return await Mixer.getStatus()
   }

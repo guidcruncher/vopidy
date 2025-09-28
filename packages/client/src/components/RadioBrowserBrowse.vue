@@ -134,21 +134,21 @@ export default {
     loadItems(item) {
       switch (item.type) {
         case '':
-          vopidy('radiobrowser.countries', []).then((res) => {
+          vopidy('radiobrowser.countries', {}).then((res) => {
             if (res.ok) {
               this.items = res.result
             }
           })
           break
         case 'country':
-          vopidy('radiobrowser.states', [item.id, item.name]).then((res) => {
+          vopidy('radiobrowser.states', { code: item.id, name: item.name }).then((res) => {
             if (res.ok) {
               this.items = res.result
             }
           })
           break
         case 'region':
-          vopidy('radiobrowser.browse', [item.name]).then((res) => {
+          vopidy('radiobrowser.browse', { name: item.name }).then((res) => {
             if (res.ok) {
               this.items = res.result
             }
@@ -173,7 +173,7 @@ export default {
         this.breadcrumbs.push({ type: item.type, name: item.name, id: item.id })
         this.loadItems(this.breadcrumbs[this.breadcrumbs.length - 1])
       } else {
-        vopidy('player.play', ['radiobrowser', item.id]).then((res) => {})
+        vopidy('player.play', { source: 'radiobrowser', id: item.id }).then((res) => {})
       }
     },
   },

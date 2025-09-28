@@ -10,7 +10,7 @@ export default {
     }
   },
   mounted() {
-    vopidy('core.config-get', []).then((res) => {
+    vopidy('core.config-get', {}).then((res) => {
       if (res.ok) {
         this.clockType = (res.result.clockType ?? 'none').toLowerCase()
         this.ready = true

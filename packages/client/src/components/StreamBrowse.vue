@@ -41,14 +41,14 @@ export default {
   beforeUnmount() {},
   methods: {
     loadItems() {
-      vopidy('stream.browse', []).then((res) => {
+      vopidy('stream.browse', {}).then((res) => {
         if (res.ok) {
           this.items = res.result
         }
       })
     },
     selectItem(item) {
-      vopidy('player.play', ['stream', item.id]).then((res) => {})
+      vopidy('player.play', { source: 'stream', id: item.id }).then((res) => {})
     },
   },
 }

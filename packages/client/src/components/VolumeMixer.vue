@@ -46,7 +46,7 @@ export default {
     return { volume: 100, canMix: false, muted: false, ready: false }
   },
   mounted() {
-    vopidy('core.config-get', []).then((res) => {
+    vopidy('core.config-get', {}).then((res) => {
       if (res.ok) {
         this.canMix = !(res.result.enableBitPerfectPlayback === 'true')
         if (this.canMix) {
@@ -63,23 +63,23 @@ export default {
   },
   methods: {
     mute() {
-      vopidy(`mixer.mute`, []).then((res) => {
+      vopidy(`mixer.mute`, {}).then((res) => {
         this.muted = true
       })
     },
     unmute() {
-      vopidy(`mixer.unmute`, []).then((res) => {
+      vopidy(`mixer.unmute`, {}).then((res) => {
         this.muted = false
       })
     },
     setVolume() {
-      vopidy(`mixer.setvolume`, [this.volume]).then((res) => {
+      vopidy(`mixer.setvolume`, { level: this.volume }).then((res) => {
         if (res.ok) {
         }
       })
     },
     getVolume() {
-      vopidy('core.status', []).then((res) => {
+      vopidy('core.status', {}).then((res) => {
         if (res.ok) {
           if (res.result.volume) {
             this.volume = res.result.volume

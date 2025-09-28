@@ -71,13 +71,13 @@ export default {
   },
   methods: {
     selectItem(item) {
-      vopidy('player.play', ['spotify', item.id]).then((res) => {
+      vopidy('player.play', { source: 'spotify', id: item.id }).then((res) => {
         emit('vopidy.track-changed')
         emit('snackbar', { text: 'Playback started.' })
       })
     },
     getNewReleases() {
-      vopidy('spotify.newreleases', []).then((res) => {
+      vopidy('spotify.newreleases', {}).then((res) => {
         if (res.ok) {
           this.items = res.result
         }

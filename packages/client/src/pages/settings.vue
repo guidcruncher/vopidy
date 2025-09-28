@@ -144,7 +144,7 @@ export default {
       dateStyle: 'short',
       timeStyle: 'long',
     }).format(new Date(parseInt(buildVersion.buildDate) * 1000))
-    vopidy('core.config-get', []).then((res) => {
+    vopidy('core.config-get', {}).then((res) => {
       if (res.ok) {
         this.clockType = res.result.clockType
         this.settings = res.result
@@ -169,7 +169,7 @@ export default {
       return navigator.language ?? 'en-US'
     },
     saveSettings() {
-      vopidy('core.config-get', []).then((res) => {
+      vopidy('core.config-get', {}).then((res) => {
         let config: any = {}
 
         if (res.ok) {
@@ -180,7 +180,7 @@ export default {
         this.settings.timezone = getTimezone()
         this.settings.locale = getLocale()
         this.settings.clockType = this.clockType.title ?? this.settings.clockType
-        vopidy('core.config-set', [this.settings]).then((res) => {
+        vopidy('core.config-set', this.settings).then((res) => {
           window.location.reload()
         })
       })

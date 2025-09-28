@@ -161,7 +161,7 @@ export default {
       this.loadItems(dir)
     },
     loadItems(dir) {
-      vopidy('library.browse', [dir]).then((res) => {
+      vopidy('library.browse', { dir: dir }).then((res) => {
         if (res.ok) {
           this.dir = res.result.dir
           this.items = res.result.items
@@ -181,7 +181,7 @@ export default {
           break
         case 'file':
           const dir = this.breadcrumbs.map((t) => t.name + '/')
-          vopidy('player.play', ['library', item.id]).then((res) => {})
+          vopidy('player.play', { source: 'library', id: item.id }).then((res) => {})
           break
       }
     },

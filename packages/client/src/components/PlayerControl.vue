@@ -75,7 +75,7 @@ export default {
   },
   methods: {
     addBookmark() {
-      vopidy('core.status', []).then((res) => {
+      vopidy('core.status', {}).then((res) => {
         if (res.ok) {
           if (res.result.track) {
             this.status = res.result
@@ -97,9 +97,9 @@ export default {
       })
     },
     playerOp(method) {
-      vopidy(`player.${method}`, []).then((res) => {
+      vopidy(`player.${method}`, {}).then((res) => {
         emit('player-command', { command: method })
-        vopidy('core.status', []).then((res) => {
+        vopidy('core.status', {}).then((res) => {
           if (res.ok) {
             if (res.result.track) {
               this.status = res.result
@@ -114,13 +114,13 @@ export default {
       })
     },
     mixerOp(method) {
-      vopidy(`mixer.${method}`, []).then((res) => {
+      vopidy(`mixer.${method}`, {}).then((res) => {
         emit('mixer-command', { command: method })
         this.getStatus()
       })
     },
     getStatus() {
-      vopidy('core.status', []).then((res) => {
+      vopidy('core.status', {}).then((res) => {
         if (res.ok) {
           this.muted = res.result.muted
           if (res.result.track) {

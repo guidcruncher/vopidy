@@ -1,126 +1,124 @@
+import { CacheManager } from "@/core/cachemanager"
 import { RpcService, ServiceModule } from "@/core/jsonrpc/types"
 import { shimNonPaged } from "@/core/paging"
-import { JsonRpcMessage } from "@/rpc/jsonrpcmessage"
 import { SpotifyCatalog } from "@/services/spotify/spotifycatalog"
 import { SpotifyLibrary } from "@/services/spotify/spotifylibrary"
 import { SpotifyUserLibrary } from "@/services/spotify/spotifyuserlibrary"
 
 class SpotifyService implements RpcService {
-  public async album(message: JsonRpcMessage) {
+  public async album(id:string) {
     const spotifyClient = new SpotifyCatalog()
-    let res = await spotifyClient.getAlbum(message.params["id"])
+    let res = await spotifyClient.getAlbum(id)
     return shimNonPaged(res)
   }
 
-  public async albums(message: JsonRpcMessage) {
+  public async albums() {
     const spotifyClient = new SpotifyLibrary()
     return await spotifyClient.getAlbums()
   }
 
-  public async artist_albums(message: JsonRpcMessage) {
+  public async artist_albums(id:string) {
     const spotifyClient = new SpotifyCatalog()
-    return await spotifyClient.getArtistAlbums(message.params["id"])
+    return await spotifyClient.getArtistAlbums(id)
   }
 
-  public async artist_tracks(message: JsonRpcMessage) {
+  public async artist_tracks(id:string) {
     const spotifyClient = new SpotifyCatalog()
-    return await spotifyClient.getArtistsTopTracks(message.params["id"])
+    return await spotifyClient.getArtistsTopTracks(id)
   }
 
-  public async artist(message: JsonRpcMessage) {
+  public async create_playlist(name:string, uris:string[]) {
+  const spotifyClient = new SpotifyCatalog()
+  let res = await spotifyClient.createPlaylist(name,uris)
+  await CacheManager.flush()
+  return res
+}
+
+  public async artist(id:string) {
     const spotifyClient = new SpotifyCatalog()
-    const res = await spotifyClient.getArtist(message.params["id"])
+    const res = await spotifyClient.getArtist(id)
     return shimNonPaged(res)
   }
 
-  public async artists(message: JsonRpcMessage) {
+  public async artists() {
     const spotifyClient = new SpotifyLibrary()
     return await spotifyClient.getArtists()
   }
 
-  public async describe(message: JsonRpcMessage) {
+  public async describe(id:string) {
     const spotifyClient = new SpotifyCatalog()
-
-    if (message.params.length == 0) {
-      return []
-    }
-
-    return await spotifyClient.describe(message.params["id"])
+    return await spotifyClient.describe(id)
   }
 
-  public async doesfollow(message: JsonRpcMessage) {
+  public async doesfollow(type:string,id:string) {
     const spotifyClient = new SpotifyUserLibrary()
-    let res = await spotifyClient.doesFollow(message.params["type"], message.params["id"])
-    return { id: message.params["id"], following: res }
+    let res = await spotifyClient.doesFollow(type,id)
+    return { id: id, following: res }
   }
 
-  public async follow(message: JsonRpcMessage) {
+  public async follow(type:string,id:string) {
     const spotifyClient = new SpotifyUserLibrary()
-    let res = await spotifyClient.follow(message.params["type"], message.params["id"])
+    let res = await spotifyClient.follow(type,id)
     return res
   }
 
-  public async library_add(message: JsonRpcMessage) {
+  public async library_add(id:string) {
     const spotifyClient = new SpotifyUserLibrary()
-    let res = await spotifyClient.saveToLibrary(message.params["id"])
+    let res = await spotifyClient.saveToLibrary(id)
     return res
   }
 
-  public async library_contains(message: JsonRpcMessage) {
+  public async library_contains(id:string) {
     const spotifyClient = new SpotifyUserLibrary()
-    let res = await spotifyClient.inLibrary(message.params["id"])
-    return { id: message.params["id"], exists: res }
+    let res = await spotifyClient.inLibrary(id)
+    return { id: id, exists: res }
   }
 
-  public async library_remove(message: JsonRpcMessage) {
+  public async library_remove(id:string) {
     const spotifyClient = new SpotifyUserLibrary()
-    let res = await spotifyClient.removeFromLibrary(message.params["id"])
+    let res = await spotifyClient.removeFromLibrary(id)
     return res
   }
 
-  public async newreleases(message: JsonRpcMessage) {
+  public async newreleases() {
     const spotifyClient = new SpotifyCatalog()
     return await spotifyClient.getNewAlbums()
   }
 
-  public async playlist(message: JsonRpcMessage) {
+  public async playlist(id:string,offset:number,limit:number) {
     const spotifyClient = new SpotifyLibrary()
-    const offset = parseInt(message.params["offset"])
-    const limit = parseInt(message.params["limit"])
-    return await spotifyClient.getPlaylist(message.params["id"], offset, limit)
+    return await spotifyClient.getPlaylist(id, offset, limit)
   }
 
-  public async playlists(message: JsonRpcMessage) {
+  public async playlists() {
     const spotifyClient = new SpotifyLibrary()
     return await spotifyClient.getPlaylists()
   }
 
-  public async queue(message: JsonRpcMessage) {
+  public async queue() {
     const spotifyClient = new SpotifyCatalog()
     return await spotifyClient.getQueue()
   }
 
-  public async show(message: JsonRpcMessage) {
+  public async show(id:string, offset:number,limit:number) {
     const spotifyClient = new SpotifyCatalog()
-    const offset = parseInt(message.params["offset"])
-    const limit = parseInt(message.params["limit"])
-    const res = await spotifyClient.getShow(message.params["id"], offset, limit)
+    const res = await spotifyClient.getShow(id, offset, limit)
     return res
   }
 
-  public async shows(message: JsonRpcMessage) {
+  public async shows() {
     const spotifyClient = new SpotifyLibrary()
     return await spotifyClient.getShows()
   }
 
-  public async tracks(message: JsonRpcMessage) {
+  public async tracks() {
     const spotifyClient = new SpotifyLibrary()
     return await spotifyClient.getTracks()
   }
 
-  public async unfollow(message: JsonRpcMessage) {
+  public async unfollow(type:string,id:string) {
     const spotifyClient = new SpotifyUserLibrary()
-    let res = await spotifyClient.unfollow(message.params["type"], message.params["id"])
+    let res = await spotifyClient.unfollow(type,id)
     return res
   }
 }

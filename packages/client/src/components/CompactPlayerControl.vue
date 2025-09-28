@@ -78,7 +78,7 @@ export default {
   },
   methods: {
     addBookmark() {
-      vopidy('core.status', []).then((res) => {
+      vopidy('core.status', {}).then((res) => {
         if (res.ok) {
           if (res.result.track) {
             this.status = res.result
@@ -102,7 +102,7 @@ export default {
     playerOp(method) {
       vopidy(`player.${method}`, []).then((res) => {
         emit('player-command', { command: method })
-        vopidy('core.status', []).then((res) => {
+        vopidy('core.status', {}).then((res) => {
           if (res.ok) {
             if (res.result.track) {
               this.status = res.result
@@ -123,7 +123,7 @@ export default {
       })
     },
     getStatus() {
-      vopidy('core.status', []).then((res) => {
+      vopidy('core.status', {}).then((res) => {
         if (res.ok) {
           this.muted = res.result.muted
           if (res.result.track) {

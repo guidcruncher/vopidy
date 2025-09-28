@@ -157,14 +157,16 @@ export default {
     },
     performSeek(position) {
       if (this.status && this.status.source) {
-        vopidy('player.seek', [this.status.source, Math.ceil(position)]).then((res) => {
-          if (!res.ok) {
-          }
-        })
+        vopidy('player.seek', { source: this.status.source, position: Math.ceil(position) }).then(
+          (res) => {
+            if (!res.ok) {
+            }
+          },
+        )
       }
     },
     getStatus(cb) {
-      vopidy('core.status', []).then((res) => {
+      vopidy('core.status', {}).then((res) => {
         if (res.ok) {
           this.paused = res.result.paused
           if (res.result.position) {

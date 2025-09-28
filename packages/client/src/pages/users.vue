@@ -10,7 +10,7 @@ meta:
 <script lang="ts" setup>
 import { vopidy } from '@/services/vopidy'
 
-vopidy('auth.users', []).then((res) => {
+vopidy('auth.users', {}).then((res) => {
   if (!res || res.length == 0) {
     window.location.href = `${window.location.protocol}//${window.location.host}/api/auth`
   }

@@ -142,7 +142,7 @@ export default {
       this.items = []
       this.detail = {}
       this.id = id
-      vopidy('spotify.library.contains', [this.id]).then((res) => {
+      vopidy('spotify.library.contains', { id: this.id }).then((res) => {
         this.inLibrary = res.result.exists
       })
       this.showDialog = true
@@ -160,7 +160,7 @@ export default {
       this.windowSize = { x: window.innerWidth, y: window.innerHeight - 240 }
     },
     doCreatePl() {
-      vopidy('create.playlist', [this.plName, this.plUris]).then((res) => {
+      vopidy('spotify.create-playlist', { name: this.plName, uris: this.plUris }).then((res) => {
         if (res.ok) {
           this.plName = ''
           this.plUris = []
@@ -175,7 +175,7 @@ export default {
     loadData({ done }) {
       const segments = this.id.split(':')
       const method = `spotify.${segments[1]}`
-      vopidy(method, [this.id, this.offset, this.limit]).then((res) => {
+      vopidy(method, { id: this.id, offset: this.offset, limit: this.limit }).then((res) => {
         if (res.ok) {
           this.detail = res.result
           if (res.result.content.items.length > 0) {
@@ -196,7 +196,7 @@ export default {
       })
     },
     selectItem(item) {
-      vopidy('player.play', ['spotify', item.id]).then((res) => {
+      vopidy('player.play', { source: 'spotify', id: item.id }).then((res) => {
         emit('snackbar', { text: 'Playback started.' })
       })
     },
@@ -227,7 +227,7 @@ export default {
           break
       }
 
-      vopidy('spotify.playlists', []).then((playlists) => {
+      vopidy('spotify.playlists', {}).then((playlists) => {
         this.playlistsAvailable = playlists.result
         this.plUris = uris
         this.showCreatePl = true
@@ -235,11 +235,11 @@ export default {
     },
     changeLibrary(state) {
       if (state) {
-        vopidy('spotify.library.add', [this.id]).then((res) => {
+        vopidy('spotify.library.add', { id: this.id }).then((res) => {
           this.inLibrary = true
         })
       } else {
-        vopidy('spotify.library.remove', [this.id]).then((res) => {
+        vopidy('spotify.library.remove', { id: this.id }).then((res) => {
           this.inLibrary = false
         })
       }

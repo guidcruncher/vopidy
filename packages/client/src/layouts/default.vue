@@ -97,8 +97,8 @@ export default {
       this.windowSize = { x: window.innerWidth, y: window.innerHeight - 90 }
     },
     logout() {
-      vopidy('player.stop', []).then((res) => {
-        vopidy('auth.logout', []).then((r) => {
+      vopidy('player.stop', {}).then((res) => {
+        vopidy('auth.logout', {}).then((r) => {
           localStorage.removeItem('vopidy.id')
           localStorage.removeItem('page')
           window.location.href = `${window.location.protocol}//${window.location.host}`

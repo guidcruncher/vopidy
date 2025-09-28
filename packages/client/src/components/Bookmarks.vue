@@ -48,17 +48,17 @@ export default {
   },
   methods: {
     selectItem(item) {
-      vopidy('player.play', [item.source, item.id]).then((res) => {
+      vopidy('player.play', { source: item.source, id: item.id }).then((res) => {
         emit('vopidy.track-changed')
       })
     },
     deleteItem(item) {
-      vopidy('bookmarks.delete', [item.source, item.id]).then((res) => {
+      vopidy('bookmarks.delete', { source: item.source, id: item.id }).then((res) => {
         this.getBookmarks()
       })
     },
     getBookmarks() {
-      vopidy('bookmarks.browse', []).then((res) => {
+      vopidy('bookmarks.browse', {}).then((res) => {
         if (res.ok) {
           this.bookmarks = res.result
         }

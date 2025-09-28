@@ -71,13 +71,13 @@ export default {
   },
   methods: {
     selectItem(item) {
-      vopidy('player.play', [item.source, item.uri]).then((res) => {
+      vopidy('player.play', { source: item.source, id: item.uri }).then((res) => {
         emit('snackbar', { text: 'Playback started.' })
         emit('vopidy.track-changed')
       })
     },
     getHistory() {
-      vopidy('player.history', []).then((res) => {
+      vopidy('player.history', {}).then((res) => {
         if (res.ok) {
           this.items = res.result
         }

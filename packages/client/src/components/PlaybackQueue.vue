@@ -44,14 +44,14 @@ export default {
   methods: {
     loadQueue() {
       const method = `spotify.queue`
-      vopidy(method, []).then((res) => {
+      vopidy(method, {}).then((res) => {
         if (res.ok) {
           this.items = res.result
         }
       })
     },
     selectItem(item) {
-      vopidy('player.play', ['spotify', item.id]).then((res) => {})
+      vopidy('player.play', { source: 'spotify', id: item.id }).then((res) => {})
     },
   },
 }

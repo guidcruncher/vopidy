@@ -145,13 +145,18 @@ export default {
       this.pagedSearch(0, this.pageSize)
     },
     selectItem(item) {
-      vopidy('player.play', [item.source, item.id]).then((res) => {})
+      vopidy('player.play', { source: item.source, id: item.id }).then((res) => {})
     },
     searchChoose() {
       this.page = 1
       this.pageTotal = 0
       this.results = new PagedItems()
-      vopidy('search.keyword', [this.catalog, this.query, 0, this.pageSize]).then((res) => {
+      vopidy('search.keyword', {
+        catalog: this.catalog,
+        query: this.query,
+        offset: 0,
+        limit: this.pageSize,
+      }).then((res) => {
         if (res.ok) {
           this.pageTotal = res.result.pageTotal
           this.page = res.result.page
@@ -182,7 +187,12 @@ export default {
       }
     },
     pagedSearch(offset, limit) {
-      vopidy('search.keyword', [this.catalog, this.query, offset, limit]).then((res) => {
+      vopidy('search.keyword', {
+        catalog: this.catalog,
+        query: this.query,
+        offset: offset,
+        limit: limit,
+      }).then((res) => {
         if (res.ok) {
           this.pageTotal = res.result.pageTotal
           this.page = res.result.page

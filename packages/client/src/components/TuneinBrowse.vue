@@ -145,7 +145,7 @@ export default {
   },
   methods: {
     loadItems(id) {
-      vopidy('tunein.browse', [id]).then((res) => {
+      vopidy('tunein.browse', { id: id }).then((res) => {
         if (res.ok) {
           this.items = res.result
         }
@@ -170,7 +170,7 @@ export default {
           this.loadItems(this.breadcrumbs[this.breadcrumbs.length - 1].id)
           break
         case 'audio':
-          vopidy('player.play', ['tunein', item.id]).then((res) => {})
+          vopidy('player.play', { source: 'tunein', id: item.id }).then((res) => {})
           break
       }
     },
