@@ -90,7 +90,7 @@ export class SpotifyPlayer {
     if (json.track) {
       track = await catalog.describe(json.track.uri)
       json.duration = json.track.duration
-      json.position = { duration: json.duration, progress: json.progress_ms }
+      json.position = { duration: json.duration, progress: json.track.position }
       json.track = track
       json.source = "spotify"
       const view = {
