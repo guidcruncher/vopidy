@@ -25,7 +25,7 @@ class CoreService implements RpcService {
   }
 
   public config_get() {
-    return Config.get()
+    return Config.load()
   }
 
   public async config_set(config: any) {
