@@ -1,13 +1,17 @@
+import { logger } from "@/core/logger"
 import * as DynamicRoute from "./dynamicroute"
 import * as StaticRoute from "./staticroute"
 
-export default function route(mode: string) {
+export function route(mode: string) {
   switch (mode.toLowerCase()) {
     case "dynamic":
+      logger.warn("Using Dynamic Service Registry")
       return DynamicRoute
     case "static":
+      logger.warn("Using Static Service Registry")
       return StaticRoute
   }
 
-  return undefined
+  logger.warn("Using default of Dynamic Service Registry")
+  return DynamicRoute
 }

@@ -1,3 +1,4 @@
+import { logger } from "@/core/logger"
 import { JsonRpcErrorCode, RpcService } from "./types"
 
 // Type for the dynamic method map: 'namespace.method' -> function
@@ -29,7 +30,7 @@ class ServiceRegistry {
         }
 
         this.methods.set(rpcMethodName, wrappedMethod)
-        console.log(`Registered RPC method: ${rpcMethodName}`)
+        logger.debug(`Registered RPC method: ${rpcMethodName}`)
       }
     }
   }

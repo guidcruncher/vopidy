@@ -1,5 +1,6 @@
 import { AppEnv } from "@/core/appenv"
 import { Config, ConfigWriter } from "@/core/config"
+import { route as JsonRpcRoute } from "@/core/jsonrpc/dynamicroute"
 import { logger } from "@/core/logger"
 import { ProcessLauncher } from "@/core/processlauncher"
 import { loadScheduler } from "@/core/scheduler"
@@ -83,6 +84,7 @@ app.get("/doc", swaggerUI({ url: "/api/doc.json" }))
 app.route("/p", proxyRoute)
 app.route("/auth", auth)
 app.route("/rpc", httprpc)
+app.route("/rpc2", JsonRpcRoute)
 
 const server = serve(
   {

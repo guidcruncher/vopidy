@@ -1,5 +1,4 @@
-// src/ServiceRegistry.ts
-
+import { logger } from "@/core/logger"
 import { JsonRpcErrorCode, RpcService, ServiceModule } from "./types"
 
 type ExposedMethod = (...params: any[]) => Promise<any> | any
@@ -24,7 +23,7 @@ class DynamicServiceRegistry {
     }
 
     this.loaded = true
-    console.log(`\nSuccessfully loaded ${modules.length} service module(s).`)
+    logger.debug(`\nSuccessfully loaded ${modules.length} service module(s).`)
   }
 
   /**
@@ -44,7 +43,7 @@ class DynamicServiceRegistry {
         }
 
         this.methods.set(rpcMethodName, wrappedMethod)
-        console.log(`-> Registered: ${rpcMethodName}`)
+        logger.debug(`-> Registered: ${rpcMethodName}`)
       }
     }
   }

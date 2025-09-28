@@ -1,10 +1,11 @@
 // src/index.ts
 
+import { logger } from "@/core/logger"
 import { Hono } from "hono"
 import { registry } from "./dynamicserviceregistry"
 import { JsonRpcErrorCode, JsonRpcRequest, JsonRpcResponse } from "./types"
 
-const app = new Hono()
+export const route = new Hono()
 
 // --- 1. Define Service Paths and Load ---
 // NOTE: Use relative paths that are resolvable by your runtime (e.g., Node or Bun).
@@ -12,13 +13,13 @@ const serviceModulePaths = []
 
 // Initialize the registry asynchronously before the server starts accepting requests
 async function initialize() {
-  console.log("Initializing RPC services via dynamic import...")
+  logger.debug("Initializing RPC services via dynamic import...")
   await registry.loadServices(serviceModulePaths)
 }
 
 // Initialize the services immediately
 initialize().catch((err) => {
-  console.error("Failed to initialize RPC services:", err)
+  logger.error("Failed to initialize RPC services:", err)
   process.exit(1)
 })
 
@@ -41,7 +42,7 @@ async function processRpcRequest(request: JsonRpcRequest): Promise<JsonRpcRespon
   if (id === null) {
     registry
       .execute(method, params)
-      .catch((e) => console.error(`Error in notification ${method}:`, e))
+      .catch((e) => logger.error(`Error in notification ${method}:`, e))
     return null
   }
 
@@ -72,7 +73,7 @@ async function processRpcRequest(request: JsonRpcRequest): Promise<JsonRpcRespon
 
 // --- 3. Hono Route Definition ---
 
-app.post("/", async (c) => {
+route.post("/", async (c) => {
   let reqBody: any
   try {
     reqBody = await c.req.json()
@@ -115,4 +116,3 @@ app.post("/", async (c) => {
   return c.json(errorResponse, 400)
 })
 
-export default app

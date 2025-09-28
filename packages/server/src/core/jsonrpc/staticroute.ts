@@ -1,8 +1,9 @@
+import { logger } from "@/core/logger"
 import { Hono } from "hono"
 import { registry } from "./serviceregistry"
 import { JsonRpcErrorCode, JsonRpcRequest, JsonRpcResponse } from "./types"
 
-const app = new Hono()
+export const route = new Hono()
 
 // --- 1. Dynamic Command Injection ---
 // registry.registerService('calc', new CalculatorService());
@@ -33,7 +34,7 @@ async function processRpcRequest(request: JsonRpcRequest): Promise<JsonRpcRespon
     // Run the command but do not send a response
     registry
       .execute(method, params)
-      .catch((e) => console.error(`Error in notification ${method}:`, e))
+      .catch((e) => logger.error(`Error in notification ${method}:`, e))
     return null
   }
 
@@ -71,7 +72,7 @@ async function processRpcRequest(request: JsonRpcRequest): Promise<JsonRpcRespon
   }
 }
 
-app.post("/", async (c) => {
+route.post("/", async (c) => {
   let reqBody: any
   try {
     reqBody = await c.req.json()
@@ -117,4 +118,3 @@ app.post("/", async (c) => {
   return c.json(errorResponse, 400)
 })
 
-export default app
