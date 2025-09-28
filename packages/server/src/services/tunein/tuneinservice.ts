@@ -2,7 +2,7 @@
 
 import { PagedItems } from "@/core/paging"
 import { WsClientStore } from "@/core/wsclientstore"
-import { db } from "@/services/db"
+import { db } from "@/services/db/"
 import { Mixer } from "@/services/mixer/"
 import { TuneInApi } from "./tuneinapi"
 

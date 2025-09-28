@@ -1,4 +1,4 @@
-import { db } from "@/services/db"
+import { db } from "@/services/db/"
 
 /**
  * Handles all data access operations for Stream-related items (PlaylistItems).

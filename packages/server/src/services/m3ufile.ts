@@ -1,4 +1,4 @@
-import { db } from "@/services/db"
+import { db } from "@/services/db/"
 import { Icons } from "@/services/icons"
 import { M3uParser } from "m3u-parser-generator"
 

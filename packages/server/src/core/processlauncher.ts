@@ -1,7 +1,7 @@
 import { logger } from "@/core/logger"
 import { SnapServer } from "@/core/snapserver"
 import { WsClientStore } from "@/core/wsclientstore"
-import { db } from "@/services/db"
+import { db } from "@/services/db/"
 import { FFplay } from "@/services/ffplay/"
 import { Mixer } from "@/services/mixer/"
 import { SpotifyCatalog } from "@/services/spotify/spotifycatalog"

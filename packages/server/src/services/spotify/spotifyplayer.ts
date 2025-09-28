@@ -1,7 +1,7 @@
 import { Body, Http, HttpAuth } from "@/core/http/"
 import { logger } from "@/core/logger"
 import { WsClientStore } from "@/core/wsclientstore"
-import { db } from "@/services/db"
+import { db } from "@/services/db/"
 import { Mixer } from "@/services/mixer/"
 import { SpotifyAuth } from "./spotifyauth"
 import { SpotifyCatalog } from "./spotifycatalog"

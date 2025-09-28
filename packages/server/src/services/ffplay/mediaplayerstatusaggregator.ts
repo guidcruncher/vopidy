@@ -1,4 +1,4 @@
-import { db } from "@/services/db"
+import { db } from "@/services/db/"
 import { LocalMusic } from "@/services/localmusic"
 import { Mixer } from "@/services/mixer/"
 import { Pulseaudio } from "@/services/pulseaudio"

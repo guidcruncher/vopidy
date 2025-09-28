@@ -1,6 +1,6 @@
 import type { JsonRpcCommand } from "@/rpc/jsonrpccommandinjector"
 import { JsonRpcMessage } from "@/rpc/jsonrpcmessage"
-import { db } from "@/services/db"
+import { db } from "@/services/db/"
 import { SpotifyUserLibrary } from "@/services/spotify/spotifyuserlibrary"
 
 export const execute: JsonRpcCommand = async (message: JsonRpcMessage) => {
