@@ -36,7 +36,7 @@ class DynamicServiceRegistry {
     }
 
     this.loaded = true
-    logger.debug(`\nSuccessfully loaded ${modules.length} service module(s).`)
+    logger.trace(`\nSuccessfully loaded ${modules.length} service module(s).`)
   }
 
   /**
@@ -56,7 +56,7 @@ class DynamicServiceRegistry {
         }
 
         this.methods.set(rpcMethodName, wrappedMethod)
-        logger.debug(`-> Registered: ${rpcMethodName}`)
+        logger.trace(`-> Registered: ${rpcMethodName}`)
       }
     }
   }

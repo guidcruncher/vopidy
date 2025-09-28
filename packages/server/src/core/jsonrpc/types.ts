@@ -27,7 +27,7 @@ export const enum JsonRpcErrorCode {
 
 // --- Dynamic Service Interface ---
 export interface RpcService {
-  [key: string]: (...args: any[]) => Promise<any> | any
+  //  [key: string]: (...args: any[]) => Promise<any> | any
 }
 
 // Defines the expected structure of a dynamically imported service file

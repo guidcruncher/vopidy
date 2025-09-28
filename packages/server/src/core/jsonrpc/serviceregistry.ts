@@ -30,7 +30,7 @@ class ServiceRegistry {
         }
 
         this.methods.set(rpcMethodName, wrappedMethod)
-        logger.debug(`Registered RPC method: ${rpcMethodName}`)
+        logger.trace(`Registered RPC method: ${rpcMethodName}`)
       }
     }
   }
