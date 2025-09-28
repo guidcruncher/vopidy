@@ -73,6 +73,7 @@ export default {
     selectItem(item) {
       vopidy('player.play', ['spotify', item.id]).then((res) => {
         emit('vopidy.track-changed')
+        emit('snackbar', { text: 'Playback started.' })
       })
     },
     getNewReleases() {

@@ -72,6 +72,7 @@ export default {
   methods: {
     selectItem(item) {
       vopidy('player.play', [item.source, item.uri]).then((res) => {
+        emit('snackbar', { text: 'Playback started.' })
         emit('vopidy.track-changed')
       })
     },

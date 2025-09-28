@@ -39,11 +39,20 @@
           <router-view />
         </v-sheet>
       </div>
+      <v-snackbar
+        :timeout="2000"
+        class="elevation-24"
+        color="deep-purple-accent-4"
+        v-model="snackbar.show"
+      >
+        {{ snackbar.text }}
+      </v-snackbar>
     </v-main>
   </v-layout>
 </template>
 
 <script lang="ts" setup>
+import { off, on } from '@/composables/useeventbus'
 import { contentsCatalog } from '@/router/contents'
 import { useUiStateStore } from '@/stores/uistatestore'
 import { storeToRefs } from 'pinia'
@@ -65,6 +74,7 @@ export default {
   data() {
     return {
       windowSize: { x: 0, y: 300 },
+      snackbar: { show: false, text: '' },
     }
   },
   computed: {
@@ -74,8 +84,14 @@ export default {
   },
   mounted() {
     this.onResize()
+    on('snackbar', (opt) => {
+      this.snackbar = opt
+      this.snackbar.show = true
+    })
   },
-  beforeUnmount() {},
+  beforeUnmount() {
+    off('snackbar')
+  },
   methods: {
     onResize() {
       this.windowSize = { x: window.innerWidth, y: window.innerHeight - 90 }

@@ -110,7 +110,7 @@
 <style></style>
 <script lang="ts" setup></script>
 <script lang="ts">
-import { off, on } from '@/composables/useeventbus'
+import { emit, off, on } from '@/composables/useeventbus'
 import { vopidy } from '@/services/vopidy'
 
 export default {
@@ -196,7 +196,9 @@ export default {
       })
     },
     selectItem(item) {
-      vopidy('player.play', ['spotify', item.id]).then((res) => {})
+      vopidy('player.play', ['spotify', item.id]).then((res) => {
+        emit('snackbar', { text: 'Playback started.' })
+      })
     },
     createPlaylist(detail) {
       let uris = []
