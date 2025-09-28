@@ -32,6 +32,7 @@ async function processRpcRequest(request: JsonRpcRequest): Promise<JsonRpcRespon
   // Notification check (id === null)
   if (id === null) {
     // Run the command but do not send a response
+    logger.trace(`jsonrpc method ${method}`)
     registry
       .execute(method, params)
       .catch((e) => logger.error(`Error in notification ${method}:`, e))
@@ -39,7 +40,9 @@ async function processRpcRequest(request: JsonRpcRequest): Promise<JsonRpcRespon
   }
 
   try {
+    logger.trace(`jsonrpc method ${method}`)
     const result = await registry.execute(method, params)
+    logger.trace(`jsonrpc result ${JSON.stringify( { jsonrpc: "2.0", result, id })}`)
     return { jsonrpc: "2.0", result, id }
   } catch (error) {
     // --- Error Formatting ---
@@ -64,6 +67,7 @@ async function processRpcRequest(request: JsonRpcRequest): Promise<JsonRpcRespon
       data = { stack: error.stack }
     }
 
+    logger.error(`jsonrpc error ${JSON.stringify({code, message, data, id})}`)
     return {
       jsonrpc: "2.0",
       error: { code, message, data },

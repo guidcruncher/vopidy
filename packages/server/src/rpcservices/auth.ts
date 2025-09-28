@@ -1,6 +1,7 @@
 import { RpcService, ServiceModule } from "@/core/jsonrpc/types"
 import { Auth } from "@/services/auth"
 import { SpotifyAuth } from "@/services/spotify/spotifyauth"
+import { LibrespotManager } from "@/services/spotify/librespotmanager"
 
 class AuthService implements RpcService {
   public async login(id: string) {

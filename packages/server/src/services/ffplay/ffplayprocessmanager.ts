@@ -96,13 +96,12 @@ export class FFplayProcessManager {
   }
 
   public async stop(): Promise<void> {
-    if (!this.isActive) {
-      return
-    }
-
     this.url = ""
     this.isStopped = true // Use internal flag
+
+    if (this.proc) {
     this.proc.kill("SIGKILL")
+    }
 
     // Cleanup handled by this.onProcessExit, but we can proactively clean up state
     this.isActive = false
