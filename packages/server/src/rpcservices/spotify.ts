@@ -6,7 +6,7 @@ import { SpotifyLibrary } from "@/services/spotify/spotifylibrary"
 import { SpotifyUserLibrary } from "@/services/spotify/spotifyuserlibrary"
 
 class SpotifyService implements RpcService {
-  public async album(id:string) {
+  public async album(id: string) {
     const spotifyClient = new SpotifyCatalog()
     let res = await spotifyClient.getAlbum(id)
     return shimNonPaged(res)
@@ -17,24 +17,24 @@ class SpotifyService implements RpcService {
     return await spotifyClient.getAlbums()
   }
 
-  public async artist_albums(id:string) {
+  public async artist_albums(id: string) {
     const spotifyClient = new SpotifyCatalog()
     return await spotifyClient.getArtistAlbums(id)
   }
 
-  public async artist_tracks(id:string) {
+  public async artist_tracks(id: string) {
     const spotifyClient = new SpotifyCatalog()
     return await spotifyClient.getArtistsTopTracks(id)
   }
 
-  public async create_playlist(name:string, uris:string[]) {
-  const spotifyClient = new SpotifyCatalog()
-  let res = await spotifyClient.createPlaylist(name,uris)
-  await CacheManager.flush()
-  return res
-}
+  public async create_playlist(name: string, uris: string[]) {
+    const spotifyClient = new SpotifyCatalog()
+    let res = await spotifyClient.createPlaylist(name, uris)
+    await CacheManager.flush()
+    return res
+  }
 
-  public async artist(id:string) {
+  public async artist(id: string) {
     const spotifyClient = new SpotifyCatalog()
     const res = await spotifyClient.getArtist(id)
     return shimNonPaged(res)
@@ -45,36 +45,36 @@ class SpotifyService implements RpcService {
     return await spotifyClient.getArtists()
   }
 
-  public async describe(id:string) {
+  public async describe(id: string) {
     const spotifyClient = new SpotifyCatalog()
     return await spotifyClient.describe(id)
   }
 
-  public async doesfollow(type:string,id:string) {
+  public async doesfollow(type: string, id: string) {
     const spotifyClient = new SpotifyUserLibrary()
-    let res = await spotifyClient.doesFollow(type,id)
+    let res = await spotifyClient.doesFollow(type, id)
     return { id: id, following: res }
   }
 
-  public async follow(type:string,id:string) {
+  public async follow(type: string, id: string) {
     const spotifyClient = new SpotifyUserLibrary()
-    let res = await spotifyClient.follow(type,id)
+    let res = await spotifyClient.follow(type, id)
     return res
   }
 
-  public async library_add(id:string) {
+  public async library_add(id: string) {
     const spotifyClient = new SpotifyUserLibrary()
     let res = await spotifyClient.saveToLibrary(id)
     return res
   }
 
-  public async library_contains(id:string) {
+  public async library_contains(id: string) {
     const spotifyClient = new SpotifyUserLibrary()
     let res = await spotifyClient.inLibrary(id)
     return { id: id, exists: res }
   }
 
-  public async library_remove(id:string) {
+  public async library_remove(id: string) {
     const spotifyClient = new SpotifyUserLibrary()
     let res = await spotifyClient.removeFromLibrary(id)
     return res
@@ -85,7 +85,7 @@ class SpotifyService implements RpcService {
     return await spotifyClient.getNewAlbums()
   }
 
-  public async playlist(id:string,offset:number,limit:number) {
+  public async playlist(id: string, offset: number, limit: number) {
     const spotifyClient = new SpotifyLibrary()
     return await spotifyClient.getPlaylist(id, offset, limit)
   }
@@ -100,7 +100,7 @@ class SpotifyService implements RpcService {
     return await spotifyClient.getQueue()
   }
 
-  public async show(id:string, offset:number,limit:number) {
+  public async show(id: string, offset: number, limit: number) {
     const spotifyClient = new SpotifyCatalog()
     const res = await spotifyClient.getShow(id, offset, limit)
     return res
@@ -116,9 +116,9 @@ class SpotifyService implements RpcService {
     return await spotifyClient.getTracks()
   }
 
-  public async unfollow(type:string,id:string) {
+  public async unfollow(type: string, id: string) {
     const spotifyClient = new SpotifyUserLibrary()
-    let res = await spotifyClient.unfollow(type,id)
+    let res = await spotifyClient.unfollow(type, id)
     return res
   }
 }
