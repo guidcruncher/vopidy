@@ -1,13 +1,13 @@
 import { Config } from "@/core/config"
 import { logger } from "@/core/logger"
-import { tts } from "@/services/tts"
+import { Tts } from "@/services/tts/"
 import cron from "node-cron"
 
 export class SchedulerInstance {
   public async hourly() {
     const config = Config.load()
     const current = new Date()
-    const ttsClient = new tts()
+    const ttsClient = new Tts()
     const locale = (config.locale ?? "en-US").split("-")
 
     logger.trace(`Hourly cron ${current.toISOString()}`)
