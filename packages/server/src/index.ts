@@ -5,7 +5,7 @@ import { ProcessLauncher } from "@/core/processlauncher"
 import { loadScheduler } from "@/core/scheduler"
 import { SnapServer } from "@/core/snapserver"
 import { auth } from "@/routes/auth"
-import { httprpc, setupWebsocket } from "@/routes/jsonrpc"
+import { httprpc } from "@/routes/jsonrpc"
 import { OpenApiDoc } from "@/routes/openapidoc"
 import { proxyRoute } from "@/routes/proxy"
 import { serve } from "@hono/node-server"
@@ -80,10 +80,8 @@ app.get("/doc.json", (c) => c.json(OpenApiDoc))
 app.get("/doc", swaggerUI({ url: "/api/doc.json" }))
 
 // API Route setup
-const wsrpc = setupWebsocket(app)
 app.route("/p", proxyRoute)
 app.route("/auth", auth)
-app.route("/ws", wsrpc.route)
 app.route("/rpc", httprpc)
 
 const server = serve(
@@ -101,5 +99,3 @@ const server = serve(
 )
 
 loadScheduler()
-
-wsrpc.injectWebSocket(server)
