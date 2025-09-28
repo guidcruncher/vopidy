@@ -37,3 +37,6 @@ class MixerService implements RpcService {
 
 export const namespace = "mixer"
 export const service = new MixerService()
+
+const module: ServiceModule = { namespace, service }
+export default module

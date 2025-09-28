@@ -1,23 +1,49 @@
 import { RpcService, ServiceModule } from "@/core/jsonrpc/types"
-import { Auth } from "@/services/auth"
-import { SpotifyAuth } from "@/services/spotify/spotifyauth"
+import { db } from "@/services/db/"
+import { Mixer } from "@/services/mixer/"
 
 class PlayerService implements RpcService {
-  public async login(id: string) {
-    const authClient = new Auth()
-    const res = await authClient.login(id)
-    await SpotifyAuth.login()
-    return res
+  public async history() {
+    return await db.getPlaybackHistory()
   }
 
-  public logout() {
-    const authClient = new Auth()
-    return authClient.logout()
+  public async history_popular() {
+    return await db.getPlaybackHistoryPop()
   }
 
-  public users() {
-    const authClient = new Auth()
-    return authClient.getAuthUsers()
+  public async next() {
+    let state = await Mixer.next()
+    return await Mixer.getStatus()
+  }
+
+  public async pause() {
+    let state = await Mixer.pause()
+    return await Mixer.getStatus()
+  }
+
+  public async play(source: string, id: string) {
+    let state = await Mixer.play(source, id)
+    return await Mixer.getStatus()
+  }
+
+  public async previous() {
+    let state = await Mixer.previous()
+    return await Mixer.getStatus()
+  }
+
+  public async resume() {
+    let state = await Mixer.resume()
+    return await Mixer.getStatus()
+  }
+
+  public async seek(position: number) {
+    let state = await Mixer.seek(position)
+    return await Mixer.getStatus()
+  }
+
+  public async stop() {
+    let state = await Mixer.stop()
+    return await Mixer.getStatus()
   }
 }
 

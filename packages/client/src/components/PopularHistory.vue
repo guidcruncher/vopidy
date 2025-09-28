@@ -77,7 +77,7 @@ export default {
       })
     },
     getHistory() {
-      vopidy('player.history.popular', []).then((res) => {
+      vopidy('player.history-popular', []).then((res) => {
         if (res.ok) {
           this.items = res.result
         }
