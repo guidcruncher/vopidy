@@ -1,6 +1,6 @@
 import { logger } from "@/core/logger"
 import { WsClientStore } from "@/core/wsclientstore"
-import { Equaliser } from "@/services/equaliser"
+import { Equaliser } from "@/services/alsa/equaliser"
 import { FFplay } from "@/services/ffplay/"
 import { IMediaPlayer } from "@/services/imediaplayer"
 import { LocalMusic } from "@/services/localmusic"
