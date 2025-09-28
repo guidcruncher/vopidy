@@ -42,7 +42,6 @@ async function processRpcRequest(request: JsonRpcRequest): Promise<JsonRpcRespon
   try {
     logger.trace(`jsonrpc method ${method}`)
     const result = await registry.execute(method, params)
-    logger.trace(`jsonrpc result ${JSON.stringify( { jsonrpc: "2.0", result, id })}`)
     return { jsonrpc: "2.0", result, id }
   } catch (error) {
     // --- Error Formatting ---
