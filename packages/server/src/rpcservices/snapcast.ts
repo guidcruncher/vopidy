@@ -1,28 +1,35 @@
 import { RpcService, ServiceModule } from "@/core/jsonrpc/types"
-import { Auth } from "@/services/auth"
-import { SpotifyAuth } from "@/services/spotify/spotifyauth"
+import { JsonRpcClient } from "@/core/jsonrpcclient"
 
-class SnapCastService implements RpcService {
-  public async login(id: string) {
-    const authClient = new Auth()
-    const res = await authClient.login(id)
-    await SpotifyAuth.login()
-    return res
+class SnapcastService implements RpcService {
+  public async setclientname(id: string, name: string) {
+    return await JsonRpcClient.request("Client.SetName", {
+      id: id,
+      name: name,
+    })
   }
 
-  public logout() {
-    const authClient = new Auth()
-    return authClient.logout()
+  public async setovolume(id: string, level: number, muted: boolean) {
+    if (!level) {
+      return await JsonRpcClient.request("Client.SetVolume", {
+        id: id,
+        volume: { muted: muted },
+      })
+    } else {
+      return await JsonRpcClient.request("Client.SetVolume", {
+        id: id,
+        volume: { percent: level },
+      })
+    }
   }
 
-  public users() {
-    const authClient = new Auth()
-    return authClient.getAuthUsers()
+  public async status() {
+    return await JsonRpcClient.request("Server.GetStatus")
   }
 }
 
 export const namespace = "snapcast"
-export const service = new SnapCastService()
+export const service = new SnapcastService()
 
 const module: ServiceModule = { namespace, service }
 export default module

@@ -1,23 +1,35 @@
 import { RpcService, ServiceModule } from "@/core/jsonrpc/types"
 import { Auth } from "@/services/auth"
-import { SpotifyAuth } from "@/services/spotify/spotifyauth"
+import { RadioBrowser } from "@/services/radiobrowser"
+import { Spotify } from "@/services/spotify"
+import { SpotifyFinder } from "@/services/spotify/finder"
+import { Streamer } from "@/services/streamer"
+import { TuneIn } from "@/services/tunein"
 
 class SearchService implements RpcService {
-  public async login(id: string) {
-    const authClient = new Auth()
-    const res = await authClient.login(id)
-    await SpotifyAuth.login()
-    return res
-  }
+  public async search(catalog: string, query: string, offset: number, limit: number) {
+    const spotifyClient = new Spotify()
+    const tuneInClient = new TuneIn()
+    const radioBrowserClient = new RadioBrowser()
+    const streamClient = new Streamer()
+    const spotifyFinder = new SpotifyFinder()
 
-  public logout() {
-    const authClient = new Auth()
-    return authClient.logout()
-  }
+    const catalogIdent = catalog.split(":")
 
-  public users() {
-    const authClient = new Auth()
-    return authClient.getAuthUsers()
+    switch (catalogIdent[0]) {
+      case "tunein":
+        return await tuneInClient.search(query, offset, limit)
+        break
+      case "stream":
+        return await streamClient.search(query, offset, limit)
+        break
+      case "radiobrowser":
+        return await radioBrowserClient.search(query, offset, limit)
+
+      case "spotify":
+        const market = Auth.getProfile().market
+        return spotifyFinder.keyword(catalogIdent[1], query, offset, limit, market)
+    }
   }
 }
 

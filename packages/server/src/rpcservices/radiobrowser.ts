@@ -1,23 +1,33 @@
 import { RpcService, ServiceModule } from "@/core/jsonrpc/types"
-import { Auth } from "@/services/auth"
-import { SpotifyAuth } from "@/services/spotify/spotifyauth"
+import { RadioBrowser } from "@/services/radiobrowser"
 
 class RadioBrowserService implements RpcService {
-  public async login(id: string) {
-    const authClient = new Auth()
-    const res = await authClient.login(id)
-    await SpotifyAuth.login()
-    return res
+  public async browse(name: string) {
+    const rbClient = new RadioBrowser()
+
+    if (message.params.length == 0) {
+      return []
+    }
+
+    return rbClient.browse(name, 0, 0, false)
   }
 
-  public logout() {
-    const authClient = new Auth()
-    return authClient.logout()
+  public async countries() {
+    const rbClient = new RadioBrowser()
+
+    return rbClient.countries()
   }
 
-  public users() {
-    const authClient = new Auth()
-    return authClient.getAuthUsers()
+  public async regions(code: string, country: string) {
+    const rbClient = new RadioBrowser()
+
+    return rbClient.states(code, country)
+  }
+
+  public async states(code: string, name: string) {
+    const rbClient = new RadioBrowser()
+
+    return rbClient.states(code, name)
   }
 }
 

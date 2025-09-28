@@ -1,23 +1,49 @@
 import { RpcService, ServiceModule } from "@/core/jsonrpc/types"
-import { Auth } from "@/services/auth"
-import { SpotifyAuth } from "@/services/spotify/spotifyauth"
+import { db } from "@/services/db/"
+import { M3uFile } from "@/services/m3ufile"
 
 class StreamService implements RpcService {
-  public async login(id: string) {
-    const authClient = new Auth()
-    const res = await authClient.login(id)
-    await SpotifyAuth.login()
-    return res
+  public async browse() {
+    return await db.getPlaylistItems()
   }
 
-  public logout() {
-    const authClient = new Auth()
-    return authClient.logout()
+  public async describe(id: string) {
+    return await db.getPlaylistItem(id)
   }
 
-  public users() {
-    const authClient = new Auth()
-    return authClient.getAuthUsers()
+  public async import(url: string, text: string, name: string) {
+    if (message.params.length == 0) {
+      return []
+    }
+
+    let list: any = []
+    let pl: any = {}
+
+    if (urt) {
+      list = await M3uFile.fromUrl(url)
+    }
+
+    if (text) {
+      list = M3uFile.fromString(text)
+    }
+
+    if (name && list.length > 0) {
+      pl = await db.createPlaylist(name, list)
+    }
+
+    return pl
+  }
+
+  public async playlist(url: string, text: string) {
+    if (url) {
+      return await M3uFile.fromUrl(url)
+    }
+
+    if (text) {
+      return M3uFile.fromString(text)
+    }
+
+    return []
   }
 }
 

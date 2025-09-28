@@ -1,23 +1,36 @@
+import { Config } from "@/core/config"
 import { RpcService, ServiceModule } from "@/core/jsonrpc/types"
-import { Auth } from "@/services/auth"
-import { SpotifyAuth } from "@/services/spotify/spotifyauth"
+import { Tts } from "@/services/tts/"
 
 class TtsService implements RpcService {
-  public async login(id: string) {
-    const authClient = new Auth()
-    const res = await authClient.login(id)
-    await SpotifyAuth.login()
-    return res
+  public async speak(lang: string, text: string) {
+    const ttsClient = new Tts()
+    let res = {}
+
+    return await ttsClient.speak(lang, text)
   }
 
-  public logout() {
-    const authClient = new Auth()
-    return authClient.logout()
-  }
+  public async time(lang: string) {
+    const ttsClient = new Tts()
+    let res = {}
+    let date = Config.localDateString()
+    const config = Config.load()
 
-  public users() {
-    const authClient = new Auth()
-    return authClient.getAuthUsers()
+    if (config.nightEndHour && config.nightEndHour == Config.localDate().getHours()) {
+      await ttsClient.speak(lang, `Good Morning, It's ${date}`)
+    } else {
+      if (config.nightStartHour && config.nightStartHour == Config.localDate().getHours()) {
+        await ttsClient.speak(lang, `It's ${date}, Good night.`)
+      } else {
+        if (Config.localDate().getHours() == 12) {
+          await ttsClient.speak(lang, `Good afternoon, It's ${date}`)
+        } else {
+          await ttsClient.speak(lang, `It's ${date}`)
+        }
+      }
+    }
+
+    return date
   }
 }
 
