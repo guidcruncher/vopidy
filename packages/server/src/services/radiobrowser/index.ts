@@ -6,7 +6,9 @@ import { db } from "@/services/db"
 import { Mixer } from "@/services/mixer"
 import { RadioBrowserApiService } from "./radiobrowserapiservice"
 
-export class RadioBrowserService {
+export class RadioBrowser {
+  private apiService: RadioBrowserApiService
+
   constructor() {
     this.apiService = new RadioBrowserApiService()
   }

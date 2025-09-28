@@ -4,6 +4,8 @@ import { Http } from "@/core/http/"
 import { RadioBrowserHostResolver } from "./radiobrowserhostresolver"
 
 export class RadioBrowserApiService {
+  private resolver: RadioBrowserHostResolver
+
   constructor() {
     this.resolver = new RadioBrowserHostResolver()
   }

@@ -1,37 +1,48 @@
+// streamer.facade.ts
+
 import { PagedItems } from "@/core/paging"
-import { WsClientStore } from "@/core/wsclientstore"
-import { db } from "@/services/db"
-import { Mixer } from "@/services/mixer"
 
+// --- Import the Refactored Classes (Assuming they are available) ---
+import { MediaPlayerService } from "./mediaplayerservice"
+import { StreamRepository } from "./streamerrepository"
+import { StreamService } from "./streamservice"
+
+/**
+ * The StreamerFacade provides a simplified, clean interface to the complex
+ * Stream subsystem (StreamService, StreamRepository, MediaPlayerService).
+ * * It mirrors the original Streamer class's public methods but handles
+ * the instantiation and wiring of all underlying dependencies internally.
+ */
 export class Streamer {
+  private streamService: StreamService
+
+  constructor() {
+    // 1. Instantiate low-level dependencies
+    const repository = new StreamRepository()
+    const mediaPlayerService = new MediaPlayerService()
+
+    // 2. Instantiate the core business logic service with its dependencies
+    this.streamService = new StreamService(repository, mediaPlayerService)
+  }
+
+  /**
+   * Searches for playlist items.
+   */
   public async search(query: string, offset: number, limit: number): Promise<PagedItems<any>> {
-    let view = new PagedItems()
-    let res = await db.findPlaylistItems(query)
-    view.items = res
-    view.offset = 0
-    view.limit = res.length
-    view.total = res.length
-    view.calculatePaging()
-    return view
+    return this.streamService.search(query, offset, limit)
   }
 
-  public async describe(id: string) {
-    let item: any = await db.getPlaylistItem(id)
-    item.type = "stream"
-    return item
+  /**
+   * Retrieves and enriches the details of a stream item.
+   */
+  public async describe(id: string): Promise<any> {
+    return this.streamService.describe(id)
   }
 
-  public async play(id: string) {
-    const mpdClient = Mixer.getMediaPlayer()
-    let item: any = await this.describe(id)
-    await db.addToPlaybackHistory("stream", item)
-    let res = await mpdClient.play(item.url)
-    Mixer.savePlaybackTrack("stream", id)
-
-    WsClientStore.broadcast({
-      type: "track-changed",
-      data: { uri: id, source: "stream" },
-    })
-    return item
+  /**
+   * Initiates playback for a stream item, updates history, and broadcasts the change.
+   */
+  public async play(id: string): Promise<any> {
+    return this.streamService.play(id)
   }
 }
