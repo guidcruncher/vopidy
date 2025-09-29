@@ -15,6 +15,8 @@ export interface BodyTransform {
   contentType: string
 }
 
+export type AuthorizationFunc = () => Promise<Authorization>
+
 export class Body {
   static json(data: any): BodyTransform {
     return { body: JSON.stringify(data), contentType: "application/json" }
@@ -35,5 +37,5 @@ export class Body {
 }
 
 export interface Fetch {
-  execute(req: Request, auth?: Authorization): Promise<HttpResponse>
+  execute(req: Request, auth?: AuthorizationFunc): Promise<HttpResponse>
 }

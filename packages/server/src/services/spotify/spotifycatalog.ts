@@ -1,5 +1,5 @@
 import { CacheManager } from "@/core/cachemanager"
-import { Body, HttpAuth, HttpResponse } from "@/core/http/"
+import { Authorization, Body, Http, HttpResponse } from "@/core/http/"
 import { logger } from "@/core/logger"
 import { PagedItems } from "@/core/paging"
 import { getAccessTokenOnly } from "@/services/auth"
@@ -113,7 +113,7 @@ export class SpotifyCatalog {
     }
 
     logger.warn(id, url)
-    const res = await HttpAuth.get(url, await this.getAuthHeaders(), true)
+    const res = await Http.Cache().Authorize(this.getAuthHeaders).get(url)
 
     if (!res.ok) {
       return {}
@@ -122,7 +122,7 @@ export class SpotifyCatalog {
     return this.toView(id, res)
   }
 
-  private async getAuthHeaders() {
+  private async getAuthHeaders(): Promise<Authorization> {
     return await SpotifyAuth.getAuthorization()
   }
 
@@ -132,7 +132,7 @@ export class SpotifyCatalog {
     let data: any = {}
     const url = `${process.env.SPOTIFY_API}/albums/${segs[2]}?fields=uri,images,name,artists,popularity,type,tracks(next),tracks(offset),tracks(limit),tracks(total),tracks(items)(uri),tracks(items)(album)(images),tracks(items)(is_playable),tracks(items)(name),tracks(items)(artists),tracks(items)(popularity),tracks(items)(type)`
 
-    const res = await HttpAuth.get(url, await this.getAuthHeaders(), true)
+    const res = await Http.Cache().Authorize(this.getAuthHeaders).get(url)
 
     if (!res.ok) {
       return data
@@ -160,7 +160,7 @@ export class SpotifyCatalog {
     let tracks = value.tracks
     do {
       if (!tracks || !tracks.items) {
-        const res = await HttpAuth.get(tracks.next, await this.getAuthHeaders(), true)
+        const res = await Http.Cache().Authorize(this.getAuthHeaders).get(tracks.next)
         if (!res.ok) {
           break
         }
@@ -198,7 +198,7 @@ export class SpotifyCatalog {
     const accessToken = await getAccessTokenOnly()
 
     const url = `${process.env.SPOTIFY_API}/tracks/${extractId(id)}?fields=uri,album(images),is_playable,name,album(name),artists,popularity,album(uri),type`
-    const res = await HttpAuth.get(url, await this.getAuthHeaders(), true)
+    const res = await Http.Cache().Authorize(this.getAuthHeaders).get(url)
 
     if (!res.ok) {
       return {}
@@ -231,7 +231,7 @@ export class SpotifyCatalog {
     const accessToken = await getAccessTokenOnly()
 
     const url = `${process.env.SPOTIFY_API}/episodes/${extractId(id)}?fields=uri,images,show(name),name,show(publisher),show(uri),type`
-    const res = await HttpAuth.get(url, await this.getAuthHeaders(), true)
+    const res = await Http.Cache().Authorize(this.getAuthHeaders).get(url)
 
     if (!res.ok) {
       return {}
@@ -258,7 +258,7 @@ export class SpotifyCatalog {
     const data = []
 
     const url = `${process.env.SPOTIFY_API}/me/player/queue`
-    const res = await HttpAuth.get(url, await this.getAuthHeaders(), true)
+    const res = await Http.NoCache().Authorize(this.getAuthHeaders).get(url)
 
     if (!res.ok) {
       return data
@@ -307,7 +307,7 @@ export class SpotifyCatalog {
     const data = []
 
     const url = `${process.env.SPOTIFY_API}/browse/new-releases?offset=${offset}&limit=${limit}&fields=albums(items)(uri),albums(items)(images),albums(items)(name),albums(items)(artists),albums(items)(popularity),albums(items)(type),next,offset,limit,total`
-    const res = await HttpAuth.get(url, await this.getAuthHeaders(), true)
+    const res = await Http.NoCache().Authorize(this.getAuthHeaders).get(url)
 
     if (!res.ok) {
       return data
@@ -346,7 +346,7 @@ export class SpotifyCatalog {
     const url = `${process.env.SPOTIFY_API}/artists/${extractId(id)}/top-tracks?fields=next,offset,limit,total,tracks(uri),tracks(album)(images),tracks(is_playable),tracks(name),tracks(artists),tracks(popularity),tracks(type)`
     const data = []
 
-    const res = await HttpAuth.get(url, await this.getAuthHeaders(), true)
+    const res = await Http.NoCache().Authorize(this.getAuthHeaders).get(url)
 
     if (!res.ok) {
       return data
@@ -385,7 +385,7 @@ export class SpotifyCatalog {
 
     const url = `${process.env.SPOTIFY_API}/artists/${extractId(id)}/albums?offset=${offset}&limit=${limit}&fields=next,offset,limit,total,items(uri),items(images),items(name),items(artists),items(popularity),items(type),items(album_type)`
 
-    const res = await HttpAuth.get(url, await this.getAuthHeaders(), true)
+    const res = await Http.Cache().Authorize(this.getAuthHeaders).get(url)
 
     if (!res.ok) {
       return data
@@ -425,7 +425,7 @@ export class SpotifyCatalog {
     const segments = id.split(":")
     const url = `${process.env.SPOTIFY_API}/shows/${segments[2]}/episodes?offset=${offset}&limit=${limit}&fields=next,offset,limit,total,items(uri),items(images),items(description),items(name),items(publisher),items(type),`
 
-    const res = await HttpAuth.get(url, await this.getAuthHeaders())
+    const res = await Http.Cache().Authorize(this.getAuthHeaders).get(url)
 
     if (!res.ok) {
       return root
@@ -465,7 +465,8 @@ export class SpotifyCatalog {
     const accessToken = await getAccessTokenOnly()
     let data: any = {}
     const url = `${process.env.SPOTIFY_API}/artists/${extractId(id)}`
-    const res = await HttpAuth.get(url, await this.getAuthHeaders(), true)
+    const res = await Http.Cache().Authorize(this.getAuthHeaders).get(url)
+
     if (!res.ok) {
       return data
     }
@@ -519,7 +520,7 @@ export class SpotifyCatalog {
         public: false,
       }
 
-      const res = await HttpAuth.post(url, Body.json(body), await this.getAuthHeaders())
+      const res = await Http.NoCache().Authorize(this.getAuthHeaders).post(url, Body.json(body))
       let id = ""
 
       if (res.ok) {
@@ -540,11 +541,9 @@ export class SpotifyCatalog {
       logger.log(`saving ${chunks.length} chunks`)
       for (const chunk of chunks) {
         let chunkurl = `${process.env.SPOTIFY_API}/playlists/${id}/tracks`
-        const chunkres = await HttpAuth.post(
-          chunkurl,
-          Body.json({ uris: chunk }),
-          await this.getAuthHeaders(),
-        )
+        const chunkres = await Http.NoCache()
+          .Authorize(this.getAuthHeaders)
+          .post(chunkurl, Body.json({ uris: chunk }))
       }
 
       await CacheManager.flush()

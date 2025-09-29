@@ -7,7 +7,7 @@ import { Streamer } from "@/services/streamer"
 import { TuneIn } from "@/services/tunein"
 
 class SearchService implements RpcService {
-  public async search(catalog: string, query: string, offset: number, limit: number) {
+  public async keyword(catalog: string, query: string, offset: number, limit: number) {
     const spotifyClient = new Spotify()
     const tuneInClient = new TuneIn()
     const radioBrowserClient = new RadioBrowser()

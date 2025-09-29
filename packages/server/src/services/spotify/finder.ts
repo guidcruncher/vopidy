@@ -1,6 +1,6 @@
-import { Authorization, HttpAuth } from "@/core/http/"
+import { Authorization, Http } from "@/core/http/"
 import { PagedItems } from "@/core/paging"
-import { getAccessTokenOnly } from "@/services/auth"
+import { SpotifyAuth } from "./spotifyauth"
 
 export class SpotifyFinder {
   public async keyword(
@@ -11,7 +11,6 @@ export class SpotifyFinder {
     market: string,
   ): Promise<PagedItems<any>> {
     let view = new PagedItems()
-    const auth: Authorization = { type: "Bearer", value: await getAccessTokenOnly() }
     const params = new URLSearchParams()
     params.append("q", query)
     params.append("limit", limit.toString())
@@ -20,7 +19,7 @@ export class SpotifyFinder {
     params.append("type", catalog)
     const url = `https://api.spotify.com/v1/search?${params.toString()}`
     view.query = query
-    const res = await HttpAuth.get(url, auth, true)
+    const res = await Http.Cache().Authorize(this.getAuthHeaders).get(url)
     if (!res.ok) {
       return view
     }
@@ -118,5 +117,9 @@ export class SpotifyFinder {
 
     view.calculatePaging()
     return view
+  }
+
+  private async getAuthHeaders(): Promise<Authorization> {
+    return await SpotifyAuth.getAuthorization()
   }
 }

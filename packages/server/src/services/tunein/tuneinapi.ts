@@ -56,7 +56,7 @@ export class TuneInApi {
    */
   public async getCategories(): Promise<TuneInItem[] | undefined> {
     const url = `${this.baseUrl}/?render=json`
-    const res = await Http.get(url, true)
+    const res = await Http.Cache().get(url)
 
     if (!res.ok) {
       return undefined
@@ -75,7 +75,7 @@ export class TuneInApi {
     params.append("id", id)
     const url = `${this.baseUrl}/browse.ashx?${params.toString()}`
 
-    const res = await Http.get(url, true)
+    const res = await Http.Cache().get(url)
     if (!res.ok) {
       return undefined
     }
@@ -95,7 +95,7 @@ export class TuneInApi {
     params.append("id", id)
     const url = `${this.baseUrl}/describe.ashx?${params.toString()}`
 
-    const res = await Http.get(url, true)
+    const res = await Http.Cache().get(url)
     if (!res.ok || res.response.body.length === 0) {
       return undefined
     }
@@ -121,7 +121,7 @@ export class TuneInApi {
     params.append("id", id)
     const url = `${this.baseUrl}/tune.ashx?${params.toString()}`
 
-    const res = await Http.get(url, false) // Note: original code uses 'false' here
+    const res = await Http.NoCache().get(url) // Note: original code uses 'false' here
     if (!res.ok || res.response.body.length === 0) {
       return undefined
     }
@@ -142,7 +142,7 @@ export class TuneInApi {
     params.append("query", query)
     const url = `${this.searchUrl}?${params.toString()}`
 
-    const res = await Http.get(url, true)
+    const res = await Http.Cache().get(url)
 
     if (!res.ok || !res.response.Items) {
       return []

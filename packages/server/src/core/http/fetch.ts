@@ -1,13 +1,14 @@
 import { CacheManager } from "@/core/cachemanager"
-import { Authorization, Fetch, HttpResponse } from "@/core/http/utils"
+import { Authorization, AuthorizationFunc, Fetch, HttpResponse } from "@/core/http/utils"
 import { logger } from "@/core/logger"
 import { Auth } from "@/services/auth"
 import * as crypto from "crypto"
 
 export class NoCacheFetch implements Fetch {
-  public async execute(req: Request, auth?: Authorization): Promise<HttpResponse> {
+  public async execute(req: Request, auth?: AuthorizationFunc): Promise<HttpResponse> {
     if (auth) {
-      req.headers.append("Authorization", `${auth.type} ${auth.value}`)
+      const authData: Authorization = await auth()
+      req.headers.append("Authorization", `${authData.type} ${authData.value}`)
     }
 
     let res: Response
@@ -52,7 +53,7 @@ export class NoCacheFetch implements Fetch {
 }
 
 export class CachedFetch {
-  public async execute(req: Request, auth?: Authorization): Promise<HttpResponse> {
+  public async execute(req: Request, auth?: AuthorizationFunc): Promise<HttpResponse> {
     const key = req.url + ":" + (Auth.getProfile().id ?? "")
     const hash = crypto.createHash("sha256").update(key).digest("hex")
 

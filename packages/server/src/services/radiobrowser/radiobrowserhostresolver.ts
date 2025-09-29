@@ -46,7 +46,7 @@ export class RadioBrowserHostResolver {
       try {
         logger.warn(`Checking host: ${host} (${hosts.length} remaining)`)
         // Use an HTTP HEAD or small GET request for a health check
-        const res = await Http.get(host, false) // Assuming 'false' bypasses some auth/parsing
+        const res = await Http.NoCache().get(host) // Assuming 'false' bypasses some auth/parsing
 
         if (res.ok) {
           return host // Found a good host!

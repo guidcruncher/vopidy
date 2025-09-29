@@ -1,4 +1,4 @@
-import { HttpAuth } from "@/core/http/"
+import { Authorization, Http } from "@/core/http/"
 import { PagedItems } from "@/core/paging"
 import { SpotifyAuth } from "./spotifyauth"
 import { SpotifyCatalog } from "./spotifycatalog"
@@ -12,7 +12,7 @@ export class SpotifyLibrary {
       const url = `${process.env.SPOTIFY_API}/me/playlists?offset=${offset}&limit=${limit}&fields=items(uri),items(owner)(display_name),items(images),items(name),items(owner),items(type),next,offset,limit,total`
       let res: any = {}
 
-      res = await HttpAuth.get(url, await this.getAuthHeaders(), !nocache)
+      res = await Http.NoCache().Authorize(this.getAuthHeaders).get(url)
 
       if (!res.ok) {
         return data
@@ -53,7 +53,7 @@ export class SpotifyLibrary {
     }
 
     const url = `${process.env.SPOTIFY_API}/playlists/${extractId(uri)}/tracks?offset=${offset}&limit=${limit}&fields=items(track)(uri),items(track)(album)(name),items(track)(album)(images)items(track)(name),items(track)(type),items(track)(images),items(track)(artists),next,offset,limit,total`
-    const res = await HttpAuth.get(url, await this.getAuthHeaders(), true)
+    const res = await Http.NoCache().Authorize(this.getAuthHeaders).get(url)
 
     if (!res.ok) {
       return root
@@ -100,7 +100,7 @@ export class SpotifyLibrary {
 
     do {
       const url = `${process.env.SPOTIFY_API}/me/albums?offset=${offset}&limit=${limit}&fields=items(album)(uri),items(album)(images),items(album)(name),items(album)(artists),items(album)(popularity),items(album)(type),next,offset,limit,total`
-      const res = await HttpAuth.get(url, await this.getAuthHeaders(), true)
+      const res = await Http.NoCache().Authorize(this.getAuthHeaders).get(url)
 
       if (!res.ok) {
         return data
@@ -141,7 +141,7 @@ export class SpotifyLibrary {
 
     do {
       const url = `${process.env.SPOTIFY_API}/me/tracks?offset=${offset}&limit=${limit}&fields=next,offset,limit,total,items(track)(uri),items(track)(album)(images),items(track)(is_playable),items(track)(name),items(track)(album)(name),items(track)(artists),items(track)(popularity),items(track)(type)`
-      const res = await HttpAuth.get(url, await this.getAuthHeaders(), true)
+      const res = await Http.NoCache().Authorize(this.getAuthHeaders).get(url)
 
       if (!res.ok) {
         return data
@@ -182,7 +182,7 @@ export class SpotifyLibrary {
 
     do {
       const url = `${process.env.SPOTIFY_API}/me/shows?offset=${offset}&limit=${limit}&fields=next,offset,limit,total,items(show)(uri),items(show)(images),items(show)(name),items(show)(publisher),items(show)(description),items(show)(type)`
-      const res = await HttpAuth.get(url, await this.getAuthHeaders(), true)
+      const res = await Http.NoCache().Authorize(this.getAuthHeaders).get(url)
 
       if (!res.ok) {
         return data
@@ -220,7 +220,7 @@ export class SpotifyLibrary {
     let url = `${process.env.SPOTIFY_API}/me/following?type=artist`
 
     do {
-      const res = await HttpAuth.get(url, await this.getAuthHeaders(), true)
+      const res = await Http.NoCache().Authorize(this.getAuthHeaders).get(url)
 
       if (!res.ok) {
         return data
@@ -254,7 +254,7 @@ export class SpotifyLibrary {
     return data
   }
 
-  private async getAuthHeaders() {
+  private async getAuthHeaders(): Promise<Authorization> {
     return await SpotifyAuth.getAuthorization()
   }
 }

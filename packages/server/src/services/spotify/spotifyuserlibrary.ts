@@ -1,28 +1,25 @@
 import { CacheManager } from "@/core/cachemanager"
-import { Body, HttpAuth } from "@/core/http/"
+import { Authorization, Body, Http } from "@/core/http/"
 import { logger } from "@/core/logger"
 import { SpotifyAuth } from "./spotifyauth"
+import { extractId, extractType } from "./utils"
 
 export class SpotifyUserLibrary {
   public async saveToLibrary(id: string) {
     let res: any = {}
-    let segments = id.split(":")
 
-    if (segments[1] == "artist") {
-      return await this.follow(segments[1], id)
+    if (extractType(id) == "artist") {
+      return await this.follow(extractType(id), id)
     }
 
     if (await this.inLibrary(id)) {
       return true
     }
 
-    const getId = () => {
-      return segments.length == 3 ? segments[2] : id
-    }
-    const body = { ids: [getId()] }
-    const url = `${process.env.SPOTIFY_API}/me/${segments[1]}s?ids=${getId()}`
+    const body = { ids: [extractId(id)] }
+    const url = `${process.env.SPOTIFY_API}/me/${extractType(id)}s?ids=${extractId(id)}`
 
-    res = await HttpAuth.put(url, Body.json(body), await this.getAuthHeaders())
+    res = await Http.NoCache().Authorize(this.getAuthHeaders).put(url, Body.json(body))
 
     await CacheManager.flush()
     return res
@@ -30,37 +27,29 @@ export class SpotifyUserLibrary {
 
   public async removeFromLibrary(id: string) {
     let res: any = {}
-    let segments = id.split(":")
-    if (segments[1] == "artist") {
-      return await this.unfollow(segments[1], id)
+    if (extractType(id) == "artist") {
+      return await this.unfollow(extractType(id), id)
     }
 
     if (!(await this.inLibrary(id))) {
       return true
     }
 
-    const getId = () => {
-      return segments.length == 3 ? segments[2] : id
-    }
-    const url = `${process.env.SPOTIFY_API}/me/${segments[1]}s?ids=${getId()}`
-    res = await HttpAuth.delete(url, await this.getAuthHeaders())
+    const url = `${process.env.SPOTIFY_API}/me/${extractType(id)}s?ids=${extractId(id)}`
+    res = await Http.NoCache().Authorize(this.getAuthHeaders).delete(url)
     await CacheManager.flush()
     return res
   }
 
   public async inLibrary(id: string) {
     let res: any = {}
-    let segments = id.split(":")
 
-    if (segments[1] == "artist") {
-      return await this.doesFollow(segments[1], id)
+    if (extractType(id) == "artist") {
+      return await this.doesFollow(extractType(id), id)
     }
 
-    const getId = () => {
-      return segments.length == 3 ? segments[2] : id
-    }
-    const url = `${process.env.SPOTIFY_API}/me/${segments[1]}s/contains?ids=${getId()}`
-    res = await HttpAuth.get(url, await this.getAuthHeaders(), false)
+    const url = `${process.env.SPOTIFY_API}/me/${extractType(id)}s/contains?ids=${extractId(id)}`
+    res = await Http.NoCache().Authorize(this.getAuthHeaders).get(url)
 
     if (res.ok) {
       return res.response[0]
@@ -72,17 +61,13 @@ export class SpotifyUserLibrary {
 
   public async follow(type: string, id: string) {
     let res: any = {}
-    let segments = id.split(":")
-    const getId = () => {
-      return segments.length == 3 ? segments[2] : id
-    }
 
     if (await this.doesFollow(type, id)) {
       return true
     }
 
-    const url = `${process.env.SPOTIFY_API}/me/following?type=${type}&ids=${getId()}`
-    res = await HttpAuth.put(url, Body.empty(), await this.getAuthHeaders())
+    const url = `${process.env.SPOTIFY_API}/me/following?type=${type}&ids=${extractId(id)}`
+    res = await Http.NoCache().Authorize(this.getAuthHeaders).put(url, Body.empty())
 
     await CacheManager.flush()
     return res.ok
@@ -90,17 +75,13 @@ export class SpotifyUserLibrary {
 
   public async unfollow(type: string, id: string) {
     let res: any = {}
-    let segments = id.split(":")
 
     if (!(await this.doesFollow(type, id))) {
       return true
     }
 
-    const getId = () => {
-      return segments.length == 3 ? segments[2] : id
-    }
-    const url = `${process.env.SPOTIFY_API}/me/following?type=${type}&ids=${getId()}`
-    res = await HttpAuth.delete(url, await this.getAuthHeaders())
+    const url = `${process.env.SPOTIFY_API}/me/following?type=${type}&ids=${extractId(id)}`
+    res = await Http.NoCache().Authorize(this.getAuthHeaders).delete(url)
 
     await CacheManager.flush()
     return res.ok
@@ -108,12 +89,9 @@ export class SpotifyUserLibrary {
 
   public async doesFollow(type: string, id: string) {
     let res: any = {}
-    let segments = id.split(":")
-    const getId = () => {
-      return segments.length == 3 ? segments[2] : id
-    }
-    const url = `${process.env.SPOTIFY_API}/me/following/contains?type=${segments[1] ? segments[1] : "artist"}&ids=${getId()}`
-    res = await HttpAuth.get(url, await this.getAuthHeaders(), false)
+
+    const url = `${process.env.SPOTIFY_API}/me/following/contains?type=${extractType(id) ? extractType(id) : "artist"}&ids=${extractId(id)}`
+    res = await Http.NoCache().Authorize(this.getAuthHeaders).get(url)
 
     if (res.ok) {
       return res[0]
@@ -124,7 +102,7 @@ export class SpotifyUserLibrary {
     return false
   }
 
-  private async getAuthHeaders() {
+  private async getAuthHeaders(): Promise<Authorization> {
     return await SpotifyAuth.getAuthorization()
   }
 }

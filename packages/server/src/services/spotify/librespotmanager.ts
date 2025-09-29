@@ -1,4 +1,4 @@
-import { Body, HttpAuth } from "@/core/http/"
+import { Authorization, Body, Http } from "@/core/http/"
 import { logger } from "@/core/logger"
 import { pm2 } from "@/core/pm2"
 import { Auth } from "@/services/auth"
@@ -56,11 +56,9 @@ export class LibrespotManager {
     const url = `https://api.spotify.com/v1/me/player`
     logger.debug("Connecting to " + state.device_id)
 
-    res = await HttpAuth.put(
-      url,
-      Body.json({ device_ids: [state.device_id] }),
-      await this.getAuthHeaders(),
-    )
+    res = await Http.NoCache()
+      .Authorize(this.getAuthHeaders)
+      .put(url, Body.json({ device_ids: [state.device_id] }))
 
     if (!res.ok) {
       logger.error(`Error connecting to Librespot ${res.status} ${res.statipusText}`)
@@ -76,7 +74,7 @@ export class LibrespotManager {
     return await pm2.restartGoLibRespot()
   }
 
-  private async getAuthHeaders() {
+  private async getAuthHeaders(): Promise<Authorization> {
     return await SpotifyAuth.getAuthorization()
   }
 }

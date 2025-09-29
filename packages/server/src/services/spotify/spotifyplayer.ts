@@ -1,4 +1,4 @@
-import { Body, Http, HttpAuth } from "@/core/http/"
+import { Authorization, Body, Http } from "@/core/http/"
 import { logger } from "@/core/logger"
 import { WsClientStore } from "@/core/wsclientstore"
 import { db } from "@/services/db/"
@@ -10,7 +10,7 @@ export class SpotifyPlayer {
   async playTrack(uri: string) {
     const url = `${process.env.GOLIBRESPOT_API}/player/play`
     const body = { uri, skip_to_uri: "", paused: false }
-    const res = await Http.post(url, Body.json(body))
+    const res = await Http.NoCache().post(url, Body.json(body))
     const catalog = new SpotifyCatalog()
 
     // Track info → database
@@ -30,39 +30,39 @@ export class SpotifyPlayer {
 
   async pause() {
     const url = `${process.env.GOLIBRESPOT_API}/player/pause`
-    const res = await Http.post(url, Body.empty())
+    const res = await Http.NoCache().post(url, Body.empty())
     WsClientStore.notify("pause", { service: "spotify" })
     return res
   }
 
   async resume() {
     const url = `${process.env.GOLIBRESPOT_API}/player/resume`
-    const res = await Http.post(url, Body.empty())
+    const res = await Http.NoCache().post(url, Body.empty())
     WsClientStore.notify("resume", { service: "spotify" })
     return res
   }
 
   async stop() {
     const url = `${process.env.GOLIBRESPOT_API}/player/pause`
-    const res = await Http.post(url, Body.empty())
+    const res = await Http.NoCache().post(url, Body.empty())
     WsClientStore.notify("stop", { service: "spotify" })
     return res
   }
 
   async next() {
     const url = `${process.env.GOLIBRESPOT_API}/player/next`
-    return await Http.post(url, Body.empty())
+    return await Http.NoCache().post(url, Body.empty())
   }
 
   async previous() {
     const url = `${process.env.GOLIBRESPOT_API}/player/previous`
-    return await Http.post(url, Body.empty())
+    return await Http.NoCache().post(url, Body.empty())
   }
 
   public async seek(position: number) {
     const url = `${process.env.GOLIBRESPOT_API}/player/seek`
     const body = { position: position * 1000, relative: false }
-    const res = await HttpAuth.post(url, Body.json(body), await this.getAuthHeaders())
+    const res = await Http.NoCache().post(url, Body.json(body))
     WsClientStore.broadcast({
       type: "track-seeked",
       data: { position: position, source: "spotify" },
@@ -73,11 +73,11 @@ export class SpotifyPlayer {
 
   public async getStatus() {
     const url = `${process.env.GOLIBRESPOT_API}/status`
-    let res: any = await Http.get(url, false)
+    let res: any = await Http.NoCache().get(url)
     let track: any = {}
 
     if (res.status == 204) {
-      res = await Http.get(url, false)
+      res = await Http.NoCache().get(url)
     }
 
     if (!res.ok) {
@@ -106,7 +106,7 @@ export class SpotifyPlayer {
     }
   }
 
-  private async getAuthHeaders() {
+  private async getAuthHeaders(): Promise<Authorization> {
     return await SpotifyAuth.getAuthorization()
   }
 }

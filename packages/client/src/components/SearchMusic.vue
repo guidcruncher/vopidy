@@ -145,7 +145,10 @@ export default {
       this.pagedSearch(0, this.pageSize)
     },
     selectItem(item) {
-      vopidy('player.play', { source: item.source, id: item.id }).then((res) => {})
+      vopidy('player.play', { source: item.source, id: item.id }).then((res) => {
+        emit('vopidy.track-changed')
+        emit('snackbar', { text: 'Playback started.' })
+      })
     },
     searchChoose() {
       this.page = 1

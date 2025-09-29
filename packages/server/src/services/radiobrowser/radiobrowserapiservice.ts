@@ -24,7 +24,7 @@ export class RadioBrowserApiService {
     }
 
     const url = `${baseUrl}${endpoint}?${params.toString()}`
-    const res = await Http.get(url, true)
+    const res = await Http.Cache().get(url)
 
     if (!res.ok) {
       // Mark the host as bad if the API call fails

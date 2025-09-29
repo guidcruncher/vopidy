@@ -1,4 +1,4 @@
-import { Authorization, HttpAuth } from "@/core/http/"
+import { Authorization, Http } from "@/core/http/"
 import { getAccessTokenOnly } from "@/services/auth"
 import { LibrespotManager } from "./librespotmanager"
 
@@ -29,7 +29,7 @@ export class SpotifyAuth {
     const url = `${process.env.SPOTIFY_API}/me`
     const auth: Authorization = { type: "Bearer", value: accessToken }
 
-    res = await HttpAuth.get(url, auth, true)
+    res = await Http.Cache().Authorize(SpotifyAuth.getAuthorization).get(url)
 
     if (!res.ok) {
       return undefined

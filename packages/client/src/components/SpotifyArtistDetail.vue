@@ -174,7 +174,7 @@ export default {
     this.onResize()
     on('showartistdetail', (id) => {
       this.id = id
-      vopidy('spotify.doesfollow', { type: this.id.split(':')[1], id: this.id }).then((res) => {
+      vopidy('spotify.doesfollow', { type: 'artist', id: this.id }).then((res) => {
         this.following = res.result.following
       })
       this.loadData({ done: () => {} })

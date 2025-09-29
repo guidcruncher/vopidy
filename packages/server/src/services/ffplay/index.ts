@@ -13,7 +13,7 @@ export class FFplay implements IMediaPlayer {
 
   private constructor() {
     if (!FFplay.processManager) {
-    FFplay.processManager = new FFplayProcessManager()
+      FFplay.processManager = new FFplayProcessManager()
     }
 
     this.metadataFetcher = new FFplayMetadata()
