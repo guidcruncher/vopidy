@@ -24,7 +24,7 @@
           </v-row>
         </v-container>
       </div>
-      <div class="pa-2" v-if="canMix">
+      <div class="pa-2" v-if="canMix && mixer.frequencies.length!=0">
         <table border="0" cellpadding="5" cellspacing="0">
           <tbody>
             <tr>
