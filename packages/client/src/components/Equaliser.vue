@@ -76,7 +76,7 @@ export default {
   beforeUnmount() {},
   methods: {
     getMixer() {
-      vopidy('mixer.equaliser.get', {}).then((res) => {
+      vopidy('mixer.equaliser-get', {}).then((res) => {
         if (res.ok) {
           this.mixer = res.result
           this.ready = true
@@ -86,14 +86,14 @@ export default {
       })
     },
     setMixer() {
-      vopidy('mixer.equaliser.set', { value: this.mixer }).then((res) => {
+      vopidy('mixer.equaliser-set', { value: this.mixer }).then((res) => {
         if (res.ok) {
         }
       })
     },
     resetMixer() {
       let value = parseInt(this.resetLevel.toString())
-      vopidy('mixer.equaliser.reset', { value: value }).then((res) => {
+      vopidy('mixer.equaliser-reset', { value: value }).then((res) => {
         if (res.ok) {
           this.getMixer()
         }

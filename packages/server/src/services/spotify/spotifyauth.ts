@@ -4,7 +4,7 @@ import { LibrespotManager } from "./librespotmanager"
 
 export class SpotifyAuth {
   static async getAuthorization(): Promise<Authorization> {
-    const token = await this.getAccessToken()
+    const token = await getAccessTokenOnly()
     return { type: "Bearer", value: token }
   }
 
