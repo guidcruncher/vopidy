@@ -1,5 +1,5 @@
 import { RpcService, ServiceModule } from "@/core/jsonrpc/types"
-import { JsonRpcClient } from "@/core/jsonrpcclient"
+import { JsonRpcClient } from "@/core/jsonrpc/jsonrpcclient"
 
 class SnapcastService implements RpcService {
   public async setclientname(id: string, name: string) {
