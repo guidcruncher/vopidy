@@ -79,8 +79,8 @@ export default {
   methods: {
     getStatus() {
       vopidy('snapcast.status', {}).then((res) => {
-        if (res.result.ok) {
-          this.groups = res.result.result.server.groups
+        if (res.result) {
+          this.groups = res.result.server.groups
         }
       })
     },

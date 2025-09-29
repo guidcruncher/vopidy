@@ -1,79 +1,125 @@
 import { logger } from "@/core/logger"
+import { JsonRpcRequest, JsonRpcResponse } from "./types"
+
+export class JsonRpcClientError extends Error {
+  constructor(
+    message: string,
+    public code?: number,
+    public data?: any,
+  ) {
+    super(message)
+    this.name = "JsonRpcClientError"
+  }
+}
 
 export class JsonRpcClient {
-  private static randomInt(max: number = 65535) {
+  private url: string
+  private requestIdCounter: number
+
+  constructor(url: string) {
+    this.url = url
+    this.requestIdCounter = 1 // Simple counter for request IDs
+  }
+
+  private randomInt(max: number = 65535) {
     const min = Math.ceil(1)
     max = Math.floor(max)
     return Math.floor(Math.random() * (max - min + 1)) + min
   }
 
-  public static getMessage(method: string, params: any = undefined) {
-    const id = JsonRpcClient.randomInt()
-    let body: any = {
-      id: id,
-      jsonrpc: "2.0",
-      method: method,
-    }
-    if (params) {
-      body = {
-        id: id,
-        jsonrpc: "2.0",
-        method: method,
-        params: params,
-      }
-    }
-    return body
+  /**
+   * Generates a sequential unique ID for the JSON-RPC request.
+   * @returns A unique request ID.
+   */
+  private generateId(): number {
+    return this.requestIdCounter++
   }
 
-  public static async request(method: string, params: any = undefined) {
-    let res: any = {}
-    const id = JsonRpcClient.randomInt()
-    let body = JsonRpcClient.getMessage(method, params)
+  public async call<T = any>(
+    method: string,
+    params?: any[] | Record<string, any>,
+    id: number | string | null = this.generateId(),
+  ): Promise<T> {
+    const request: JsonRpcRequest = {
+      jsonrpc: "2.0",
+      method: method,
+      params: params,
+      id: id,
+    }
 
     try {
-      res = await fetch("http://127.0.0.1:1780/jsonrpc", {
+      const response = await fetch(this.url, {
         method: "POST",
-        body: JSON.stringify(body),
-      })
-    } catch (err) {
-      logger.error("fetch error", err)
-      res = {
-        ok: false,
-        status: 500,
-        statusText: err.message,
-        json: () => {
-          return {}
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
         },
+        body: JSON.stringify(request),
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status} ${response.statusText}`)
       }
+
+      const jsonResponse: JsonRpcResponse = await response.json()
+
+      // 1. Check for standard JSON-RPC error response
+      if ("error" in jsonResponse) {
+        const { code, message, data } = jsonResponse.error
+        logger.error(`JsonRPC Error: ${message}`, code, data)
+        throw new JsonRpcClientError(`JsonRPC Error: ${message}`, code, data)
+      }
+
+      // 2. Check for ID mismatch (good practice)
+      const successResponse = jsonResponse as JsonRpcSuccessResponse
+      if (successResponse.id !== request.id) {
+        logger.warn(`Response ID mismatch. Sent: ${request.id}, Received: ${successResponse.id}`)
+      }
+
+      // 3. Return the result
+      return successResponse.result as T
+    } catch (error) {
+      // Re-throw if it's already a JsonRpcClientError
+      if (error instanceof JsonRpcClientError) {
+        throw error
+      }
+      // Handle network or JSON parsing errors
+      logger.error(
+        `Network or Parsing Error: ${error instanceof Error ? error.message : String(error)}`,
+      )
+      throw new JsonRpcClientError(
+        `Network or Parsing Error: ${error instanceof Error ? error.message : String(error)}`,
+      )
+    }
+  }
+
+  /**
+   * Sends a JSON-RPC notification (no response expected).
+   * This method does not wait for or check a server response.
+   *
+   * @param method The name of the method to invoke on the server.
+   * @param params Optional parameters for the method.
+   */
+  public async notify(method: string, params?: any[] | Record<string, any>): Promise<void> {
+    const request: JsonRpcRequest = {
+      jsonrpc: "2.0",
+      method: method,
+      params: params,
+      id: null, // ID is null for notifications
     }
 
-    if (!res.ok) {
-      let errorRes: any = {}
-      try {
-        errorRes = await res.json()
-      } catch {
-        errorRes = {}
-      }
-      const err = {
-        status: res.status,
-        statusText: errorRes.message ?? res.statusText,
-        ok: res.ok,
-        response: {},
-      }
-      logger.error(`Error in jsonrpcclient`, err)
-      return err
+    try {
+      // Send the request but don't process the response body
+      await fetch(this.url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(request),
+      })
+    } catch (error) {
+      // Log notification errors, but don't throw, as notifications are fire-and-forget
+      logger.error("Error sending JSON-RPC notification:", error)
     }
-    const text = await res.text()
-
-    if (text && text != "") {
-      const obj = JSON.parse(text)
-      if (obj.error) {
-        return { ok: false, result: obj.error.data }
-      }
-
-      return { ok: true, result: obj.result }
-    }
-
-    return { ok: true, result: {} }
   }
 }

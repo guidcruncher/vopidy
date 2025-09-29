@@ -1,30 +1,37 @@
-import { RpcService, ServiceModule } from "@/core/jsonrpc/types"
 import { JsonRpcClient } from "@/core/jsonrpc/jsonrpcclient"
+import { RpcService, ServiceModule } from "@/core/jsonrpc/types"
 
 class SnapcastService implements RpcService {
+  private client: JsonRpcClient
+
+  constructor() {
+    this.client = new JsonRpcClient("http://127.0.0.1:1780/jsonrpc")
+  }
+
   public async setclientname(id: string, name: string) {
-    return await JsonRpcClient.request("Client.SetName", {
+    return await this.client.call("Client.SetName", {
       id: id,
       name: name,
-    })
+    }).result
   }
 
   public async setvolume(id: string, level: number, muted: boolean) {
     if (!level) {
-      return await JsonRpcClient.request("Client.SetVolume", {
+      return await this.client.call("Client.SetVolume", {
         id: id,
         volume: { muted: muted },
-      })
+      }).result
     } else {
-      return await JsonRpcClient.request("Client.SetVolume", {
+      return await this.client.call("Client.SetVolume", {
         id: id,
         volume: { percent: level },
-      })
+      }).result
     }
   }
 
   public async status() {
-    return await JsonRpcClient.request("Server.GetStatus")
+    const res = await this.client.call("Server.GetStatus")
+    return res
   }
 }
 
