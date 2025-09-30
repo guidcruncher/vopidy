@@ -16,8 +16,6 @@ export class Frequency {
 export class MixerDesk {
   frequencies: Frequency[] = [] as Frequency[]
 
-  device = ""
-
   add(numid: number, name: string, value: number, min = 0, max = 100, steps = 1) {
     this.frequencies.push({
       numid: numid,
@@ -32,7 +30,7 @@ export class MixerDesk {
 }
 
 export class Equaliser {
-  private mixerDevice = (process.env.ALSA_MIXERDEVICE ?? "").toString()
+  private mixerDevice = (process.env.ALSA_EQUAL_MIXER  ?? "").toString()
 
   public static async initialise() {
     const state = Mixer.getPlaybackState()
