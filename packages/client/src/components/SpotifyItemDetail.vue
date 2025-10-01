@@ -142,7 +142,7 @@ export default {
       this.items = []
       this.detail = {}
       this.id = id
-      vopidy('spotify.library.contains', { id: this.id }).then((res) => {
+      vopidy('spotify.library-contains', { id: this.id }).then((res) => {
         this.inLibrary = res.result.exists
       })
       this.showDialog = true
