@@ -34,13 +34,11 @@ export class LibrespotManager {
       try {
         child_process.exec("pgrep -f go-librespot", (error, stdout, stderr) => {
           if (error) {
-            logger.error("Error in getLibrespotPid", error)
             return resolve("")
           }
           resolve(stdout)
         })
       } catch (err) {
-        logger.error("Error in getibrespotPid", err)
         resolve("")
       }
     })

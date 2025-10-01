@@ -12,7 +12,7 @@ export class SpotifyPlayer {
     const body = { uri, skip_to_uri: "", paused: false }
     const res = await Http.NoCache().post(url, Body.json(body))
     const catalog = new SpotifyCatalog()
-
+    await SpotifyAuth.ensureConnection()
     // Track info → database
     try {
       const track = await catalog.describe(uri)
@@ -75,6 +75,7 @@ export class SpotifyPlayer {
     const url = `${process.env.GOLIBRESPOT_API}/status`
     let res: any = await Http.NoCache().get(url)
     let track: any = {}
+    await SpotifyAuth.ensureConnection()
 
     if (res.status == 204) {
       res = await Http.NoCache().get(url)

@@ -16,6 +16,18 @@ export class SpotifyAuth {
     return await librespot.connect("Vopidy", accessToken, true)
   }
 
+  static async ensureConnection() {
+    const librespot = new LibrespotManager()
+    let pid = await librespot.getLibrespotPid()
+    if (pid != "") {
+      return true
+    }
+
+    const accessToken = await getAccessTokenOnly()
+    logger.debug("Logging in with ", accessToken)
+    return await librespot.connect("Vopidy", accessToken, true)
+  }
+
   static async getAccessToken(): Promise<string> {
     return await getAccessTokenOnly()
   }
