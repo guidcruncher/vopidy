@@ -180,7 +180,7 @@ export default {
         this.settings.timezone = getTimezone()
         this.settings.locale = getLocale()
         this.settings.clockType = this.clockType.title ?? this.settings.clockType
-        vopidy('core.config-set', this.settings).then((res) => {
+        vopidy('core.config-set', {config: this.settings}).then((res) => {
           window.location.reload()
         })
       })
