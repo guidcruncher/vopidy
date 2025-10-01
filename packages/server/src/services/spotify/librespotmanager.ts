@@ -13,7 +13,8 @@ const exec = promisify(child_process.exec)
 
 export class LibrespotManager {
   getState() {
-    const filename = path.join(process.env.LIBRESPOT_CONFIG, "state.json")
+    const filename = path.join(process.env.GOLIBRESPOT_STATE, "state.json")
+
     if (fs.existsSync(filename)) {
       return JSON.parse(fs.readFileSync(filename, "utf8"))
     }
@@ -21,27 +22,46 @@ export class LibrespotManager {
   }
 
   setState(state: any) {
-    const filename = path.join(process.env.LIBRESPOT_CONFIG, "state.json")
+    const filename = path.join(process.env.GOLIBRESPOT_STATE, "state.json")
     if (fs.existsSync(filename)) {
       fs.copyFileSync(filename, filename + ".bak")
     }
     fs.writeFileSync(filename, JSON.stringify(state), "utf8")
   }
 
+  async getLibrespotPid() {
+    return new Promise<string>((resolve, reject) => {
+      try {
+        child_process.exec("pgrep -f go-librespot", (error, stdout, stderr) => {
+          if (error) {
+            return resolve("")
+          }
+          resolve(stdout)
+        })
+      } catch (err) {
+        resolve("")
+      }
+    })
+  }
+
   async connectWithToken() {
     const authClient = new Auth()
     const auth = authClient.loadAuthState()
-    logger.trace(`Connecting to Librespot with token ${auth.auth.access_token}`)
-    return await exec("/usr/local/bin/pm2base.sh restart go-librespot", {
-      env: { SPOTIFY_USERNAME: auth.profile.display_name, SPOTIFY_TOKEN: auth.auth.access_token },
-    })
+    logger.warn(
+      `Connecting to Librespot with username "${auth.profile.display_name}" token "${auth.auth.access_token}"`,
+    )
+    let pid = await this.getLibrespotPid()
+    if (pid == "")
+      return await child_process.exec(
+        `/usr/local/bin/librespot.sh "${auth.profile.display_name}", "${auth.auth.access_token}"`,
+      )
   }
 
   public async connect(name: string, accessToken: string, forceReconnect: boolean = false) {
     let state = this.getState()
     let pstate = Mixer.getPlaybackState()
     logger.warn("Connecting to go-librespot")
-    if (process.env.GOLIBRESPOT_CREDENTIAL_TYPE.toString() == "spotify_token") {
+    if (process.env.GOLIBRESPOT_AUTHMODE.toString() == "spotify_token") {
       logger.debug("Connecting via spotify token credentials")
       await this.connectWithToken()
       return "CONNECTED"

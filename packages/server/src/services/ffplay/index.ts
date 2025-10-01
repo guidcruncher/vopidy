@@ -64,7 +64,9 @@ export class FFplay implements IMediaPlayer {
 
   public static shutdown(): void {
     // Proxy the static call to the process manager instance
-    FFplay.processManager.shutdown()
+    if (FFplay.processManager) {
+      FFplay.processManager.shutdown()
+    }
   }
 
   // Other IMediaPlayer methods

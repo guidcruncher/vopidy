@@ -1,4 +1,4 @@
-FROM guidcruncher/node-pipewire:alpine-latest AS base
+FROM guidcruncher/node-pipewire:alpine-develop AS base
 
 ARG DATE=""
 ARG VERSION=""
@@ -7,8 +7,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 ENV NODE_ENV=development
 ARG TARGETARCH
 ENV TZ=UTC
-ENV GOLIBRESPOT_CREDENTIAL_TYPE=spotify_token
-ENV SPOTIFY_AUTHJSON=/local/state/vopidy/.vopidy-auth.json
+ENV GOLIBRESPOT_AUTHMODE=spotify_token
 
 RUN <<EOF
 apk add --no-cache sqlite caddy memcached 
@@ -36,12 +35,12 @@ EOF
 COPY ./container/config.yml /local/config/go-librespot/config.yml
 COPY ./container/shared/srv/ /srv/
 COPY ./container/shared/app/ /app/
-COPY ./container/${BUILD_CONFIG}/app/ /app/
+COPY ./container/${BUILD_CONFIG}/app/ ${APP_BASE}
 COPY ./container/${BUILD_CONFIG}/srv/ /srv/
 RUN chmod +x /app/*.sh
 RUN mv /srv/defaults/Caddyfile /local/config/caddy
 
-WORKDIR /app/src
+WORKDIR ${APP_BASE}/src
 
 COPY . .
 
@@ -49,7 +48,6 @@ RUN chown -R appuser: /app /srv /local
 
 ENV MACHINE_NAME="Vopidy"
 ENV VOPIDY_CONFIG="/local/config/vopidy"
-ENV LIBRESPOT_CONFIG=/local/config/go-librespot
 ENV VOPIDY_FILES="/srv/files"
 ENV VOPIDY_DB="/local/state/vopidy"
 ENV VOPIDY_DEFAULTS="/srv/defaults"
@@ -61,7 +59,6 @@ ENV BUILD_DATE=$DATE
 ENV BUILD_VERSION=$VERSION
 ENV SHOW_REQUEST_TIMINGS=false
 ENV BASE_PATH="http://192.168.1.201:3004"
-ENV ENABLE_SERVICES=snapserver,snapclient
 ENV MACHINENAME="Vopidy Server"
 ENV SNAPSERVER_CODEC=flac
 ENV SNAPSERVER_CHUNK_MS=26

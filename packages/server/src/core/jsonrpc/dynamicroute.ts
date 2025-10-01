@@ -70,7 +70,7 @@ async function processRpcRequest(request: JsonRpcRequest): Promise<JsonRpcRespon
       data = { stack: error.stack }
     }
 
-    logger.error(`jsonrpc error ${JSON.stringify({ code, message, data, id })}`)
+    logger.error(`jsonrpc error`, error)
     return { jsonrpc: "2.0", error: { code, message, data }, id }
   }
 }

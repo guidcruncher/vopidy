@@ -1,5 +1,4 @@
 import { logger } from "@/core/logger"
-import { pm2 } from "@/core/pm2"
 import * as fs from "fs"
 import * as path from "path"
 
@@ -81,14 +80,14 @@ export class Config {
 export const ConfigWriter = (cfg: Config) => {
   const filename = path.join(process.env.VOPIDY_CONFIG as string, "vopidy-config.json")
   const json = JSON.stringify(cfg, null, 4)
+
+  if (fs.existsSync(filename)) {
+    fs.copyFileSync(filename, filename + ".bak")
+  }
+
   fs.writeFileSync(filename, json, "utf8")
 }
 
 export const ApplyConfig = async (o: Config, n: Config) => {
   logger.debug("Applying config changes")
-
-  if (o.enableRequestCache != n.enableRequestCache) {
-    logger.debug(`enableRequestCache changed to ${n.enableRequestCache}`)
-    await pm2.exec(false, n.enableRequestCache ? "start" : "stop", ["memcached"])
-  }
 }
