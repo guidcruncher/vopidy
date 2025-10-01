@@ -1,4 +1,5 @@
 import { Authorization, Http } from "@/core/http/"
+import { logger } from "@/core/logger"
 import { getAccessTokenOnly } from "@/services/auth"
 import { LibrespotManager } from "./librespotmanager"
 
@@ -11,6 +12,7 @@ export class SpotifyAuth {
   static async login() {
     const accessToken = await getAccessTokenOnly()
     const librespot = new LibrespotManager()
+    logger.debug("Logging in with ", accessToken)
     return await librespot.connect("Vopidy", accessToken, true)
   }
 
