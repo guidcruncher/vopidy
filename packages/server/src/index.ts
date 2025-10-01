@@ -1,6 +1,6 @@
 import { AppEnv } from "@/core/appenv"
 import { Config, ConfigWriter } from "@/core/config"
-import { route as JsonRpcRoute } from "@/core/jsonrpc/dynamicroute"
+import { route as JsonRpcRoute, setupWebSocket } from "@/core/jsonrpc/dynamicroute"
 import { logger } from "@/core/logger"
 import { ProcessLauncher } from "@/core/processlauncher"
 import { loadScheduler } from "@/core/scheduler"
@@ -79,11 +79,12 @@ app.use("/files/*", async (c, next) => {
 app.get("/doc.json", (c) => c.json(OpenApiDoc))
 app.get("/doc", swaggerUI({ url: "/api/doc.json" }))
 
+const wsrpc = setupWebSocket(app)
 // API Route setup
 app.route("/p", proxyRoute)
 app.route("/auth", auth)
-// app.route("/rpc", httprpc)
 app.route("/rpc", JsonRpcRoute)
+app.route("/ws", wsrpc.route)
 
 const server = serve(
   {
@@ -100,3 +101,5 @@ const server = serve(
 )
 
 loadScheduler()
+
+wsrpc.injectWebSocket(server)

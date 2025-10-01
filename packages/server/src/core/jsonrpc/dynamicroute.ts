@@ -1,6 +1,8 @@
 // src/index.ts
 
 import { logger } from "@/core/logger"
+import { WsClientStore } from "@/core/wsclientstore"
+import { createNodeWebSocket } from "@hono/node-ws"
 import { Hono } from "hono"
 import * as path from "path"
 import { registry } from "./dynamicserviceregistry"
@@ -48,7 +50,6 @@ async function processRpcRequest(request: JsonRpcRequest): Promise<JsonRpcRespon
   }
 
   try {
-    logger.debug(`jsonrpc method ${method}`)
     const result = await registry.execute(method, params)
     return { jsonrpc: "2.0", result, id }
   } catch (error) {
@@ -118,3 +119,63 @@ route.post("/", async (c) => {
   }
   return c.json(errorResponse, 400)
 })
+
+export const setupWebSocket = (app) => {
+  const wsrpc = new Hono()
+  const { injectWebSocket, upgradeWebSocket } = createNodeWebSocket({ app })
+
+  wsrpc.get(
+    "/",
+    upgradeWebSocket((c) => {
+      return {
+        onOpen: (event, ws) => {
+          const rawWs = ws
+          logger.warn(`*** Incoming socket connection`)
+          WsClientStore.add(rawWs)
+        },
+        onMessage: async (event, ws) => {
+          let reqBody: any
+          try {
+            reqBody = JSON.parse(event.data)
+          } catch (e) {
+            const response: JsonRpcResponse = {
+              jsonrpc: "2.0",
+              error: {
+                code: JsonRpcErrorCode.ParseError,
+                message: "Invalid JSON was received by the server.",
+              },
+              id: null,
+            }
+            ws.send(JSON.stringify(response))
+            return
+          }
+
+          if (Array.isArray(reqBody)) {
+            // Batch Request
+            const responses = await Promise.all(
+              reqBody.map((r) => processRpcRequest(r as JsonRpcRequest)),
+            )
+            const validResponses = responses.filter((r): r is JsonRpcResponse => r !== null)
+            ws.send(JSON.stringify(validResponses))
+            return
+          } else if (typeof reqBody === "object" && reqBody !== null) {
+            // Single Request
+            const response = await processRpcRequest(reqBody as JsonRpcRequest)
+
+            if (response != null) {
+              ws.send(JSON.stringify(response))
+              return
+            }
+          }
+        },
+        onClose: (ws) => {
+          const rawWs = ws
+          logger.trace("Socket closed by client")
+          WsClientStore.remove(rawWs)
+        },
+      }
+    }),
+  )
+
+  return { route: wsrpc, injectWebSocket: injectWebSocket }
+}
