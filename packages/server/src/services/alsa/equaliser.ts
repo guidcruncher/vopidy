@@ -30,7 +30,7 @@ export class MixerDesk {
 }
 
 export class Equaliser {
-  private mixerDevice = (process.env.ALSA_EQUAL_MIXER  ?? "").toString()
+  private mixerDevice = (process.env.ALSA_EQUAL_MIXER ?? "").toString()
 
   public static async initialise() {
     const state = Mixer.getPlaybackState()

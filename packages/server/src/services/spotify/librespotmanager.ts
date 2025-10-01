@@ -13,7 +13,8 @@ const exec = promisify(child_process.exec)
 
 export class LibrespotManager {
   getState() {
-    const filename = path.join(process.env.LIBRESPOT_CONFIG, "state.json")
+    const filename = path.join(process.env.GOLIBRESPOT_STATE, "state.json")
+
     if (fs.existsSync(filename)) {
       return JSON.parse(fs.readFileSync(filename, "utf8"))
     }
@@ -21,7 +22,7 @@ export class LibrespotManager {
   }
 
   setState(state: any) {
-    const filename = path.join(process.env.LIBRESPOT_CONFIG, "state.json")
+    const filename = path.join(process.env.GOLIBRESPOT_STATE, "state.json")
     if (fs.existsSync(filename)) {
       fs.copyFileSync(filename, filename + ".bak")
     }
@@ -32,7 +33,9 @@ export class LibrespotManager {
     const authClient = new Auth()
     const auth = authClient.loadAuthState()
     logger.trace(`Connecting to Librespot with token ${auth.auth.access_token}`)
-    return await exec(`/usr/local/bin/librespot.sh "${auth.profile.display_name}", "${auth.auth.access_token}"`)
+    return await exec(
+      `/usr/local/bin/librespot.sh "${auth.profile.display_name}", "${auth.auth.access_token}"`,
+    )
   }
 
   public async connect(name: string, accessToken: string, forceReconnect: boolean = false) {

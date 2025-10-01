@@ -1,54 +1,57 @@
 <template>
-  <div>
+  <div class="pa-2" v-if="canMix">
+    <h3>Equaliser</h3>
     <center>
-      <div v-if="canMix" style="width: 470px">
-        <v-container v-if="ready">
-          <v-row align="start" no-gutters>
-            <v-col v-for="item in mixer.frequencies" v-if="ready">
-              <v-slider
-                :min="item.min"
-                :max="item.max"
-                show-ticks
-                tick-size="1"
-                persistent-hint
-                max-width="250"
-                :disabled="!canMix"
-                step="1"
-                thumb-label
-                direction="vertical"
-                v-model="item.value"
-                @end="setMixer"
-              ></v-slider>
-              <span class="text-caption" style="writing-mode: vertical-rl">{{ item.name }}</span>
-            </v-col>
-          </v-row>
-        </v-container>
-      </div>
-      <div class="pa-2" v-if="canMix && mixer.frequencies.length!=0">
-        <table border="0" cellpadding="5" cellspacing="0">
-          <tbody>
-            <tr>
-              <td>
-                <v-number-input
-                  :reverse="false"
-                  controlVariant="split"
-                  label="Reset level to"
-                  :hideInput="false"
-                  :inset="false"
-                  v-model="resetLevel"
-                  style="width: 170px"
-                ></v-number-input>
-              </td>
-              <td>&nbsp;</td>
-              <td valign="Middle">
-                <v-btn prepend-icon="mdi-tune-vertical" variant="outlined" @click="resetMixer()"
-                  >Reset Levels</v-btn
-                >&nbsp;
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <v-card>
+        <div v-if="canMix" style="width: 470px">
+          <v-container v-if="ready">
+            <v-row align="start" no-gutters>
+              <v-col v-for="item in mixer.frequencies" v-if="ready">
+                <v-slider
+                  :min="item.min"
+                  :max="item.max"
+                  show-ticks
+                  tick-size="1"
+                  persistent-hint
+                  max-width="250"
+                  :disabled="!canMix"
+                  step="1"
+                  thumb-label
+                  direction="vertical"
+                  v-model="item.value"
+                  @end="setMixer"
+                ></v-slider>
+                <span class="text-caption" style="writing-mode: vertical-rl">{{ item.name }}</span>
+              </v-col>
+            </v-row>
+          </v-container>
+        </div>
+        <div class="pa-2" v-if="canMix && mixer.frequencies.length != 0">
+          <table border="0" cellpadding="5" cellspacing="0">
+            <tbody>
+              <tr>
+                <td>
+                  <v-number-input
+                    :reverse="false"
+                    controlVariant="split"
+                    label="Reset level to"
+                    :hideInput="false"
+                    :inset="false"
+                    v-model="resetLevel"
+                    style="width: 170px"
+                  ></v-number-input>
+                </td>
+                <td>&nbsp;</td>
+                <td valign="Middle">
+                  <v-btn prepend-icon="mdi-tune-vertical" variant="outlined" @click="resetMixer()"
+                    >Reset Levels</v-btn
+                  >&nbsp;
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </v-card>
     </center>
   </div>
 </template>
