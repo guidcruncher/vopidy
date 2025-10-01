@@ -32,9 +32,7 @@ export class LibrespotManager {
     const authClient = new Auth()
     const auth = authClient.loadAuthState()
     logger.trace(`Connecting to Librespot with token ${auth.auth.access_token}`)
-    return await exec("/usr/local/bin/pm2base.sh restart go-librespot", {
-      env: { SPOTIFY_USERNAME: auth.profile.display_name, SPOTIFY_TOKEN: auth.auth.access_token },
-    })
+    return await exec(`/usr/local/bin/librespot.sh "${auth.profile.display_name}", "${auth.auth.access_token}"`)
   }
 
   public async connect(name: string, accessToken: string, forceReconnect: boolean = false) {
