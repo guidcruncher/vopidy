@@ -68,7 +68,7 @@ import { vopidy } from '@/services/vopidy'
 export default {
   name: 'Equaliser',
   props: {
-    locked: { type: boolean, default: false },
+    locked: { type: Boolean, default: false },
   },
   data() {
     return { mixer: {}, canMix: false, muted: false, ready: false, resetLevel: 66 }

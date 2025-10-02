@@ -44,7 +44,7 @@ import { vopidy } from '@/services/vopidy'
 export default {
   name: 'VolumeMixer',
   props: {
-    locked: { type: boolean, default: false },
+    locked: { type: Boolean, default: false },
   },
   data() {
     return { volume: 100, canMix: false, muted: false, ready: false }
