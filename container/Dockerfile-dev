@@ -30,15 +30,8 @@ mkdir -p \
 /usr/bin/npm install -g pm2 node-gyp
 EOF
 
-
-
-COPY ./container/config.yml /local/config/go-librespot/config.yml
-COPY ./container/shared/srv/ /srv/
-COPY ./container/shared/app/ ${APP_BASE}
-COPY ./container/${BUILD_CONFIG}/app/ ${APP_BASE}
-COPY ./container/${BUILD_CONFIG}/srv/ /srv/
-RUN chmod +x /app/*.sh
-RUN mv /srv/defaults/Caddyfile /local/config/caddy
+COPY ./container/${BUILD_CONFIG}/ ${APP_BASE}
+RUN chmod +x $APP_BASE/*.sh
 
 WORKDIR ${APP_BASE}/src
 

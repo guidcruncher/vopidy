@@ -67,12 +67,8 @@ ARG VERSION=""
 COPY --from=build /app/ ${APP_BASE}
 COPY --from=build /srv/ /srv/
 
-COPY ./container/shaed/srv/ /srv/
-COPY ./container/shared/app/ ${APP_BASE}
-COPY ./container/${BUILD_CONFIG}/app/ ${APP_BASE}
-COPY ./container/${BUILD_CONFIG}/srv/ /srv/
-RUN chmod +x /app/*.s
-RUN mv /srv/defaults/Caddyfile /local/config/caddy
+COPY ./container/${BUILD_CONFIG}/ ${APP_BASE}
+RUN chmod +x $APP_BASE/*.sh
 
 WORKDIR ${APP_BASE}
 
