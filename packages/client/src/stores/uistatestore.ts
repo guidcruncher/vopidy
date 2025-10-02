@@ -5,6 +5,7 @@ export const useUiStateStore = defineStore('uistatestore', {
     drawer: false,
     profileImage: '',
     displayMode: 'list',
+    locked: false,
   }),
   actions: {
     setProfileImage() {
@@ -22,6 +23,9 @@ export const useUiStateStore = defineStore('uistatestore', {
     },
     setDrawer(value) {
       this.drawer = value
+    },
+    setLocked(state) {
+      this.locked = state
     },
     toggleDrawer() {
       this.drawer = !this.drawer

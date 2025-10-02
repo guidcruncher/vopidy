@@ -14,7 +14,7 @@
           thumb-label
           :label="item.config.name"
           v-model="item.config.volume.percent"
-          :disabled="!item.connected"
+          :disabled="!item.connected || locked"
           @end="setVolume(item.id, item.config.volume.percent)"
         >
           <template v-slot:prepend>
@@ -23,6 +23,7 @@
               icon="mdi-volume-mute"
               variant="outlined"
               density="compact"
+              :disasbled="locked"
               @click="setMute(item.id, true)"
             ></v-btn>
             <v-btn
@@ -30,6 +31,7 @@
               icon="mdi-volume-high"
               variant="outlined"
               density="compact"
+              :disabled="locked"
               @click="setMute(item.id, false)"
             ></v-btn>
           </template>
@@ -46,7 +48,9 @@ import { vopidy } from '@/services/vopidy'
 
 export default {
   name: 'VolumeMixer',
-  props: {},
+  props: {
+    locked: { type: boolean, default: false },
+  },
   data() {
     return { groups: [] }
   },

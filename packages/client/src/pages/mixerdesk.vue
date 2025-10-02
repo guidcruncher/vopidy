@@ -1,8 +1,14 @@
 <template>
   <PageTitle title="Mixer Desk" />
-  <Equaliser />
-  <VolumeMixer />
-  <SnapcastVolume />
+  <v-btn v-if="!locked" prependicon="mdi-lock" variant="outlined" @click="setLockState(true)"
+    >Lock</v-btn
+  >
+  <v-btn v-if="locked" prependicon="mdi-lock-open" variant="outlined" @click="setLockState(false)"
+    >Unlock</v-btn
+  >
+  <Equaliser :locked="locked" />
+  <VolumeMixer :locked="locked" />
+  <SnapcastVolume :locked="locked" />
 </template>
 
 <script lang="ts" setup>
@@ -13,12 +19,19 @@ export default {
   name: 'Mixerdesk',
   props: {},
   data() {
-    return {}
+    return { locked: true }
   },
-  mounted() {},
+  mounted() {
+    const store = useUIStateStore()
+    this.locked = store.locked
+  },
   beforeUnmount() {},
   methods: {
-    refreshTab() {},
+    setLockState(state) {
+      const store = useUIStateStore()
+      this.locked = state
+      store.setLocked(state)
+    },
   },
 }
 </script>

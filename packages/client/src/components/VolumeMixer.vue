@@ -7,7 +7,7 @@
         max="100"
         show-ticks
         tick-size="1"
-        :disabled="!canMix"
+        :disabled="!canMix || locked"
         step="1"
         thumb-label
         v-model="volume"
@@ -20,6 +20,7 @@
             variant="outlined"
             density="compact"
             @click="mute()"
+            :disabled="locked"
           ></v-btn>
           <v-btn
             v-if="muted"
@@ -27,6 +28,7 @@
             variant="outlined"
             density="compact"
             @click="unmute()"
+            :disabled="locked"
           ></v-btn>
         </template>
       </v-slider>
@@ -41,7 +43,9 @@ import { vopidy } from '@/services/vopidy'
 
 export default {
   name: 'VolumeMixer',
-  props: {},
+  props: {
+    locked: { type: boolean, default: false },
+  },
   data() {
     return { volume: 100, canMix: false, muted: false, ready: false }
   },

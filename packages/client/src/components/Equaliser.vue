@@ -14,7 +14,7 @@
                   tick-size="1"
                   persistent-hint
                   max-width="250"
-                  :disabled="!canMix"
+                  :disabled="!canMix || locked"
                   step="1"
                   thumb-label
                   direction="vertical"
@@ -37,13 +37,18 @@
                     label="Reset level to"
                     :hideInput="false"
                     :inset="false"
+                    :disabled="locked"
                     v-model="resetLevel"
                     style="width: 170px"
                   ></v-number-input>
                 </td>
                 <td>&nbsp;</td>
                 <td valign="Middle">
-                  <v-btn prepend-icon="mdi-tune-vertical" variant="outlined" @click="resetMixer()"
+                  <v-btn
+                    prepend-icon="mdi-tune-vertical"
+                    :disabled="locked"
+                    variant="outlined"
+                    @click="resetMixer()"
                     >Reset Levels</v-btn
                   >&nbsp;
                 </td>
@@ -62,25 +67,20 @@ import { vopidy } from '@/services/vopidy'
 
 export default {
   name: 'Equaliser',
-  props: {},
+  props: {
+    locked: { type: boolean, default: false },
+  },
   data() {
     return { mixer: {}, canMix: false, muted: false, ready: false, resetLevel: 66 }
   },
   mounted() {
-    vopidy('core.config-get', {}).then((res) => {
-      if (res.ok) {
-        this.canMix = !(res.result.enableBitPerfectPlayback === 'true')
-        if (this.canMix) {
-          this.getMixer()
-        }
-      }
-    })
+    this.getMixer()
   },
   beforeUnmount() {},
   methods: {
     getMixer() {
       vopidy('mixer.equaliser-get', {}).then((res) => {
-        if (res.ok) {
+        if (res.result) {
           this.mixer = res.result
           this.ready = true
         } else {
