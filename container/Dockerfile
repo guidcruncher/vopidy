@@ -71,6 +71,7 @@ COPY --from=build /srv/ /srv/
 
 COPY ./container/${BUILD_CONFIG}/ ${APP_BASE}
 RUN chmod +x $APP_BASE/*.sh
+RUN chmod +x $APP_BASE/startup/*.sh
 
 WORKDIR ${APP_BASE}
 
