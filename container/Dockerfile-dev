@@ -1,4 +1,4 @@
-FROM guidcruncher/node-pipewire:alpine-develop AS base
+FROM guidcruncher/node-pipewire:alpine-latest AS base
 
 ARG DATE=""
 ARG VERSION=""
@@ -34,7 +34,7 @@ EOF
 
 COPY ./container/config.yml /local/config/go-librespot/config.yml
 COPY ./container/shared/srv/ /srv/
-COPY ./container/shared/app/ /app/
+COPY ./container/shared/app/ ${APP_BASE}
 COPY ./container/${BUILD_CONFIG}/app/ ${APP_BASE}
 COPY ./container/${BUILD_CONFIG}/srv/ /srv/
 RUN chmod +x /app/*.sh
