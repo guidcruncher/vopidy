@@ -1,12 +1,13 @@
 import { Authorization, Body, Http } from "@/core/http/"
 import { logger } from "@/core/logger"
-import { pm2 } from "@/core/pm2"
+import { ProcessManager } from "@/core/processmanager"
 import { Auth } from "@/services/auth"
 import { Mixer } from "@/services/mixer/"
 import * as fs from "fs"
 import { default as child_process } from "node:child_process"
 import { promisify } from "node:util"
 import * as path from "path"
+import { LibrespotSocket } from "./librespotsocket"
 import { SpotifyAuth } from "./spotifyauth"
 
 const exec = promisify(child_process.exec)
@@ -30,18 +31,7 @@ export class LibrespotManager {
   }
 
   async getLibrespotPid() {
-    return new Promise<string>((resolve, reject) => {
-      try {
-        child_process.exec("pgrep -f go-librespot", (error, stdout, stderr) => {
-          if (error) {
-            return resolve("")
-          }
-          resolve(stdout)
-        })
-      } catch (err) {
-        resolve("")
-      }
-    })
+    return ProcessManager.getPid("go-librespot")
   }
 
   async connectWithToken() {
@@ -51,10 +41,12 @@ export class LibrespotManager {
       `Connecting to Librespot with username "${auth.profile.display_name}" token "${auth.auth.access_token}"`,
     )
     let pid = await this.getLibrespotPid()
-    if (pid == "")
-      return await child_process.exec(
+    if (pid == 0) {
+      await child_process.exec(
         `/usr/local/bin/librespot.sh "${auth.profile.display_name}", "${auth.auth.access_token}"`,
       )
+      LibrespotSocket.open()
+    }
   }
 
   public async connect(name: string, accessToken: string, forceReconnect: boolean = false) {
@@ -81,17 +73,13 @@ export class LibrespotManager {
       .put(url, Body.json({ device_ids: [state.device_id] }))
 
     if (!res.ok) {
-      logger.error(`Error connecting to Librespot ${res.status} ${res.statipusText}`)
+      logger.error(`Error connecting to Librespot ${res.status} ${res.statusText}`)
       return "ERROR"
     }
 
+    LibrespotSocket.open()
     Mixer.setPlaybackState({ librespot: state.device_id })
-
     return "OK"
-  }
-
-  async restart() {
-    return await pm2.restartGoLibRespot()
   }
 
   private async getAuthHeaders(): Promise<Authorization> {

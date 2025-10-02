@@ -1,5 +1,6 @@
 import { RpcService, ServiceModule } from "@/core/jsonrpc/types"
 import { Auth } from "@/services/auth"
+import { Mixer } from "@/services/mixer/"
 import { SpotifyAuth } from "@/services/spotify/spotifyauth"
 
 class AuthService implements RpcService {
@@ -7,6 +8,7 @@ class AuthService implements RpcService {
     const authClient = new Auth()
     const res = await authClient.login(id)
     await SpotifyAuth.login()
+    await Mixer.ensurePlayback()
     return res
   }
 

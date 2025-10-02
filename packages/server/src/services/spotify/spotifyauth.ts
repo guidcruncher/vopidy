@@ -19,7 +19,7 @@ export class SpotifyAuth {
   static async ensureConnection() {
     const librespot = new LibrespotManager()
     let pid = await librespot.getLibrespotPid()
-    if (pid != "") {
+    if (pid != 0) {
       return true
     }
 

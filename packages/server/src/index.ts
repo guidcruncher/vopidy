@@ -2,7 +2,7 @@ import { AppEnv } from "@/core/appenv"
 import { Config, ConfigWriter } from "@/core/config"
 import { route as JsonRpcRoute, setupWebSocket } from "@/core/jsonrpc/dynamicroute"
 import { logger } from "@/core/logger"
-import { ProcessLauncher } from "@/core/processlauncher"
+import { ProcessManager } from "@/core/processmanager"
 import { loadScheduler } from "@/core/scheduler"
 import { SnapServer } from "@/core/snapserver"
 import { auth } from "@/routes/auth"
@@ -11,15 +11,14 @@ import { proxyRoute } from "@/routes/proxy"
 import { serve } from "@hono/node-server"
 import { swaggerUI } from "@hono/swagger-ui"
 import * as crypto from "crypto"
+import * as fs from "fs"
 import { Hono } from "hono"
 import { contextStorage } from "hono/context-storage"
 import { cors } from "hono/cors"
 import { prettyJSON } from "hono/pretty-json"
-
-import * as fs from "fs"
 import * as path from "path"
 
-ProcessLauncher.start()
+ProcessManager.start()
 SnapServer.start()
 
 const cfg = Config.load()

@@ -1,12 +1,35 @@
+import { ProcessManager } from "@/core/processmanager"
 import { IMediaPlayer } from "@/services/imediaplayer"
 import { DeviceMapper } from "./devicemapper"
 import { PlaybackController } from "./playbackcontroller"
-import { PlaybackState } from "./playbackstate" // Assuming PlaybackState is imported or defined
+import { PlaybackState } from "./playbackstate"
 import { PlaybackStateStore } from "./playbackstatestore"
 import { VolumeController } from "./volumecontroller"
 
 export class Mixer {
   // --- Playback/Control Methods (Delegated to PlaybackController) ---
+
+  public static async shutdown() {
+    await ProcessManager.kill("go-librespot")
+    await ProcessManager.kill("ffplay")
+  }
+
+  public static async ensurePlayback() {
+    const state: PlaybackState = PlaybackStateStore.getPlaybackState()
+    if (!state) {
+      return {}
+    }
+
+    if (!state.source || !state.uri) {
+      return {}
+    }
+
+    if (state.source !== "" && state.uri! + "") {
+      return await Mixer.play(state.source, state.uri)
+    }
+
+    return {}
+  }
 
   public static getMediaPlayer(): IMediaPlayer {
     return PlaybackController.getMpdClient()
