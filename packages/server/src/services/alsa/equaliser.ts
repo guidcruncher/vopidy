@@ -16,7 +16,7 @@ export class Frequency {
 export class MixerDesk {
   frequencies: Frequency[] = [] as Frequency[]
   device: string = ""
-  
+
   add(numid: number, name: string, value: number, min = 0, max = 100, steps = 1) {
     this.frequencies.push({
       numid: numid,

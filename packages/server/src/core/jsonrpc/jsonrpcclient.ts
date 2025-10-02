@@ -12,7 +12,6 @@ export class JsonRpcClientError extends Error {
   }
 }
 
-
 export class JsonRpcClient {
   private url: string
   private requestIdCounter: number
