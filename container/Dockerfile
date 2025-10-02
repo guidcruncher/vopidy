@@ -1,4 +1,4 @@
-FROM guidcruncher/node-pipewire:alpin3-latest AS base
+FROM guidcruncher/node-pipewire:alpine-latest AS base
 
 ARG DATE=""
 ARG VERSION=""
