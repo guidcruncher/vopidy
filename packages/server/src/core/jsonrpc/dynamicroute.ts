@@ -136,7 +136,7 @@ export const setupWebSocket = (app) => {
         onMessage: async (event, ws) => {
           let reqBody: any
           try {
-            reqBody = JSON.parse(event.data)
+            reqBody = JSON.parse(event.data.toString())
           } catch (e) {
             const response: JsonRpcResponse = {
               jsonrpc: "2.0",

@@ -12,7 +12,7 @@ class SnapcastService implements RpcService {
     return await this.client.call("Client.SetName", {
       id: id,
       name: name,
-    }).result
+    })
   }
 
   public async setvolume(id: string, level: number, muted: boolean) {
@@ -20,12 +20,12 @@ class SnapcastService implements RpcService {
       return await this.client.call("Client.SetVolume", {
         id: id,
         volume: { muted: muted },
-      }).result
+      })
     } else {
       return await this.client.call("Client.SetVolume", {
         id: id,
         volume: { percent: level },
-      }).result
+      })
     }
   }
 

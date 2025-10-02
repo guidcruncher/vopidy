@@ -12,6 +12,7 @@ export class JsonRpcClientError extends Error {
   }
 }
 
+
 export class JsonRpcClient {
   private url: string
   private requestIdCounter: number
@@ -71,7 +72,7 @@ export class JsonRpcClient {
       }
 
       // 2. Check for ID mismatch (good practice)
-      const successResponse = jsonResponse as JsonRpcSuccessResponse
+      const successResponse = jsonResponse as JsonRpcResponse
       if (successResponse.id !== request.id) {
         logger.warn(`Response ID mismatch. Sent: ${request.id}, Received: ${successResponse.id}`)
       }
