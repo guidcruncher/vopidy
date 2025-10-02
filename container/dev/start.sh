@@ -30,6 +30,4 @@ cd /app/src
 
 pm2 start /app/ecosystem.config.cjs
 
-pm2 logs
-
 tail -f /dev/null

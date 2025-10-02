@@ -13,6 +13,7 @@ RUN <<EOF
 apk add --no-cache sqlite caddy memcached 
 
 mkdir -p \
+  /run/caddy /run/memcached /run/client /run/server  \
   /srv /local/state/vopidy/cache \
   /local/config/vopidy \
   /srv/files \
@@ -27,6 +28,7 @@ mkdir -p \
   /tmp \
   /app/src
 
+chown appuser:appgroup /run/memcached
 /usr/bin/npm install -g pm2 node-gyp
 EOF
 

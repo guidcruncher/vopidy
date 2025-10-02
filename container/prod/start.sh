@@ -27,22 +27,7 @@ if [ ! -f "$VOPIDY_DB/vopidy.sqlite" ]; then
   sh /srv/db/update-db.sh
 fi
 
-memcached="true"
-
-if [ -f "$VOPIDY_CONFIG/vopidy-config.json" ]; then
-  memcached="$(cat $VOPIDY_CONFIG/vopidy-config.json | jq '.enableRequestCache' -r)"
-fi
-
-cd /app/
-
-services="caddy,server"
-
-if [ "$memcached" == "true" ]; then
-  services="$services,memcached"
-fi
-
-pm2 start /app/ecosystem.config.cjs --only "$services"
+pm2 start /app/ecosystem.config.cjs
 
 pm2 logs
 
-tail -f /dev/null

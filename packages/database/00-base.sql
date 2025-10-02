@@ -1,4 +1,3 @@
-
 CREATE TABLE IF NOT EXISTS playlist (
     playlist_id INTEGER PRIMARY_KEY,
     uri TEXT NOT NULL,

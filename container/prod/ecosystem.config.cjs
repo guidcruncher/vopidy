@@ -5,14 +5,14 @@ module.exports = {
     name   : "server",
     cwd    : "/app/packages/server",
     script : "index.js",
-    pid_file: "/run/pid/server.pid",
+    pid_file: "/run/server/pid",
     args   : "--color",
   },
   {
     name   : "caddy",
     cwd    : "/usr/bin",
     script : "caddy",
-    pid_file: "/run/pid/caddy.pid",
+    pid_file: "/run/caddy/pid",
     args   : "run --config /app/Caddyfile"
   }
   ]
