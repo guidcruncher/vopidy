@@ -2,9 +2,8 @@ import { logger } from "@/core/logger"
 import { WsClientStore } from "@/core/wsclientstore"
 import { Mixer } from "@/services/mixer/"
 import { spawn } from "child_process"
-import * as fs from "fs"
 
-const PID_FILE_PATH = "/local/state/ffplay.pid"
+const PID_FILE_PATH = "/run/ffplay/pid"
 
 export class FFplayProcessManager {
   private proc: any = undefined
@@ -26,13 +25,11 @@ export class FFplayProcessManager {
   }
 
   private writePidFile(pid: number) {
-    fs.writeFileSync(PID_FILE_PATH, pid.toString())
+    ProcessManager.writePidFile("ffplay", pid)
   }
 
   private deletePidFile() {
-    if (fs.existsSync(PID_FILE_PATH)) {
-      fs.unlinkSync(PID_FILE_PATH)
-    }
+    ProcessManager.deletePidFile("ffplay")
   }
 
   private onProcessExit = () => {
@@ -102,6 +99,8 @@ export class FFplayProcessManager {
     if (this.proc) {
       this.proc.kill("SIGKILL")
     }
+
+    ProcessManager.kill("ffplay")
 
     // Cleanup handled by this.onProcessExit, but we can proactively clean up state
     this.isActive = false

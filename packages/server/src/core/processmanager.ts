@@ -2,6 +2,7 @@ import { logger } from "@/core/logger"
 import { SnapServer } from "@/core/snapserver"
 import { Mixer } from "@/services/mixer"
 import { LibrespotSocket } from "@/services/spotify/librespotsocket"
+import * as fs from "fs"
 import { default as child_process } from "node:child_process"
 import { promisify } from "node:util"
 
@@ -15,6 +16,44 @@ export class ProcessManager {
     if (options.cleanup) logger.trace("cleanup")
     if (exitCode || exitCode === 0) logger.trace(`Exit code ${exitCode}`)
     if (options.exit) process.exit()
+  }
+
+  public static writePidFile(name: string, pid: number) {
+    const dir = `/run/${name}`
+
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true })
+    }
+
+    fs.writeFileSync(`${name}/pid`, pid.toString())
+  }
+
+  public static readPidFile(name: string): number {
+    const dir = `/run/${name}`
+
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true })
+    }
+
+    if (fs.existsSync(`${name}/pid`)) {
+      return parseInt(fs.readFileSync(`${name}/pid`, "utf8"))
+    }
+    return 0
+  }
+
+  public static deletePidFile(name: string): number {
+    const dir = `/run/${name}`
+    let pid = 0
+
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true })
+    }
+
+    if (fs.existsSync(`${name}/pid`)) {
+      pid = parseInt(fs.readFileSync(`${name}/pid`, "utf8"))
+      fs.unlinkSync(`${name}/pid`)
+    }
+    return pid
   }
 
   public static start() {

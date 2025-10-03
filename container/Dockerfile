@@ -13,7 +13,7 @@ RUN <<EOF
 apk add --no-cache sqlite caddy memcached 
 
 mkdir -p \
-  /run/caddy /run/memcached /run/client /run/server  \
+  /run/ffplay /run/caddy /run/memcached /run/client /run/server  \
   /srv /local/state/vopidy/cache \
   /local/config/vopidy \
   /srv/files \
