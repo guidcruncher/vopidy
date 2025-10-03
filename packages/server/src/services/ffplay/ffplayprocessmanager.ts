@@ -2,8 +2,7 @@ import { logger } from "@/core/logger"
 import { WsClientStore } from "@/core/wsclientstore"
 import { Mixer } from "@/services/mixer/"
 import { spawn } from "child_process"
-
-const PID_FILE_PATH = "/run/ffplay/pid"
+import { ProcessManager } from "@/core/processmanager"
 
 export class FFplayProcessManager {
   private proc: any = undefined
@@ -54,7 +53,6 @@ export class FFplayProcessManager {
     if (this.isActive) {
       await this.stop()
     }
-
     const opts = ["-nodisp", "-autoexit", filename]
     logger.debug("/usr/bin/ffplay " + opts.join(" "))
 

@@ -25,7 +25,7 @@ export class ProcessManager {
       fs.mkdirSync(dir, { recursive: true })
     }
 
-    fs.writeFileSync(`${name}/pid`, pid.toString())
+    fs.writeFileSync(`${dir}/pid`, pid.toString())
   }
 
   public static readPidFile(name: string): number {
@@ -35,8 +35,8 @@ export class ProcessManager {
       fs.mkdirSync(dir, { recursive: true })
     }
 
-    if (fs.existsSync(`${name}/pid`)) {
-      return parseInt(fs.readFileSync(`${name}/pid`, "utf8"))
+    if (fs.existsSync(`${dir}/pid`)) {
+      return parseInt(fs.readFileSync(`${dir}/pid`, "utf8"))
     }
     return 0
   }
@@ -50,8 +50,8 @@ export class ProcessManager {
     }
 
     if (fs.existsSync(`${name}/pid`)) {
-      pid = parseInt(fs.readFileSync(`${name}/pid`, "utf8"))
-      fs.unlinkSync(`${name}/pid`)
+      pid = parseInt(fs.readFileSync(`${dir}/pid`, "utf8"))
+      fs.unlinkSync(`${dir}/pid`)
     }
     return pid
   }
@@ -94,6 +94,8 @@ export class ProcessManager {
           if (error) {
             return resolve(false)
           }
+
+          ProcessManager.deletePidFile(name)
           resolve(true)
         })
       } catch (err) {
@@ -114,7 +116,9 @@ export class ProcessManager {
           if (error) {
             return resolve(0)
           }
-          resolve(parseInt(stdout))
+          const pid = parseInt(stdout)
+          ProcessManager.writePidFile(name, pid)
+          resolve(pid)
         })
       } catch (err) {
         resolve(0)
@@ -122,3 +126,4 @@ export class ProcessManager {
     })
   }
 }
+
