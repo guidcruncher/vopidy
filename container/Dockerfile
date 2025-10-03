@@ -10,10 +10,10 @@ ENV TZ=UTC
 ENV GOLIBRESPOT_AUTHMODE=spotify_token
 
 RUN <<EOF
-apk add --no-cache sqlite caddy memcached 
+apk add --no-cache sqlite caddy
 
 mkdir -p \
-  /run/ffplay /run/caddy /run/memcached /run/client /run/server  \
+  /run/ffplay /run/caddy /run/client /run/server  \
   /srv /local/state/vopidy/cache \
   /local/config/vopidy \
   /srv/files \
@@ -28,7 +28,6 @@ mkdir -p \
   /tmp \
   /app/src
 
-chown appuser:appgroup /run/memcached
 /usr/bin/npm install -g pm2 node-gyp
 EOF
 
