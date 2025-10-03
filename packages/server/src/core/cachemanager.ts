@@ -1,6 +1,5 @@
 import { Config } from "@/core/config"
 import { logger } from "@/core/logger"
-import * as Memcached from "memcached"
 
 export class CacheManager {
   public static enabled() {
@@ -13,17 +12,16 @@ export class CacheManager {
       return false
     }
     logger.log("Flushing cache")
-    return new Promise<any>((resolve, reject) => {
-      const memcached = new Memcached("127.0.0.1:11211")
-      memcached.flush((err, data) => {
-        if (err) {
-          logger.error("Error flushing cache", err)
-          reject(err)
-        } else {
-          resolve(data)
-        }
-      })
-    })
+    cache.flushAll()
+  }
+
+  public static async delete(key: string) {
+    if (cache.has(key)) {
+      cache.delete(key)
+      return true
+    }
+
+    return false
   }
 
   public static async get(key: string) {
@@ -33,16 +31,11 @@ export class CacheManager {
         return
       }
 
-      const memcached = new Memcached("127.0.0.1:11211")
-
-      memcached.get(key, (err, data) => {
-        if (err) {
-          reject(err)
-          return
-        }
-
-        resolve(data)
-      })
+      if (!cache.has(key)) {
+        reject()
+      } else {
+        return cache.get(key)
+      }
     })
   }
 
@@ -54,17 +47,8 @@ export class CacheManager {
       }
 
       const cfg: Config = Config.load()
-      const memcached = new Memcached("127.0.0.1:11211")
-      const cacheLifetime = cfg.requestCacheLifetimeSeconds ?? 7200
-
-      memcached.set(key, value, cacheLifetime, (err) => {
-        if (err) {
-          reject(err)
-          return
-        }
-
-        resolve(true)
-      })
+      const ttl = cfg.requestCacheLifetimeSeconds ?? 1800
+      cache.set(key, value, ttl)
     })
   }
 }

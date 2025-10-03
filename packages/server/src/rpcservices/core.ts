@@ -4,24 +4,10 @@ import { RpcService, ServiceModule } from "@/core/jsonrpc/types"
 import { Alsa } from "@/services/alsa/"
 import { Mixer } from "@/services/mixer/"
 import { SpotifyAuth } from "@/services/spotify/spotifyauth"
-import * as Memcached from "memcached"
 
 class CoreService implements RpcService {
   public async cache_flush() {
     return CacheManager.flush()
-  }
-
-  public async cache_stats() {
-    return new Promise<any>((resolve, reject) => {
-      const memcached = new Memcached("127.0.0.1:11211")
-      memcached.stats((err, data) => {
-        if (err) {
-          reject(err)
-        } else {
-          resolve(data)
-        }
-      })
-    })
   }
 
   public config_get() {

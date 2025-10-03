@@ -1,6 +1,7 @@
 import { logger } from "@/core/logger"
 import * as fs from "fs"
 import * as path from "path"
+import { CacheManager } from "./cachemanager"
 
 export class Config {
   public enableBitPerfectPlayback: boolean = false
@@ -90,4 +91,7 @@ export const ConfigWriter = (cfg: Config) => {
 
 export const ApplyConfig = async (o: Config, n: Config) => {
   logger.debug("Applying config changes")
+  if (o.enableRequestCache != n.enableRequestCache) {
+    CacheManager.flush()
+  }
 }
