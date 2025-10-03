@@ -1,6 +1,6 @@
 import { Config } from "@/core/config"
 import { logger } from "@/core/logger"
-const Memcached = require("memcached")
+import * as Memcached from "memcached"
 
 export class CacheManager {
   public static enabled() {

@@ -4,7 +4,7 @@ import { RpcService, ServiceModule } from "@/core/jsonrpc/types"
 import { Alsa } from "@/services/alsa/"
 import { Mixer } from "@/services/mixer/"
 import { SpotifyAuth } from "@/services/spotify/spotifyauth"
-const Memcached = require("memcached")
+import * as Memcached from "memcached"
 
 class CoreService implements RpcService {
   public async cache_flush() {
