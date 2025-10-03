@@ -17,6 +17,6 @@
 
 	handle {
 		encode gzip
-		reverse_proxy http://localhost:3003
+		reverse_proxy http://localhost:3005
 	}
 }

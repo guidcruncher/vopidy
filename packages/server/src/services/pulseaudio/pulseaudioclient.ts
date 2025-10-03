@@ -4,6 +4,10 @@ import { PulseAudio } from "pulseaudio.js"
 export class PulseAudioClient {
   private socketPath = "/tmp/pulse/native" as any
 
+  constructor() {
+    this.socketPath = `${process.env.PULSE_RUNTIME_DIR}/pulse/native`
+  }
+
   /**
    * Initializes and connects to the PulseAudio server.
    * @returns The connected PulseAudio instance.
