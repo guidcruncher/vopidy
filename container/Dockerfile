@@ -38,6 +38,8 @@ ARG BUILD_CONFIG
 ARG DATE 
 ARG VERSION
 
+ENV NODE_ENV=development
+
 RUN mkdir -p /build/client/src /build/server/src /build/server/dist
 COPY package.json /build/package.json
 
@@ -46,11 +48,14 @@ COPY . .
 RUN /usr/bin/npm i --no-audit --no-fund
 
 WORKDIR /build/packages/client
-RUN /usr/bin/npm i --no-audit --no-fund
+RUN /usr/bin/npm i --no-audit --no-fund 
+ENV NODE_ENV=production
 RUN /usr/bin/npm run build-production
 
 WORKDIR /build/packages/server
+ENV NODE_ENV=development
 RUN /usr/bin/npm i --no-audit --no-fund
+ENV NODE_ENV=production
 RUN /usr/bin/npm run build-production
 RUN cp package.json /build/packages/server/dist/
 
