@@ -104,23 +104,7 @@ export default defineConfig({
     watch: {
       usePolling: false
     },
-    port: 3004 ,
-    proxy: {
-      '/api': {
-        target: 'http://localhost:3002/',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
-      },
-      '/ws': {
-        target: 'ws://localhost:3002',
-        ws: true,
-        rewriteWsOrigin: true,
-      },
-      '/files': {
-        target: 'http://localhost:3002/',
-        changeOrigin: true,
-      },
-    },
+    port: 3003 ,
   },
   css: {
     preprocessorOptions: {

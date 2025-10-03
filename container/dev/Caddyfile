@@ -6,17 +6,24 @@
 }
 
 :3004 {
+
+	handle_path /ws {
+		rewrite * /ws
+		reverse_proxy localhost:3002
+	}
+
 	handle_path /api/* {
 		reverse_proxy http://localhost:3002
 	}
 
 	handle_path /files/* {
 		root * /srv/files
-		file_server browse
+		file_server
 	}
 
-	handle {
-		encode gzip
-		reverse_proxy http://localhost:3005
-	}
+        handle {
+                encode gzip
+                reverse_proxy http://localhost:3003
+        }
+
 }
