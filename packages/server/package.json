@@ -1,6 +1,7 @@
 {
   "name": "Vopidy-Server",
   "type": "module",
+  "exports": "./index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts --color",
     "build": "NODE_ENV=development rm -rf ./dist && tsc --build . --pretty && tsc-alias",
