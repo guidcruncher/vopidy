@@ -1,4 +1,5 @@
 module.exports = {
+  apps: [
   {
     name   : "server",
     cwd    : "/app/src/packages/server",
