@@ -1,5 +1,6 @@
 import { Config } from "@/core/config"
 import { logger } from "@/core/logger"
+import { cache } from  "ts-cache"
 
 export class CacheManager {
   public static enabled() {
