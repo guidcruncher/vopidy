@@ -38,10 +38,8 @@ export class LibrespotManager {
     return new Promise(async (resolve, reject) => {
       const authClient = new Auth()
       const auth = authClient.loadAuthState()
-      logger.warn(
-        `Connecting to Librespot with username "${auth.profile.display_name}" token "${auth.auth.access_token}"`,
-      )
       let pid = await this.getLibrespotPid()
+      logger.debug("Existing go-librespot pid", pid)
       if (pid == 0) {
         logger.warn("Spawning librespot")
         await exec(

@@ -51,9 +51,7 @@ async function processRpcRequest(request: JsonRpcRequest): Promise<JsonRpcRespon
 
   if (id === null) {
     logger.debug(`jsonrpc method ${method}`)
-    registry
-      .execute(method, params)
-      .catch((e) => logger.error(`Error in notification ${method}:`, e))
+    registry.execute(method, params).catch((e) => {})
     return null
   }
 
@@ -78,7 +76,6 @@ async function processRpcRequest(request: JsonRpcRequest): Promise<JsonRpcRespon
       data = { stack: error.stack }
     }
 
-    logger.error(`jsonrpc error`, { method, code, message, data })
     return { jsonrpc: "2.0", error: { code, message, data }, id }
   }
 }

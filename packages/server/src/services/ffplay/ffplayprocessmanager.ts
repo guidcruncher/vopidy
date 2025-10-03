@@ -32,7 +32,7 @@ export class FFplayProcessManager {
   }
 
   private onProcessExit = () => {
-    if (this.isActive) {
+    if (this.proc) {
       this.isActive = false
       // Remove process listener upon exit to clean up
       process.removeListener("exit", this.onSystemExit)
@@ -50,9 +50,7 @@ export class FFplayProcessManager {
   }
 
   public async play(filename: string): Promise<void> {
-    if (this.isActive) {
-      await this.stop()
-    }
+    await this.stop()
     const opts = ["-nodisp", "-autoexit", filename]
     logger.debug("/usr/bin/ffplay " + opts.join(" "))
 

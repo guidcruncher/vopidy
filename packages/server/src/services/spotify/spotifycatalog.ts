@@ -112,8 +112,7 @@ export class SpotifyCatalog {
         break
     }
 
-    logger.warn(id, url)
-    const res = await Http.Cache().Authorize(this.getAuthHeaders).get(url)
+    const res = await Http.NoCache().Authorize(this.getAuthHeaders).get(url)
 
     if (!res.ok) {
       return {}

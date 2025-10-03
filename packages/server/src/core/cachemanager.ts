@@ -1,6 +1,9 @@
 import { Config } from "@/core/config"
 import { logger } from "@/core/logger"
-import cache from "ts-cache"
+import { CacheContainer } from "node-ts-cache"
+import { MemoryStorage } from "node-ts-cache-storage-memory"
+
+const cache = new CacheContainer(new MemoryStorage())
 
 export class CacheManager {
   public static enabled() {
@@ -13,12 +16,12 @@ export class CacheManager {
       return false
     }
     logger.log("Flushing cache")
-    cache.flushAll()
+    await cache.clear()
   }
 
   public static async delete(key: string) {
     try {
-      cache.delete(key)
+      await cache.setItem(key, undefined, { ttl: 1 })
       return true
     } catch (err) {
       return false
@@ -26,30 +29,21 @@ export class CacheManager {
   }
 
   public static async get(key: string) {
-    return new Promise<any>((resolve, reject) => {
-      if (!CacheManager.enabled()) {
-        reject()
-        return
-      }
+    if (!CacheManager.enabled()) {
+      return undefined
+    }
 
-      try {
-        resolve(cache.get(key))
-      } catch (err) {
-        reject()
-      }
-    })
+    const data = await cache.getItem<any>(key)
+    return data
   }
 
   public static async set(key: string, value: any) {
-    return new Promise<any>((resolve, reject) => {
-      if (!CacheManager.enabled()) {
-        reject()
-        return
-      }
+    if (!CacheManager.enabled()) {
+      return
+    }
 
-      const cfg: Config = Config.load()
-      const ttl = cfg.requestCacheLifetimeSeconds ?? 1800
-      cache.set(key, value, ttl)
-    })
+    const cfg: Config = Config.load()
+    const ttl = cfg.requestCacheLifetimeSeconds ?? 1800
+    return await cache.setItem(key, value, { ttl: ttl })
   }
 }

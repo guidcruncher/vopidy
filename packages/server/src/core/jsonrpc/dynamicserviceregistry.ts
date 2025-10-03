@@ -79,7 +79,12 @@ class DynamicServiceRegistry {
 
     const args = Array.isArray(params) ? params : params ? Object.values(params) : []
 
-    return func(...args)
+    try {
+      return func(...args)
+    } catch (err) {
+      logger.error(err)
+      throw err
+    }
   }
 }
 

@@ -6,7 +6,6 @@ class AuthService implements RpcService {
   public async login(id: string) {
     const authClient = new Auth()
     const res = await authClient.login(id)
-    // PROBLEM   await SpotifyAuth.login()
     await Mixer.ensurePlayback()
     return res
   }
