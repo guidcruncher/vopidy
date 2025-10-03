@@ -2,12 +2,12 @@ import { HttpClient } from "@/core/http/httpclient"
 import { AuthorizationFunc, BodyTransform } from "@/core/http/utils"
 
 export {
-  Authorization,
-  AuthorizationFunc,
   Body,
-  BodyTransform,
-  HttpResponse,
-} from "@/core/http/utils"
+  type Authorization,
+  type AuthorizationFunc,
+  type BodyTransform,
+  type HttpResponse,
+} from "./utils"
 
 export class Http {
   private _client: HttpClient

@@ -118,7 +118,7 @@ export class Auth {
     res = users[id]
     this.saveAuthState(res.auth, res.profile)
 
-    if (process.env.GOLIBRESPOT_CREDENTIAL_TYPE.toString() == "spotify_token") {
+    if (process.env.GOLIBRESPOT_AUTHMODE.toString() == "spotify_token") {
       await librespot.connectWithToken()
     }
 

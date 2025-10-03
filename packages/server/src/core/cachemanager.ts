@@ -1,6 +1,6 @@
 import { Config } from "@/core/config"
 import { logger } from "@/core/logger"
-import { cache } from  "ts-cache"
+import cache from "ts-cache"
 
 export class CacheManager {
   public static enabled() {
@@ -17,12 +17,12 @@ export class CacheManager {
   }
 
   public static async delete(key: string) {
-    if (cache.has(key)) {
+    try {
       cache.delete(key)
       return true
+    } catch (err) {
+      return false
     }
-
-    return false
   }
 
   public static async get(key: string) {
@@ -32,10 +32,10 @@ export class CacheManager {
         return
       }
 
-      if (!cache.has(key)) {
+      try {
+        resolve(cache.get(key))
+      } catch (err) {
         reject()
-      } else {
-        return cache.get(key)
       }
     })
   }
