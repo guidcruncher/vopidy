@@ -1,8 +1,8 @@
 import { logger } from "@/core/logger"
+import { ProcessManager } from "@/core/processmanager"
 import { WsClientStore } from "@/core/wsclientstore"
 import { Mixer } from "@/services/mixer/"
 import { spawn } from "child_process"
-import { ProcessManager } from "@/core/processmanager"
 
 export class FFplayProcessManager {
   private proc: any = undefined
