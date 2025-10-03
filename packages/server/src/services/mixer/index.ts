@@ -25,6 +25,9 @@ export class Mixer {
     }
 
     if (state.source !== "" && state.uri! + "") {
+      const status = await Mixer.getStatus()
+       if (status.track) {return {}
+       }
       return await Mixer.play(state.source, state.uri)
     }
 

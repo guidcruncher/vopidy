@@ -137,8 +137,8 @@ export default {
         return
       }
 
-      vopidy('spotify.doesfollow', { type: 'artist', id: this.id }).then((res) => {
-        this.following = res.result.following
+      vopidy('spotify.doesfollow', { itemtype: 'artist', id: this.id }).then((res) => {
+        this.following = res.result.following??false
       })
 
       const method = `spotify.artist`
@@ -154,11 +154,11 @@ export default {
     },
     changefollowing(state) {
       if (state) {
-        vopidy('spotify.follow', { type: this.id.split(':')[1], id: this.id }).then((res) => {
+        vopidy('spotify.follow', { itemtype: 'artist', id: this.id }).then((res) => {
           this.following = true
         })
       } else {
-        vopidy('spotify.unfollow', { type: this.id.split(':')[1], id: this.id }).then((res) => {
+        vopidy('spotify.unfollow', { itemtype: 'artist', id: this.id }).then((res) => {
           this.following = false
         })
       }

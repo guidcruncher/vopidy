@@ -50,15 +50,15 @@ class SpotifyService implements RpcService {
     return await spotifyClient.describe(id)
   }
 
-  public async doesfollow(type: string, id: string) {
+  public async doesfollow(itemtype: string, id: string) {
     const spotifyClient = new SpotifyUserLibrary()
-    let res = await spotifyClient.doesFollow(type, id)
-    return { id: id, following: res }
+    let res = await spotifyClient.doesFollow(itemtype, id)
+    return { id: id, following: res??false }
   }
 
-  public async follow(type: string, id: string) {
+  public async follow(itemtype: string, id: string) {
     const spotifyClient = new SpotifyUserLibrary()
-    let res = await spotifyClient.follow(type, id)
+    let res = await spotifyClient.follow(itemtype, id)
     return res
   }
 
@@ -116,9 +116,9 @@ class SpotifyService implements RpcService {
     return await spotifyClient.getTracks()
   }
 
-  public async unfollow(type: string, id: string) {
+  public async unfollow(itemtype: string, id: string) {
     const spotifyClient = new SpotifyUserLibrary()
-    let res = await spotifyClient.unfollow(type, id)
+    let res = await spotifyClient.unfollow(itemtype, id)
     return res
   }
 }

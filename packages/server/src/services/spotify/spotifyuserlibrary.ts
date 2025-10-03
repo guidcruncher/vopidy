@@ -92,9 +92,8 @@ export class SpotifyUserLibrary {
 
     const url = `${process.env.SPOTIFY_API}/me/following/contains?type=${extractType(id) ? extractType(id) : "artist"}&ids=${extractId(id)}`
     res = await Http.NoCache().Authorize(this.getAuthHeaders).get(url)
-
     if (res.ok) {
-      return res[0]
+      return res.response[0]
     } else {
       logger.error("No valid response received", res)
     }

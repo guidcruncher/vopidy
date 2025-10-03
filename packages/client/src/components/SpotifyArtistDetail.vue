@@ -174,8 +174,8 @@ export default {
     this.onResize()
     on('showartistdetail', (id) => {
       this.id = id
-      vopidy('spotify.doesfollow', { type: 'artist', id: this.id }).then((res) => {
-        this.following = res.result.following
+      vopidy('spotify.doesfollow', { itemtype: 'artist', id: this.id }).then((res) => {
+        this.following = res.result.following??false
       })
       this.loadData({ done: () => {} })
       this.showDialog = true
@@ -206,7 +206,7 @@ export default {
     },
     loadData({ done }) {
       const segments = this.id.split(':')
-      const method = `spotify.${segments[1]}`
+      const method = `spotify.artist`
       vopidy(method, { id: this.id, offset: this.offset, limit: this.limit }).then((res) => {
         if (res.ok) {
           this.detail = res.result
@@ -334,11 +334,11 @@ export default {
     },
     changefollowing(state) {
       if (state) {
-        vopidy('spotify.follow', { type: this.id.split(':')[1], id: this.id }).then((res) => {
+        vopidy('spotify.follow', { itemtype: 'artist', id: this.id }).then((res) => {
           this.following = true
         })
       } else {
-        vopidy('spotify.unfollow', { type: this.id.split(':')[1], id: this.id }).then((res) => {
+        vopidy('spotify.unfollow', { itemtype: 'artist', id: this.id }).then((res) => {
           this.following = false
         })
       }

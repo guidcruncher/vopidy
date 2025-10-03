@@ -40,7 +40,7 @@ export default {
   beforeUnmount() {},
   methods: {
     artistInfo(item) {
-      this.selectedId = item.id
+      this.selectedId = 'spotify:artist:' + item.id
       this.showInfo = true
     },
   },
