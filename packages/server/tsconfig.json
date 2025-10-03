@@ -1,7 +1,7 @@
  {
   "compilerOptions": {
     "target": "ESNext",
-    "module": "NodeNext",
+    "module": "ESNext",
     "strict": false,
     "verbatimModuleSyntax": false,
     "skipLibCheck": true,
@@ -21,6 +21,7 @@
       "@/commands": [ "./src/commands/*" ],
       "@/rpcservices": [ "./src/rpcservices/*" ],
       "@/core": [ "./src/core/*" ],
+      "@/core/http/": [ "./src/core/http/*" ],
       "@/middleware": [ "./src/middleware/*" ],
       "@/routes": [ "./src/routes/*" ],
       "@/rpc": [ "./src/rpc/*" ],
