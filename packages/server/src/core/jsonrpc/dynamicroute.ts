@@ -5,9 +5,17 @@ import { WsClientStore } from "@/core/wsclientstore"
 import { createNodeWebSocket } from "@hono/node-ws"
 import { Hono } from "hono"
 import * as path from "path"
+import { dirname } from "path"
+import { fileURLToPath } from "url"
 import { registry } from "./dynamicserviceregistry"
 import { JsonRpcErrorCode, JsonRpcRequest, JsonRpcResponse } from "./types"
 
+function getDirname(importMetaUrl) {
+  const filename = fileURLToPath(importMetaUrl)
+  return dirname(filename)
+}
+
+const __dirname = getDirname(import.meta.url)
 export const route = new Hono()
 
 // --- 1. Define Service Paths and Load ---
