@@ -58,6 +58,7 @@ RUN /usr/bin/npm i --no-audit --no-fund
 ENV NODE_ENV=production
 RUN /usr/bin/npm run build-production
 RUN cp package.json /build/packages/server/dist/
+RUN sed -i '2s/^/var exports = {};/'  /build/packages/server/dist/index.js
 
 WORKDIR /build/packages/server/dist/
 RUN /usr/bin/npm i --no-audit --no-fund --omit=dev
