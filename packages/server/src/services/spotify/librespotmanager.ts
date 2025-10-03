@@ -35,18 +35,25 @@ export class LibrespotManager {
   }
 
   async connectWithToken() {
-    const authClient = new Auth()
-    const auth = authClient.loadAuthState()
-    logger.warn(
-      `Connecting to Librespot with username "${auth.profile.display_name}" token "${auth.auth.access_token}"`,
-    )
-    let pid = await this.getLibrespotPid()
-    if (pid == 0) {
-      await child_process.exec(
-        `/usr/local/bin/librespot.sh "${auth.profile.display_name}", "${auth.auth.access_token}"`,
+    return new Promise(async (resolve, reject) => {
+      const authClient = new Auth()
+      const auth = authClient.loadAuthState()
+      logger.warn(
+        `Connecting to Librespot with username "${auth.profile.display_name}" token "${auth.auth.access_token}"`,
       )
-      LibrespotSocket.open()
-    }
+      let pid = await this.getLibrespotPid()
+      if (pid == 0) {
+        logger.warn("Spawning librespot")
+        await exec(
+          `/usr/local/bin/librespot.sh "${auth.profile.display_name}", "${auth.auth.access_token}"`,
+        ).then(() => {
+          LibrespotSocket.open()
+          resolve(auth.profile)
+        })
+      } else {
+        resolve(auth.profile)
+      }
+    })
   }
 
   public async connect(name: string, accessToken: string, forceReconnect: boolean = false) {

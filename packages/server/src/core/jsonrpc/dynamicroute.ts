@@ -78,7 +78,7 @@ async function processRpcRequest(request: JsonRpcRequest): Promise<JsonRpcRespon
       data = { stack: error.stack }
     }
 
-    logger.error(`jsonrpc error`, {code, message, data})
+    logger.error(`jsonrpc error`, { method, code, message, data })
     return { jsonrpc: "2.0", error: { code, message, data }, id }
   }
 }
@@ -108,6 +108,7 @@ route.post("/", async (c) => {
     return c.json(validResponses)
   } else if (typeof reqBody === "object" && reqBody !== null) {
     // Single Request
+
     const response = await processRpcRequest(reqBody as JsonRpcRequest)
 
     if (response === null) {

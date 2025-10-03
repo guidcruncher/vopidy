@@ -35,7 +35,7 @@ auth.get("/profile/image", async (c) => {
 })
 
 auth.get("/refresh", async (c) => {
-  const filename = path.join(process.env.VOPIDY_CONFIG.toString(), ".vopidy-auth.json")
+  const filename = path.join(process.env.VOPIDY_DB.toString(), ".vopidy-auth.json")
   const auth = new Auth()
   if (!fs.existsSync(filename)) {
     throw new HTTPException(401, { message: "Unauthorized" })

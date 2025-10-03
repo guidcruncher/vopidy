@@ -43,7 +43,12 @@ app.mount('#app')
 if (!localStorage.getItem('vopidy.id')) {
   router.push({ path: '/users' })
 } else {
-  vopidy('auth.login', localStorage.getItem('vopidy.id')).then((res) => {
+  vopidy('auth.login', { id: localStorage.getItem('vopidy.id') }).then((res) => {
+    if (!res.ok) {
+      router.push({ path: '/users' })
+      return
+    }
+    localStorage.setItem('vopidy.id', res.result.id)
     if (localStorage.getItem('page')) {
       let json = JSON.parse(localStorage.getItem('page'))
       router.push({ path: json.path, query: json.query, hash: json.hash })

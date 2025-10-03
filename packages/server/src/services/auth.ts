@@ -41,9 +41,14 @@ export class Auth {
     })
   }
 
-  public saveAuthState(state, profile = {}) {
+  public saveAuthState(state, profile = undefined) {
     const filename = path.join(process.env.VOPIDY_DB.toString(), ".vopidy-auth.json")
-    fs.writeFileSync(filename, JSON.stringify({ auth: state, profile: profile }))
+    let currstate: any = this.loadAuthState()
+    currstate.auth = state
+    if (profile) {
+      currstate.profile = profile
+    }
+    fs.writeFileSync(filename, JSON.stringify(currstate))
     return state
   }
 

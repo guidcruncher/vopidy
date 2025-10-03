@@ -12,20 +12,27 @@ export class SpotifyPlayer {
     const body = { uri, skip_to_uri: "", paused: false }
     const res = await Http.NoCache().post(url, Body.json(body))
     const catalog = new SpotifyCatalog()
-    await SpotifyAuth.ensureConnection()
-    // Track info → database
-    try {
-      const track = await catalog.describe(uri)
-      if (track) {
-        db.addToPlaybackHistory("spotify", track)
-        await Mixer.savePlaybackTrack("spotify", uri)
-        WsClientStore.notify("track-changed", { service: "spotify", uri, track })
-      }
-    } catch (err) {
-      logger.error("Error saving track metadata:", err)
-    }
+    return SpotifyAuth.ensureConnection().then(async () => {
+      // Track info → database
 
-    return res
+      if (!uri) {
+        logger.error("Error playing track, Uri is null")
+        return
+      }
+
+      try {
+        const track = await catalog.describe(uri)
+        if (track) {
+          db.addToPlaybackHistory("spotify", track)
+          await Mixer.savePlaybackTrack("spotify", uri)
+          WsClientStore.notify("track-changed", { service: "spotify", uri, track })
+        }
+      } catch (err) {
+        logger.error("Error saving track metadata:", err)
+      }
+
+      return res
+    })
   }
 
   async pause() {

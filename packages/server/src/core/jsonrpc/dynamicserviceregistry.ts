@@ -66,12 +66,14 @@ class DynamicServiceRegistry {
    */
   public async execute(method: string, params: any): Promise<any> {
     if (!this.loaded) {
+      logger.error("Service registry not initialized.")
       throw { code: JsonRpcErrorCode.InternalError, message: "Service registry not initialized." }
     }
 
     const func = this.methods.get(method.replace("-", "_"))
 
     if (!func) {
+      logger.error(`Method not found: ${method}`)
       throw { code: JsonRpcErrorCode.MethodNotFound, message: `Method not found: ${method}` }
     }
 
