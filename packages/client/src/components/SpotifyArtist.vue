@@ -101,36 +101,26 @@
 <style></style>
 <script lang="ts" setup></script>
 <script lang="ts">
+import { off, on } from '@/composables/useeventbus'
 import { vopidy } from '@/services/vopidy'
 
 export default {
   name: 'SpotifyArtist',
-  props: {
-    id: {
-      type: String,
-      required: true,
-    },
-    show: {
-      type: Boolean,
-      required: true,
-    },
-  },
-  watch: {
-    id: function (val) {
-      if (val != '') {
-        this.loadItem(val)
-      } else {
-        this.detail = {}
-      }
-    },
-  },
+  props: {},
+  watch: {},
   data() {
-    return { following: false, detail: {}, showDialog: false, tab: 'albums' }
+    return { id: '', following: false, detail: {}, showDialog: false, tab: 'albums' }
   },
   mounted() {
-    this.loadItem(this.id)
+    on('SpotifyArtist', (data) => {
+      this.id = data.id
+      this.showDialog = true
+      this.loadItem(this.id)
+    })
   },
-  beforeUnmount() {},
+  beforeDestroy() {
+    off('SpotifyArtist')
+  },
   methods: {
     loadItem(id) {
       if (id == '') {

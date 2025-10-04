@@ -1,4 +1,6 @@
 <script lang="ts">
+import { emit } from '@/composables/useeventbus'
+
 export default {
   name: 'ArtistNames',
   props: {
@@ -12,7 +14,7 @@ export default {
     },
   },
   data() {
-    return { selectedId: '', showInfo: false }
+    return { selectedId: '' }
   },
   computed: {
     getArtists() {
@@ -41,7 +43,7 @@ export default {
   methods: {
     artistInfo(item) {
       this.selectedId = 'spotify:artist:' + item.id
-      this.showInfo = true
+      emit('SpotifyArtist', { id: this.selectedId })
     },
   },
 }
@@ -58,6 +60,6 @@ export default {
     </v-chip>
   </span>
 
-  <SpotifyArtist :show="showInfo" :id="selectedId" />
+  <SpotifyArtist :id="selectedId" />
 </template>
 <style></style>
