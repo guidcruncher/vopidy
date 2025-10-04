@@ -42,6 +42,9 @@ export default {
   beforeUnmount() {},
   methods: {
     artistInfo(item) {
+      if (!item.id || item.id == '') {
+        return
+      }
       this.selectedId = 'spotify:artist:' + item.id
       emit('SpotifyArtist', { id: this.selectedId })
     },
@@ -55,7 +58,7 @@ export default {
     ></span
   >
   <span v-if="variant == 'pill'">
-    <v-chip @click="artistInfo(item)" v-for="(item, index) in getArtists">
+    <v-chip @click="artistInfo(item)" :disabled="!item.id" v-for="(item, index) in getArtists">
       {{ item.name }}
     </v-chip>
   </span>
