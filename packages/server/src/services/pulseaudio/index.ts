@@ -22,46 +22,70 @@ export class Pulseaudio {
   // --- Public Operations ---
 
   public async getSinkInfo(sink: string = "") {
-    const targetSink = sink === "" ? this.playbackSink : sink
-    return this.execute(async (pa) => {
-      return pa.getSinkInfo(targetSink)
-    })
+    try {
+      const targetSink = sink === "" ? this.playbackSink : sink
+      return this.execute(async (pa) => {
+        return pa.getSinkInfo(targetSink)
+      })
+    } catch (err) {
+      return {}
+    }
   }
 
   public async getVolume(): Promise<number> {
-    return this.execute(async (pa) => {
-      const id = await pa.lookupSink(this.playbackSink)
-      const sink = await pa.getSinkInfo(id)
-      return volumeToPercent(sink.volume.current[0])
-    })
+    try {
+      return this.execute(async (pa) => {
+        const id = await pa.lookupSink(this.playbackSink)
+        const sink = await pa.getSinkInfo(id)
+        return volumeToPercent(sink.volume.current[0])
+      })
+    } catch (err) {
+      return 0
+    }
   }
 
   public async getVolumeLinear(): Promise<number> {
-    return this.execute(async (pa) => {
-      const id = await pa.lookupSink(this.playbackSink)
-      const sink = await pa.getSinkInfo(id)
-      return sink.volume.current[0]
-    })
+    try {
+      return this.execute(async (pa) => {
+        const id = await pa.lookupSink(this.playbackSink)
+        const sink = await pa.getSinkInfo(id)
+        return sink.volume.current[0]
+      })
+    } catch (err) {
+      return 0
+    }
   }
 
   public async setVolume(levelPercent: number) {
-    return this.execute(async (pa) => {
-      return pa.setSinkVolume(
-        [percentToVolume(levelPercent), percentToVolume(levelPercent)],
-        this.playbackSink,
-      )
-    })
+    try {
+      return this.execute(async (pa) => {
+        return pa.setSinkVolume(
+          [percentToVolume(levelPercent), percentToVolume(levelPercent)],
+          this.playbackSink,
+        )
+      })
+    } catch (err) {
+      return
+    }
   }
 
   public async mute() {
-    return this.execute(async (pa) => {
-      return pa.setSinkMute(true, this.playbackSink)
-    })
+    try {
+      return this.execute(async (pa) => {
+        return pa.setSinkMute(true, this.playbackSink)
+      })
+    } catch (err) {
+      return false
+    }
   }
 
   public async unmute() {
-    return this.execute(async (pa) => {
-      return pa.setSinkMute(false, this.playbackSink)
-    })
+    try {
+      return this.execute(async (pa) => {
+        return pa.setSinkMute(false, this.playbackSink)
+      })
+    } catch (err) {
+      return false
+    }
   }
 }

@@ -28,7 +28,8 @@ mkdir -p \
   /tmp \
   /app/src
 
-/usr/bin/npm install -g pm2 node-gyp
+node
+npm install -g pm2 node-gyp
 EOF
 
 COPY ./container/${BUILD_CONFIG}/ ${APP_BASE}
