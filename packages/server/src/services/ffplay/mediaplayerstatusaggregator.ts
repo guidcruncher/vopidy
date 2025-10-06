@@ -1,7 +1,7 @@
 import { db } from "@/services/db/"
 import { LocalMusic } from "@/services/localmusic"
 import { Mixer } from "@/services/mixer/"
-import { Pulseaudio } from "@/services/pulseaudio"
+import { PipeWire } from "@/core/pipewire"
 import { RadioBrowser } from "@/services/radiobrowser/"
 import { TuneIn } from "@/services/tunein/"
 import { FFplayMetadata } from "./ffplaymetadata"
@@ -16,14 +16,14 @@ export interface MediaPlayerStatus {
 }
 
 export class MediaPlayerStatusAggregator {
-  private paClient: Pulseaudio
+  private paClient: PipeWire
   private tuneinClient: TuneIn
   private radioBrowserClient: RadioBrowser
   private localClient: LocalMusic
 
   constructor() {
     // Instantiate dependencies once if they are stateless/singletons
-    this.paClient = new Pulseaudio()
+    this.paClient = new PipeWire()
     this.tuneinClient = new TuneIn()
     this.radioBrowserClient = new RadioBrowser()
     this.localClient = new LocalMusic()

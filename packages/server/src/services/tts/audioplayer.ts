@@ -1,6 +1,6 @@
 import { logger } from "@/core/logger"
 import { Mixer } from "@/services/mixer/"
-import { Pulseaudio } from "@/services/pulseaudio"
+import { PipeWire } from "@/core/pipewire"
 import * as crypto from "crypto"
 import * as fs from "fs"
 import { Buffer } from "node:buffer"
@@ -15,10 +15,10 @@ const execFile = promisify(child_process.execFile)
  * Handles playing audio buffers using system services (Pulseaudio/paplay).
  */
 export class AudioPlayer {
-  private readonly PULSE_CLIENT: Pulseaudio
+  private readonly PULSE_CLIENT: PipeWire
 
   constructor() {
-    this.PULSE_CLIENT = new Pulseaudio()
+    this.PULSE_CLIENT = new PipeWire()
   }
 
   /**

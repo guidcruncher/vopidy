@@ -1,10 +1,10 @@
 import { Equaliser } from "@/services/alsa/equaliser"
-import { Pulseaudio } from "@/services/pulseaudio"
+import { PipeWire } from "@/core/pipewire"
 import { PlaybackStateStore } from "./playbackstatestore"
 
 export class VolumeController {
-  private static getPaClient(): Pulseaudio {
-    return new Pulseaudio()
+  private static getPaClient(): PipeWire {
+    return new PipeWire()
   }
 
   public static async setVolume(volume: number): Promise<any> {

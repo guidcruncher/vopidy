@@ -10,7 +10,7 @@ import {
   VolumeStatus,
 } from "./types"
 
-export class PipeWireSystemFacade {
+export class PipeWire {
   private router: PipeWireRouter
   private volumeController: PipeWireVolumeController
 
@@ -45,6 +45,10 @@ export class PipeWireSystemFacade {
 
   public async getVolumeStatus(): Promise<VolumeStatus> {
     return this.volumeController.getVolumeStatus()
+  }
+
+  public async getVolume(): Promise<number> {
+    return
   }
 
   public async setVolume(percentage: number): Promise<void> {

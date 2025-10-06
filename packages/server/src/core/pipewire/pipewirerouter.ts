@@ -16,16 +16,20 @@ export class PipeWireRouter {
     }
   }
 
-  public async listSinks(): Promise<AudioSink[]> {
-    const stdout = await this.executeCommand("pactl list short sinks")
-
+  public async getDefaultSinkName(): Promise<string> {
     let defaultSinkName = ""
     try {
       defaultSinkName = await this.executeCommand(
         'pactl info | grep "Default Sink:" | awk "{print $3}"',
       )
     } catch (e) {}
+    return defaultSinkName.replaceAll("Default Sink:", "").trim()
+  }
 
+  public async listSinks(): Promise<AudioSink[]> {
+    const stdout = await this.executeCommand("pactl list short sinks")
+
+    let defaultSinkName = await this.getDefaultSinkName()
     return stdout
       .split("\n")
       .filter((line) => line.trim() !== "")

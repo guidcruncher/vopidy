@@ -2,7 +2,7 @@ import { logger } from "@/core/logger"
 import { FFplay } from "@/services/ffplay/"
 import { IMediaPlayer } from "@/services/imediaplayer"
 import { LocalMusic } from "@/services/localmusic"
-import { Pulseaudio } from "@/services/pulseaudio"
+import { PipeWire } from "@/core/pipewire"
 import { RadioBrowser } from "@/services/radiobrowser/"
 import { Spotify } from "@/services/spotify"
 import { Streamer } from "@/services/streamer/"
@@ -116,7 +116,7 @@ export class PlaybackController {
   }
 
   public static async getStatus(): Promise<any> {
-    const paClient = new Pulseaudio()
+    const paClient = new PipeWire()
     const source = PlaybackStateStore.activeOutputDevice()
     const client = PlaybackController.getActiveDeviceClient(source)
 
@@ -126,15 +126,15 @@ export class PlaybackController {
       res = await client.getStatus()
     }
 
-    // Supplement status with volume/mute info from Pulseaudio
-    const paState = await paClient.getSinkInfo()
-    const volume = await paClient.getVolume()
+    // Supplement status with volume/mute info from PipeWire
+    const paState = await paClient.getVolumeStatus()
 
     if (res) {
-      res.volume = volume
-      res.muted = paState.mute
+      res.volume =  paState.volume
+      res.muted = paState.muted
     } else {
-      res = { muted: paState.mute, volume: volume }
+
+      res = { muted: paState.muted, volume: paState.volume }
     }
 
     return res
