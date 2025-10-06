@@ -1,8 +1,8 @@
 import { logger } from "@/core/logger"
+import { PipeWire } from "@/core/pipewire"
 import { FFplay } from "@/services/ffplay/"
 import { IMediaPlayer } from "@/services/imediaplayer"
 import { LocalMusic } from "@/services/localmusic"
-import { PipeWire } from "@/core/pipewire"
 import { RadioBrowser } from "@/services/radiobrowser/"
 import { Spotify } from "@/services/spotify"
 import { Streamer } from "@/services/streamer/"
@@ -130,11 +130,10 @@ export class PlaybackController {
     const paState = await paClient.getVolumeStatus()
 
     if (res) {
-      res.volume =  paState.volume
-      res.muted = paState.muted
+      res.volume = paState.volume
+      res.muted = paState.isMuted
     } else {
-
-      res = { muted: paState.muted, volume: paState.volume }
+      res = { muted: paState.isMuted, volume: paState.volume }
     }
 
     return res

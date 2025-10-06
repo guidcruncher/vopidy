@@ -1,6 +1,6 @@
 import { logger } from "@/core/logger"
-import { Mixer } from "@/services/mixer/"
 import { PipeWire } from "@/core/pipewire"
+import { Mixer } from "@/services/mixer/"
 import * as crypto from "crypto"
 import * as fs from "fs"
 import { Buffer } from "node:buffer"
@@ -25,7 +25,7 @@ export class AudioPlayer {
    * Calculates the appropriate volume for TTS playback, boosting it if other media is playing.
    */
   private async calculateTtsVolume(): Promise<number> {
-    let volume = await this.PULSE_CLIENT.getVolumeLinear()
+    let volume = await this.PULSE_CLIENT.getVolume()
     const state = await Mixer.getStatus()
 
     // Boost volume if media is currently playing to ensure TTS is heard

@@ -1,5 +1,5 @@
-import { Equaliser } from "@/services/alsa/equaliser"
 import { PipeWire } from "@/core/pipewire"
+import { Equaliser } from "@/services/alsa/equaliser"
 import { PlaybackStateStore } from "./playbackstatestore"
 
 export class VolumeController {
