@@ -28,8 +28,8 @@ opt=$(Menu.Show '([backtitle]="Backtitle"
             [title]="Title"
             [question]="Please choose:")'          \
                                                     \
-            "Option A"  "Stuff...."                \
-            "Option B"  "Stuff...."                \
+            "1"  "Open shell inside container"                \
+            "2"  "View logs"                \
             "Option C"  "Stuff...."  )
 echo $opt
 if [ -z "$opt" ]; then
@@ -37,4 +37,16 @@ if [ -z "$opt" ]; then
   exit 0
   break
 fi
+
+case "$opt" in
+1) 
+clear
+docker exec -i -t vopidy-dev /bin/bash
+;;
+2) 
+clear
+docker exec -i -t vopidy-dev /usr/local/bin/pm2 logs
+;;
+esac
+
 done
