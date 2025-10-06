@@ -1,27 +1,9 @@
+import { logger } from "@/core/logger"
 import { exec } from "child_process"
 import { promisify } from "util"
+import { PipewireDump, PipewireObject } from "./types"
 
 const execPromise = promisify(exec)
-
-export interface PipewireDump {
-  metadata: PipewireObject[]
-  core: PipewireObject[]
-  modules: PipewireObject[]
-  factories: PipewireObject[]
-  devices: PipewireObject[]
-  nodes: PipewireObject[]
-  ports: PipewireObject[]
-  clients: PipewireObject[]
-  links: PipewireObject[]
-  // Fallback for any other object types
-  [key: string]: PipewireObject[]
-}
-
-export interface PipewireObject {
-  id: number
-  type: string
-  [key: string]: any
-}
 
 export class PipewireDumpParser {
   private rawJsonString: string
@@ -34,22 +16,18 @@ export class PipewireDumpParser {
     const command = "pw-dump -N"
 
     try {
-      // Execute the command and capture stdout
       const { stdout, stderr } = await execPromise(command, { maxBuffer: 1024 * 5000 }) // Increase buffer for large dumps
 
       if (stderr) {
         console.warn(`pw-dump produced warnings/stderr: ${stderr.trim()}`)
       }
 
-      // Create a new parser instance with the raw JSON string
       const parser = new PipewireDumpParser(stdout)
 
-      // Parse the output
       return parser.parse()
     } catch (error: any) {
-      // Throw an error if the command execution fails (e.g., pw-dump not found, or non-zero exit code)
       const errorMessage = `Failed to execute 'pw-dump -j'. Error: ${error.message}`
-      console.error(errorMessage)
+      logger.error(errorMessage)
       throw new Error(errorMessage)
     }
   }
@@ -58,10 +36,9 @@ export class PipewireDumpParser {
     let dumpArray: PipewireObject[]
 
     try {
-      // The pw-dump output is an array of objects
       dumpArray = JSON.parse(this.rawJsonString) as PipewireObject[]
     } catch (e) {
-      console.error("Failed to parse pw-dump JSON string:", e)
+      logger.error("Failed to parse pw-dump JSON string:", e)
       throw new Error("Invalid JSON format in pw-dump output.")
     }
 
@@ -83,17 +60,14 @@ export class PipewireDumpParser {
         continue
       }
 
-      // Get the category key (e.g., 'Node', 'Link', 'Client')
       const typeParts = obj.type.split(":")
       const categoryKey = typeParts[typeParts.length - 1].toLowerCase()
 
-      // Find the corresponding array in the structuredDump object
       const categoryArray = structuredDump[categoryKey] as PipewireObject[] | undefined
 
       if (categoryArray) {
         categoryArray.push(obj)
       } else {
-        // Handle new or fallback types dynamically
         if (!structuredDump[categoryKey]) {
           structuredDump[categoryKey] = []
         }
