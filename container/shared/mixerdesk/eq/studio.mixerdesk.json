@@ -1,5 +1,5 @@
 {
-  "equalizer_preset_name": "Studio Reference (10-Band Easy Effects)",
+  "equalizer_preset_name": "Studio Reference",
   "description": "A near-flat curve with slight high-frequency enhancement for detail, aiming for a neutral and uncolored playback experience.",
   "bands": [
     {
