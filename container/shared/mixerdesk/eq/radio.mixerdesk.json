@@ -1,0 +1,56 @@
+{
+  "equalizer_preset_name": "Commercial Radio Simulation (10-Band Easy Effects)",
+  "description": "Aggressive 'Smile Curve' to mimic the sound of heavily processed FM radio, emphasizing loudness, clarity, and punch in the bass and highs.",
+  "bands": [
+    {
+      "frequency_hz": 31,
+      "gain_db": 3.0,
+      "notes": "Strong boost for a powerful, deep low-end rumble."
+    },
+    {
+      "frequency_hz": 63,
+      "gain_db": 3.5,
+      "notes": "Maximum boost for punch and impact (e.g., kick drum), characteristic of loud broadcast audio."
+    },
+    {
+      "frequency_hz": 125,
+      "gain_db": 2.0,
+      "notes": "Moderate boost to maintain fullness and body in the low-mids."
+    },
+    {
+      "frequency_hz": 250,
+      "gain_db": 0.5,
+      "notes": "Slight lift to retain a bit of warmth, but kept low to prevent boominess."
+    },
+    {
+      "frequency_hz": 500,
+      "gain_db": -0.5,
+      "notes": "Minor cut to clear low-mids and increase perceived clarity."
+    },
+    {
+      "frequency_hz": 1000,
+      "gain_db": 0.0,
+      "notes": "Neutral or near-neutral. This range is often compressed but not severely equalized in broadcast."
+    },
+    {
+      "frequency_hz": 2000,
+      "gain_db": 1.5,
+      "notes": "Moderate boost for vocal and instrument presence, helping the primary melody cut through."
+    },
+    {
+      "frequency_hz": 4000,
+      "gain_db": 2.5,
+      "notes": "Strong boost for articulation, sibilance, and high-end clarity—critical for speech and bright vocals."
+    },
+    {
+      "frequency_hz": 8000,
+      "gain_db": 3.0,
+      "notes": "Maximum boost for sparkle, crispness, and the 'excitement' factor of broadcast treble."
+    },
+    {
+      "frequency_hz": 16000,
+      "gain_db": 2.0,
+      "notes": "Moderate boost for 'air' and high-frequency extension."
+    }
+  ]
+}

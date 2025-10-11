@@ -1,0 +1,57 @@
+{
+  "equalizer_preset_name": "Country Music (10-Band Easy Effects)",
+  "description": "Settings for a warm, clear, and balanced sound, highlighting vocals, acoustic instruments, and a defined low-end.",
+  "bands": [
+    {
+      "frequency_hz": 31,
+      "gain_db": -1.5,
+      "notes": "Slight cut to reduce sub-bass rumble or noise, keeping the low-end clean."
+    },
+    {
+      "frequency_hz": 63,
+      "gain_db": 1.0,
+      "notes": "Small boost for foundational bass warmth, mainly affecting the kick drum and bass guitar."
+    },
+    {
+      "frequency_hz": 125,
+      "gain_db": 1.5,
+      "notes": "Boost to add body and fullness to acoustic guitars and the bassline."
+    },
+    {
+      "frequency_hz": 250,
+      "gain_db": 0.5,
+      "notes": "Very small boost for low-mid warmth, but keeping it near neutral to avoid muddiness."
+    },
+    {
+      "frequency_hz": 500,
+      "gain_db": -1.0,
+      "notes": "Slight cut to prevent 'boxiness' and to clear space for the primary vocal and instrumental frequencies."
+    },
+    {
+      "frequency_hz": 1000,
+      "gain_db": 1.0,
+      "notes": "Boost for core clarity and to help vocals and lead instruments cut through the mix gently."
+    },
+    {
+      "frequency_hz": 2000,
+      "gain_db": 2.0,
+      "notes": "Moderate boost for vocal presence, intelligibility, and the attack/strum of acoustic guitars."
+    },
+    {
+      "frequency_hz": 4000,
+      "gain_db": 1.5,
+      "notes": "Boost for instrumental articulation, steel guitar shimmer, and vocal definition."
+    },
+    {
+      "frequency_hz": 8000,
+      "gain_db": 1.0,
+      "notes": "Small boost for high-end sparkle and 'air' on cymbals and acoustic instrument harmonics."
+    },
+    {
+      "frequency_hz": 16000,
+      "gain_db": 0.0,
+      "notes": "Neutral or slight roll-off to avoid emphasizing hiss or unwanted noise."
+    }
+  ]
+}
+

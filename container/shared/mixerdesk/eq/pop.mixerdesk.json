@@ -1,0 +1,56 @@
+{
+  "equalizer_preset_name": "Pop Music (10-Band Easy Effects)",
+  "description": "Classic 'smile curve' settings for Pop music, emphasizing punchy bass and bright highs for energy and clarity.",
+  "bands": [
+    {
+      "frequency_hz": 31,
+      "gain_db": 3.0,
+      "notes": "Strong boost for deep sub-bass and low-end impact (rhythm/kick)."
+    },
+    {
+      "frequency_hz": 63,
+      "gain_db": 2.5,
+      "notes": "Boost for warmth and body, adding punch to the kick drum and bassline."
+    },
+    {
+      "frequency_hz": 125,
+      "gain_db": 1.0,
+      "notes": "Small boost to maintain warmth without adding too much 'boominess'."
+    },
+    {
+      "frequency_hz": 250,
+      "gain_db": 0.0,
+      "notes": "Neutral, or slight cut if the track sounds muddy."
+    },
+    {
+      "frequency_hz": 500,
+      "gain_db": -1.5,
+      "notes": "Small cut to reduce muddiness and prevent the low-mids from clouding the mix."
+    },
+    {
+      "frequency_hz": 1000,
+      "gain_db": 0.0,
+      "notes": "Neutral, as this range is critical for fundamental clarity and is often left untouched in the 'smile' curve."
+    },
+    {
+      "frequency_hz": 2000,
+      "gain_db": 1.0,
+      "notes": "Small boost to enhance percussive attack and instrumental detail."
+    },
+    {
+      "frequency_hz": 4000,
+      "gain_db": 2.0,
+      "notes": "Boost for vocal presence and clarity/articulation."
+    },
+    {
+      "frequency_hz": 8000,
+      "gain_db": 3.0,
+      "notes": "Significant boost for high-end sparkle, cymbal clarity, and 'air'."
+    },
+    {
+      "frequency_hz": 16000,
+      "gain_db": 2.5,
+      "notes": "Boost for high-frequency extension and brightness."
+    }
+  ]
+}

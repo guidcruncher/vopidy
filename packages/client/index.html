@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="manifest" href="/site.webmanifest">
+    <meta charset="UTF-8">
+    <link rel="icon" href="/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vopidy</title>
+    <style type="text/css">
+       [v-cloak] > * { display:none }  
+    </style>
+  </head>
+  <body>
+   <div v-cloak id="app">
+   </div>
+<script type="text/javascript">
+window._alert=window.alert
+window.alert=((args)=>{
+let value=args
+
+if (typeof args === 'object' || Array.isArray(args)) {
+value=JSON.stringify(args)
+}
+window._alert(value)
+})
+</script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js"></script>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

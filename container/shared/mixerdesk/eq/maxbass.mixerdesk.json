@@ -1,0 +1,56 @@
+{
+  "equalizer_preset_name": "Maximum Bass Boost (10-Band Easy Effects)",
+  "description": "Aggressive low-end lift across the sub-bass and mid-bass frequencies for maximum rumble and punch, while retaining some clarity in the highs.",
+  "bands": [
+    {
+      "frequency_hz": 31,
+      "gain_db": 5.0,
+      "notes": "Maximum boost for sub-bass rumble and physical feeling (requires good speakers/subwoofer)."
+    },
+    {
+      "frequency_hz": 63,
+      "gain_db": 4.5,
+      "notes": "Strong boost for mid-bass punch, kick drum impact, and overall bass loudness."
+    },
+    {
+      "frequency_hz": 125,
+      "gain_db": 3.0,
+      "notes": "Moderate boost to add thick body and fullness to the bassline and low instruments."
+    },
+    {
+      "frequency_hz": 250,
+      "gain_db": 1.5,
+      "notes": "Small lift to maintain warmth and transition smoothly into the midrange."
+    },
+    {
+      "frequency_hz": 500,
+      "gain_db": 0.0,
+      "notes": "Neutral or slightly reduced to prevent the boosted low end from making the sound 'muddy' or 'boomy'."
+    },
+    {
+      "frequency_hz": 1000,
+      "gain_db": -1.0,
+      "notes": "Slight cut to scoop the mids, contrasting the heavy bass boost."
+    },
+    {
+      "frequency_hz": 2000,
+      "gain_db": 0.0,
+      "notes": "Neutral, focusing attention on the boosted low and high ends."
+    },
+    {
+      "frequency_hz": 4000,
+      "gain_db": 1.0,
+      "notes": "Small lift for overall instrumental clarity (attack)."
+    },
+    {
+      "frequency_hz": 8000,
+      "gain_db": 1.5,
+      "notes": "Moderate boost for high-end sparkle and definition to contrast the heavy bass."
+    },
+    {
+      "frequency_hz": 16000,
+      "gain_db": 1.0,
+      "notes": "Small boost for 'air' and high-frequency extension."
+    }
+  ]
+}

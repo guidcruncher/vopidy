@@ -1,0 +1,29 @@
+{
+	default_bind 0.0.0.0
+	http_port 3004
+	admin off
+	auto_https off
+}
+
+:3004 {
+
+	handle_path /ws {
+		rewrite * /ws
+		reverse_proxy localhost:3002
+	}
+
+	handle_path /api/* {
+		reverse_proxy http://localhost:3002
+	}
+
+	handle_path /files/* {
+		root * /srv/files
+		file_server
+	}
+
+        handle {
+                encode gzip
+                reverse_proxy http://localhost:3003
+        }
+
+}

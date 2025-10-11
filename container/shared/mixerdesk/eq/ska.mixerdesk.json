@@ -1,0 +1,56 @@
+{
+  "equalizer_preset_name": "Ska & Reggae Rhythm (10-Band Easy Effects)",
+  "description": "Optimized to emphasize the driving, melodic bassline and the bright, rhythmic off-beat guitar 'skank' and brass/horn sections.",
+  "bands": [
+    {
+      "frequency_hz": 31,
+      "gain_db": 1.5,
+      "notes": "Moderate lift for low-end feel and weight."
+    },
+    {
+      "frequency_hz": 63,
+      "gain_db": 2.5,
+      "notes": "Strong boost for foundational bass tone and kick drum depth."
+    },
+    {
+      "frequency_hz": 125,
+      "gain_db": 3.0,
+      "notes": "Maximum boost for the melodic, driving 'walking' bassline characteristic of the genre."
+    },
+    {
+      "frequency_hz": 250,
+      "gain_db": 1.0,
+      "notes": "Small lift for bass transition, but kept in check to avoid boominess."
+    },
+    {
+      "frequency_hz": 500,
+      "gain_db": -1.5,
+      "notes": "Mid-range scoop to clean up the mix, separating the bass from the guitar/vocals."
+    },
+    {
+      "frequency_hz": 1000,
+      "gain_db": 0.0,
+      "notes": "Neutral."
+    },
+    {
+      "frequency_hz": 2000,
+      "gain_db": 2.0,
+      "notes": "Strong boost for vocal presence, the attack of the snare, and the clarity of horns."
+    },
+    {
+      "frequency_hz": 4000,
+      "gain_db": 3.5,
+      "notes": "Maximum boost for the bright, cutting sound of the **off-beat guitar skank/chop** and the core harmonics of the brass section."
+    },
+    {
+      "frequency_hz": 8000,
+      "gain_db": 2.0,
+      "notes": "Moderate boost for high-hat and cymbal crispness, enhancing the rhythmic drive."
+    },
+    {
+      "frequency_hz": 16000,
+      "gain_db": 1.0,
+      "notes": "Small lift for overall air and brightness."
+    }
+  ]
+}

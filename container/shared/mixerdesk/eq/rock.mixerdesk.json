@@ -1,0 +1,56 @@
+{
+  "equalizer_preset_name": "Rock Music (10-Band Easy Effects)",
+  "description": "Settings optimized for Rock music, providing punchy lows, scooped mids for guitar thickness, and bright highs.",
+  "bands": [
+    {
+      "frequency_hz": 31,
+      "gain_db": 1.5,
+      "notes": "Slight boost for foundational bass and rumble, giving weight to the overall sound."
+    },
+    {
+      "frequency_hz": 63,
+      "gain_db": 3.0,
+      "notes": "Strong boost for kick drum punch and bass guitar thickness."
+    },
+    {
+      "frequency_hz": 125,
+      "gain_db": 2.0,
+      "notes": "Boost for low-end body and warmth, essential for powerful drums and bass."
+    },
+    {
+      "frequency_hz": 250,
+      "gain_db": 0.0,
+      "notes": "Neutral or slight cut; too much here can make the rhythm section muddy."
+    },
+    {
+      "frequency_hz": 500,
+      "gain_db": -2.5,
+      "notes": "Mid-range cut to 'scoop' the sound, creating a heavier, more aggressive, and less 'honky' guitar tone."
+    },
+    {
+      "frequency_hz": 1000,
+      "gain_db": -1.0,
+      "notes": "Small cut to maintain the scoop effect and prevent the core frequencies from becoming too dominant."
+    },
+    {
+      "frequency_hz": 2000,
+      "gain_db": 1.5,
+      "notes": "Boost for guitar presence and attack, helping electric guitars cut through the mix."
+    },
+    {
+      "frequency_hz": 4000,
+      "gain_db": 2.0,
+      "notes": "Boost for vocal and snare drum clarity/snap."
+    },
+    {
+      "frequency_hz": 8000,
+      "gain_db": 2.5,
+      "notes": "Boost for cymbal clarity and high-end air, adding sparkle to the track."
+    },
+    {
+      "frequency_hz": 16000,
+      "gain_db": 1.0,
+      "notes": "Small boost for high-frequency extension."
+    }
+  ]
+}

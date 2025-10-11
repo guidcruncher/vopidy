@@ -1,0 +1,57 @@
+{
+  "equalizer_preset_name": "Live Concert Simulation (10-Band Easy Effects)",
+  "description": "Settings to simulate the energy, punch, and high-end presence of a loud, clear live concert environment.",
+  "bands": [
+    {
+      "frequency_hz": 31,
+      "gain_db": 2.0,
+      "notes": "Moderate boost for sub-bass impact and the low-end rumble often felt live."
+    },
+    {
+      "frequency_hz": 63,
+      "gain_db": 3.0,
+      "notes": "Strong boost for kick drum punch and foundational bass energy."
+    },
+    {
+      "frequency_hz": 125,
+      "gain_db": 1.5,
+      "notes": "Small boost to add body to the rhythm section."
+    },
+    {
+      "frequency_hz": 250,
+      "gain_db": 0.0,
+      "notes": "Neutral or slight cut; often left flat to avoid muddiness."
+    },
+    {
+      "frequency_hz": 500,
+      "gain_db": -1.5,
+      "notes": "Mid-range cut to reduce 'boxiness' and simulate the general mid-scoop common in live venue sound."
+    },
+    {
+      "frequency_hz": 1000,
+      "gain_db": 0.0,
+      "notes": "Neutral, the core point of the mix."
+    },
+    {
+      "frequency_hz": 2000,
+      "gain_db": 1.0,
+      "notes": "Small boost for instrumental and vocal presence, helping guitars and leads cut through."
+    },
+    {
+      "frequency_hz": 4000,
+      "gain_db": 2.5,
+      "notes": "Moderate boost for clarity, articulation, and the snap of the snare drum/high-hats."
+    },
+    {
+      "frequency_hz": 8000,
+      "gain_db": 3.0,
+      "notes": "Strong boost for high-end brilliance and 'sizzle,' mimicking the high-frequency energy of a live PA system."
+    },
+    {
+      "frequency_hz": 16000,
+      "gain_db": 1.5,
+      "notes": "Boost for overall 'air' and high-frequency extension."
+    }
+  ]
+}
+

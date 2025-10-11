@@ -1,0 +1,57 @@
+{
+  "equalizer_preset_name": "Podcasts / Spoken Word (10-Band Easy Effects)",
+  "description": "Optimized for vocal clarity and intelligibility. Focuses on boosting the mid-range while cutting distracting low-end rumble and high-end hiss.",
+  "bands": [
+    {
+      "frequency_hz": 31,
+      "gain_db": -3.0,
+      "notes": "Strong cut to remove low-frequency rumble, air conditioning noise, and mic handling noise."
+    },
+    {
+      "frequency_hz": 63,
+      "gain_db": -2.0,
+      "notes": "Moderate cut to eliminate plosives ('P' and 'B' sounds) and deep chest resonance that can sound 'muddy'."
+    },
+    {
+      "frequency_hz": 125,
+      "gain_db": 0.0,
+      "notes": "Neutral or slightly cut; this is the very bottom of the male voice fundamental frequency."
+    },
+    {
+      "frequency_hz": 250,
+      "gain_db": 1.0,
+      "notes": "Small boost to add fullness and warmth to voices without becoming boomy."
+    },
+    {
+      "frequency_hz": 500,
+      "gain_db": 1.5,
+      "notes": "Moderate boost for the core body and loudness of the voice."
+    },
+    {
+      "frequency_hz": 1000,
+      "gain_db": 2.0,
+      "notes": "Strong boost for **clarity and nasal presence**, the primary range for vocal intelligibility."
+    },
+    {
+      "frequency_hz": 2000,
+      "gain_db": 1.0,
+      "notes": "Small boost to help voices cut through and maintain presence."
+    },
+    {
+      "frequency_hz": 4000,
+      "gain_db": 0.0,
+      "notes": "Neutral, or slightly cut. Contains sibilance (sharp 'S' and 'T' sounds)."
+    },
+    {
+      "frequency_hz": 8000,
+      "gain_db": -1.0,
+      "notes": "Slight cut to reduce microphone hiss and sharp sibilance/breaths that can be distracting."
+    },
+    {
+      "frequency_hz": 16000,
+      "gain_db": -2.0,
+      "notes": "Moderate cut to eliminate high-end noise/hiss, as no useful vocal information exists here."
+    }
+  ]
+}
+

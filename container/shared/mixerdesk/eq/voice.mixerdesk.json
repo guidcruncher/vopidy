@@ -1,0 +1,57 @@
+{
+  "equalizer_preset_name": "Voice Clarity (10-Band Easy Effects)",
+  "description": "Settings optimized for voice clarity, presence, and reduction of plosives/muddiness.",
+  "bands": [
+    {
+      "frequency_hz": 31,
+      "gain_db": -2.0,
+      "notes": "Slight cut to reduce low-end rumble/noise."
+    },
+    {
+      "frequency_hz": 63,
+      "gain_db": -3.0,
+      "notes": "Cut to remove excessive bass or 'boominess' (muddiness)."
+    },
+    {
+      "frequency_hz": 125,
+      "gain_db": -1.5,
+      "notes": "Small cut to control chest resonance/muddiness."
+    },
+    {
+      "frequency_hz": 250,
+      "gain_db": 0.0,
+      "notes": "Neutral."
+    },
+    {
+      "frequency_hz": 500,
+      "gain_db": 1.0,
+      "notes": "Small boost to add body and warmth to the voice."
+    },
+    {
+      "frequency_hz": 1000,
+      "gain_db": 2.0,
+      "notes": "Boost for core intelligibility and clarity."
+    },
+    {
+      "frequency_hz": 2000,
+      "gain_db": 1.5,
+      "notes": "Slight boost for articulation and presence."
+    },
+    {
+      "frequency_hz": 4000,
+      "gain_db": 3.0,
+      "notes": "Significant boost for 'air', presence, and articulation (consonants)."
+    },
+    {
+      "frequency_hz": 8000,
+      "gain_db": 1.0,
+      "notes": "Small boost for high-end sparkle and 'air'."
+    },
+    {
+      "frequency_hz": 16000,
+      "gain_db": 0.0,
+      "notes": "Neutral, or slight roll-off for noise."
+    }
+  ]
+}
+

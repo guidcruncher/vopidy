@@ -1,0 +1,38 @@
+ {
+  "compilerOptions": {
+    "target": "es2021",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": false,
+    "verbatimModuleSyntax": false,
+    "skipLibCheck": true,
+    "types": [
+      "node"
+    ],
+    "jsx": "react-jsx",
+    "jsxImportSource": "hono/jsx",
+    "outDir": "./dist",
+    "baseUrl": ".",
+    "noImplicitAny": false,
+    "noEmitOnError": true,
+    "removeComments": false,
+    "sourceMap": true,
+    "paths": {
+      "@/*": [ "./src/*" ],
+      "@/commands": [ "./src/commands/*" ],
+      "@/rpcservices": [ "./src/rpcservices/*" ],
+      "@/core": [ "./src/core/*" ],
+      "@/middleware": [ "./src/middleware/*" ],
+      "@/routes": [ "./src/routes/*" ],
+      "@/rpc": [ "./src/rpc/*" ],
+      "@/services": [ "./src/services/*" ]
+    }
+  },
+  "tsc-alias": {
+    "resolveFullPaths": true,
+    "verbose": false
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}
