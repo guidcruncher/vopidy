@@ -6,6 +6,7 @@ export const useUiStateStore = defineStore('uistatestore', {
     profileImage: '',
     displayMode: 'list',
     locked: false,
+    theme: 'dark',
   }),
   actions: {
     setProfileImage() {
@@ -20,6 +21,9 @@ export const useUiStateStore = defineStore('uistatestore', {
     },
     setDisplayMode(mode) {
       this.displayMode = mode
+    },
+    setTheme(t) {
+      this.theme = t
     },
     setDrawer(value) {
       this.drawer = value

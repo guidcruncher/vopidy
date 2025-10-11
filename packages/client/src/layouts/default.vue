@@ -19,6 +19,11 @@
       <v-app-bar-title>Vopidy</v-app-bar-title>
 
       <template #append>
+        <v-btn
+          :icon="theme === 'light' ? 'mdi-weather-sunny' : 'mdi-weather-night'"
+          slim
+          @click="themeChange"
+        ></v-btn>
         <v-btn class="text-none me-2" height="48" icon slim>
           <v-avatar color="surface-light" v-once :image="profileImage" size="32" />
 
@@ -61,11 +66,12 @@ import { useDisplay } from 'vuetify'
 
 const display = useDisplay()
 const uiStateStore = useUiStateStore()
-const { drawer, profileImage, displayMode } = storeToRefs(uiStateStore)
+const { drawer, profileImage, displayMode, locked, theme } = storeToRefs(uiStateStore)
 
 const items = ref(contentsCatalog())
 </script>
 <script lang="ts">
+import { emit } from '@/composables/useeventbus'
 import { vopidy } from '@/services/vopidy'
 
 export default {
@@ -95,6 +101,12 @@ export default {
   methods: {
     onResize() {
       this.windowSize = { x: window.innerWidth, y: window.innerHeight - 90 }
+    },
+    themeChange() {
+      let theme = useUiStateStore().theme
+      let newtheme = theme == 'dark' ? 'light' : 'dark'
+      useUiStateStore().setTheme(newtheme)
+      emit('themechange', newtheme)
     },
     logout() {
       vopidy('player.stop', {}).then((res) => {

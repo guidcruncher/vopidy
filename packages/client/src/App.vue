@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <v-app>
+    <v-app :theme="theme">
       <router-view></router-view>
     </v-app>
     <Loader v-if="appLoading" />
@@ -12,6 +12,7 @@
 </script>
 <script lang="ts">
 import Loader from '@/components/Loader'
+import { off, on } from '@/composables/useeventbus'
 import { useConfigStore } from '@/stores/configstore'
 import { useUiStateStore } from '@/stores/uistatestore'
 
@@ -19,9 +20,10 @@ export default {
   name: 'App',
   props: {},
   data() {
-    return { appLoading: true }
+    return { appLoading: true, theme: 'light' }
   },
   mounted() {
+    this.theme = useUiStateStore().theme
     const configStore = useConfigStore()
     configStore.loadConfig().then(() => {
       if (localStorage.getItem('vopidy.id')) {
@@ -29,8 +31,14 @@ export default {
       }
       this.appLoading = false
     })
+    on('themechange', (t) => {
+      this.theme = t
+      useUiStateStore().setTheme(t)
+    })
   },
-  beforeUnmount() {},
+  beforeUnmount() {
+    off('themechamge')
+  },
   methods: {},
 }
 </script>
