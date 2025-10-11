@@ -1,4 +1,27 @@
 <template>
+  <v-menu>
+    <template v-slot:activator="{ props }">
+      <v-btn prepend-icon="mdi-sine-wave" v-bind="props" variant="outlined">Presets</v-btn>
+    </template>
+    <v-list lines="two">
+      <v-list-item
+        v-for="item in presets"
+        :title="item.equalizerPresetName"
+        :key="item.fileName"
+        @click="loadPreset(item)"
+      >
+      </v-list-item>
+    </v-list>
+  </v-menu>
+  &nbsp;
+  <v-btn
+    prepend-icon="mdi-tune-vertical"
+    :disabled="locked"
+    variant="outlined"
+    @click="resetMixer()"
+    >Reset</v-btn
+  >&nbsp;
+
   <div class="pa-2" v-if="canMix">
     <div v-if="canMix">
       <v-container v-if="ready">
@@ -28,61 +51,16 @@
       </v-container>
     </div>
     <div class="pa-2" v-if="canMix && mixer.frequencies.length != 0">
-      <table border="0" cellpadding="5" cellspacing="0">
-        <tbody>
-          <tr>
-            <td>
-              <v-number-input
-                :reverse="false"
-                controlVariant="split"
-                label="Reset level to"
-                :hideInput="false"
-                :inset="false"
-                :disabled="locked"
-                v-model="resetLevel"
-                style="width: 170px"
-              ></v-number-input>
-            </td>
-            <td>&nbsp;</td>
-            <td valign="Middle">
-              <v-btn
-                prepend-icon="mdi-tune-vertical"
-                :disabled="locked"
-                variant="outlined"
-                @click="resetMixer()"
-                >Reset</v-btn
-              >&nbsp;
-            </td>
-          </tr>
-          <tr>
-            <td colspan="3">
-              <v-file-input
-                clearable
-                label="Select presets file"
-                accept="application/json"
-                v-model="eqfile"
-              ></v-file-input>
-              &nbsp;
-              <v-btn prepend-icon="mdi-upload" variant="outlined" @click="submitPreset(eqfile)"
-                >Apply</v-btn
-              >&nbsp;
-            </td>
-          </tr>
-          <tr>
-            <td colspan="3">
-              <v-list lines="two">
-                <v-list-item
-                  v-for="item in presets"
-                  :title="item.equalizerPresetName"
-                  :key="item.fileName"
-                  @click="loadPreset(item)"
-                >
-                </v-list-item>
-              </v-list>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <v-file-input
+        clearable
+        label="Select presets file"
+        accept="application/json"
+        v-model="eqfile"
+      ></v-file-input>
+      &nbsp;
+      <v-btn prepend-icon="mdi-upload" variant="outlined" @click="submitPreset(eqfile)"
+        >Apply</v-btn
+      >
     </div>
   </div>
 </template>
@@ -118,6 +96,7 @@ export default {
   },
   beforeUnmount() {},
   methods: {
+    showPresets() {},
     loadPreset(item) {
       vopidy('mixer.equaliser-loadpreset', { filename: item.fileName }).then((eqres) => {
         if (eqres.ok == true) {
@@ -169,7 +148,7 @@ export default {
       })
     },
     resetMixer() {
-      let value = parseInt(this.resetLevel.toString())
+      let value = 0
       vopidy('mixer.equaliser-reset', { value: value }).then((res) => {
         if (res.ok) {
           this.getMixer()
