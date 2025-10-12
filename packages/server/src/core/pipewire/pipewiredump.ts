@@ -16,10 +16,10 @@ export class PipewireDumpParser {
     const command = "pw-dump -N"
 
     try {
-      const { stdout, stderr } = await execPromise(command, { maxBuffer: 1024 * 5000 }) // Increase buffer for large dumps
+      const { stdout, stderr } = await execPromise(command, { maxBuffer: 1024 * 5000 })
 
       if (stderr) {
-        console.warn(`pw-dump produced warnings/stderr: ${stderr.trim()}`)
+        logger.warn(`pw-dump produced warnings/stderr: ${stderr.trim()}`)
       }
 
       const parser = new PipewireDumpParser(stdout)
@@ -56,7 +56,7 @@ export class PipewireDumpParser {
 
     for (const obj of dumpArray) {
       if (typeof obj.id !== "number" || typeof obj.type !== "string") {
-        console.warn(`Skipping object due to missing 'id' or 'type':`, obj)
+        logger.warn(`Skipping object due to missing 'id' or 'type':`, obj)
         continue
       }
 

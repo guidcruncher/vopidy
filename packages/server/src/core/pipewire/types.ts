@@ -1,3 +1,21 @@
+export interface Band {
+  frequency_hz: number
+  gain_db: number
+  notes: string
+}
+
+export interface EqualizerPreset {
+  equalizer_preset_name: string
+  description: string
+  bands: Band[]
+}
+
+export interface PresetFileInfo {
+  fileName: string
+  equalizerPresetName: string
+  fullPath: string
+}
+
 export interface AudioSink {
   id: number
   name: string
@@ -40,93 +58,31 @@ export interface PipewireDump {
 }
 
 export class Eq10Parameters {
-  /**
-   * The stereo balance control. 0.0 is center.
-   */
   balance: number
-
-  /**
-   * Gain in dB for the 31 Hz band.
-   */
   band_0_gain: number
-
-  /**
-   * Gain in dB for the 63 Hz band.
-   */
   band_1_gain: number
-
-  /**
-   * Gain in dB for the 125 Hz band.
-   */
   band_2_gain: number
-
-  /**
-   * Gain in dB for the 250 Hz band.
-   */
   band_3_gain: number
-
-  /**
-   * Gain in dB for the 500 Hz band.
-   */
   band_4_gain: number
-
-  /**
-   * Gain in dB for the 1000 Hz band.
-   */
   band_5_gain: number
-
-  /**
-   * Gain in dB for the 2000 Hz band.
-   */
   band_6_gain: number
-
-  /**
-   * Gain in dB for the 4000 Hz band.
-   */
   band_7_gain: number
-
-  /**
-   * Gain in dB for the 8000 Hz band.
-   */
   band_8_gain: number
-
-  /**
-   * Gain in dB for the 16000 Hz band.
-   */
   band_9_gain: number
-
-  /**
-   * Overall pre-gain for the filter (usually negative to prevent clipping).
-   */
   input_gain: number
-
-  /**
-   * Mute state of the filter.
-   */
   mute: boolean
-
-  /**
-   * Output gain for the filter.
-   */
   output_gain: number
-
-  /**
-   * Filter mode (typically 0 for standard EQ).
-   */
   mode: number
 }
 
 export interface EasyEffectsFilter {
   name: "eq10" | string
 
-  params: Eq10Parameters | any // Use 'any' if the filter name is not 'eq10'
+  params: Eq10Parameters | any
 }
-
-// --------------------------------------------------
 
 export interface EasyEffectsMetadata {
   name: string
-
   description: string
 }
 
@@ -135,3 +91,31 @@ export interface EasyEffectsPreset {
   input: EasyEffectsFilter[]
   output: EasyEffectsFilter[]
 }
+
+export const EQ_BANDS = {
+  "31Hz": "eq_band_1:Gain",
+  "63Hz": "eq_band_2:Gain",
+  "125Hz": "eq_band_3:Gain",
+  "250Hz": "eq_band_4:Gain",
+  "500Hz": "eq_band_5:Gain",
+  "1kHz": "eq_band_6:Gain",
+  "2kHz": "eq_band_7:Gain",
+  "4kHz": "eq_band_8:Gain",
+  "8kHz": "eq_band_9:Gain",
+  "16kHz": "eq_band_10:Gain",
+} as const
+
+export const DISPLAY_BANDS = {
+  "31Hz": "eq_band_1:Gain",
+  "63Hz": "eq_band_2:Gain",
+  "125Hz": "eq_band_3:Gain",
+  "250Hz": "eq_band_4:Gain",
+  "500Hz": "eq_band_5:Gain",
+  "1kHz": "eq_band_6:Gain",
+  "2kHz": "eq_band_7:Gain",
+  "4kHz": "eq_band_8:Gain",
+  "8kHz": "eq_band_9:Gain",
+  "16kHz": "eq_band_10:Gain",
+} as const
+
+export type BandName = keyof typeof EQ_BANDS

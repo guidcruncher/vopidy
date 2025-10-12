@@ -10,16 +10,19 @@ export class PipeWireVolumeController {
 
   private async executeCommand(command: string): Promise<string> {
     try {
-      const { stdout } = await execPromise(command)
+      const { stdout, stderr } = await execPromise(command)
+      if (stderr) {
+        logger.warn(`pactl command produced stderr for: ${command}\nStderr: ${stderr.trim()}`)
+      }
       return stdout.trim()
     } catch (error) {
       const err = error as ExecException
+      logger.error(`Command failed: ${command}`, error)
       throw new Error(`Command failed: ${command}\nStderr: ${err.stderr || err.message}`)
     }
   }
 
   public async getVolumeStatus(): Promise<VolumeStatus> {
-    // This command outputs volume and mute status for the default sink
     const command = `pactl get-sink-volume @DEFAULT_SINK@`
     const rawOutput = await this.executeCommand(command)
 
@@ -30,7 +33,7 @@ export class PipeWireVolumeController {
     if (volumeMatch && volumeMatch[1]) {
       volume = parseInt(volumeMatch[1], 10)
     } else {
-      console.warn("Could not reliably parse volume percentage from pactl output.")
+      logger.warn("Could not reliably parse volume percentage from pactl output.")
     }
 
     if (rawOutput.includes("Mute: yes")) {

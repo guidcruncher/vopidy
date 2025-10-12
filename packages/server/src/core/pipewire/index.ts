@@ -1,29 +1,47 @@
 import { PipewireDumpParser } from "./pipewiredump"
-import { BandName, PipeWireEqualizer } from "./pipewireeq"
+import { PipeWireEqualizer } from "./pipewireeq"
+import { PipewireReverbController } from "./pipewirereverb"
 import { PipeWireRouter } from "./pipewirerouter"
 import { PipeWireVolumeController } from "./pipewirevolumecontroller"
-import { type EqualizerPreset } from "./presetmanager"
+import { EqualizerPresetManager } from "./presetmanager"
+
 import {
   ApplicationStreamMap,
   AudioSink,
   AudioStream,
+  BandName,
+  EqualizerPreset,
   PipewireDump,
   PipewireObject,
+  PresetFileInfo,
   VolumeStatus,
 } from "./types"
 
-export { type BandName } from "./pipewireeq"
-export { type EqualizerPreset } from "./presetmanager"
+export {
+  type ApplicationStreamMap,
+  type AudioSink,
+  type AudioStream,
+  type BandName,
+  type EqualizerPreset,
+  type PipewireDump,
+  type PipewireObject,
+  type PresetFileInfo,
+  type VolumeStatus,
+} from "./types"
 
 export class PipeWire {
-  private router: PipeWireRouter
-  private volumeController: PipeWireVolumeController
-  private eq: PipeWireEqualizer
+  private readonly router: PipeWireRouter
+  private readonly volumeController: PipeWireVolumeController
+  private readonly eq: PipeWireEqualizer
+  private readonly reverbController: PipewireReverbController
+  private readonly presetManager: EqualizerPresetManager
 
   constructor() {
     this.router = new PipeWireRouter()
     this.volumeController = new PipeWireVolumeController()
     this.eq = new PipeWireEqualizer()
+    this.reverbController = new PipewireReverbController()
+    this.presetManager = new EqualizerPresetManager()
   }
 
   public async listSinks(): Promise<AudioSink[]> {
@@ -36,10 +54,6 @@ export class PipeWire {
 
   public async listActiveStreamsByApplication(): Promise<ApplicationStreamMap> {
     return this.router.listActiveStreamsByApplication()
-  }
-
-  public applyEqPreset(preset: EqualizerPreset) {
-    return this.eq.applyPreset(preset)
   }
 
   public async redirectStream(streamId: number, targetSinkName: string): Promise<void> {
@@ -78,13 +92,8 @@ export class PipeWire {
     return this.volumeController.unmute()
   }
 
-  public async getSystemDump(): Promise<PipewireDump> {
-    return PipewireDumpParser.executeAndParse()
-  }
-
-  public async getAllPipewireObjects(): Promise<PipewireObject[]> {
-    const dump = await this.getSystemDump()
-    return Object.values(dump).flat() as PipewireObject[]
+  public applyEqPreset(preset: EqualizerPreset) {
+    return this.eq.applyPreset(preset)
   }
 
   public setProperty(band: BandName, gain: any): void {
@@ -92,7 +101,7 @@ export class PipeWire {
   }
 
   public getProperty(band: BandName): any {
-    return this.eq.getControlValue<any>(band)
+    return this.eq.getGain(band)
   }
 
   public getCurrentEq(): Partial<Record<BandName, any>> {
@@ -105,5 +114,46 @@ export class PipeWire {
 
   public resetEq(gain: number) {
     this.eq.resetSettings(gain)
+  }
+
+  public async getSystemDump(): Promise<PipewireDump> {
+    return PipewireDumpParser.executeAndParse()
+  }
+
+  public async getAllPipewireObjects(): Promise<PipewireObject[]> {
+    const dump = await this.getSystemDump()
+    return Object.values(dump).flat() as PipewireObject[]
+  }
+
+  public async setReverbGain(gain: number): Promise<void> {
+    return this.reverbController.changeGain(gain)
+  }
+
+  public async setReverbDelay(delay: number): Promise<void> {
+    return this.reverbController.changeConvolverDelay(delay)
+  }
+
+  public async loadReverbIR(filename: string): Promise<void> {
+    return this.reverbController.changeIR(filename)
+  }
+
+  public async disableReverb(filename: string): Promise<void> {
+    return this.reverbController.disableFilter(filename)
+  }
+
+  public async enableReverb(irFilename: string): Promise<void> {
+    return this.reverbController.enableFilter(irFilename)
+  }
+
+  public async listEqPresets(): Promise<PresetFileInfo[]> {
+    return this.presetManager.generatePresetList()
+  }
+
+  public async readEqPresetFile(filename: string): Promise<EqualizerPreset> {
+    return this.presetManager.readPresetFile(filename)
+  }
+
+  public async writeEqPresetFile(filename: string, preset: EqualizerPreset): Promise<void> {
+    return this.presetManager.writePresetFile(filename, preset)
   }
 }

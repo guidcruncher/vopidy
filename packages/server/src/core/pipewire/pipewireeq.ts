@@ -1,37 +1,8 @@
 import { logger } from "@/core/logger"
 import { execSync } from "child_process"
-import { Band, EqualizerPreset } from "./presetmanager"
+import { BandName, DISPLAY_BANDS, EQ_BANDS, EqualizerPreset } from "./types"
+
 const masterProps = ["Mute", "Input:", "Balance", "Output"]
-
-const EQ_BANDS = {
-  //  Mute: "master_mute:Mute",
-  //  Input: "input_gain:Volume",
-  //  Balance: "balance_control:balance",
-  "31Hz": "eq_band_1:Gain",
-  "63Hz": "eq_band_2:Gain",
-  "125Hz": "eq_band_3:Gain",
-  "250Hz": "eq_band_4:Gain",
-  "500Hz": "eq_band_5:Gain",
-  "1kHz": "eq_band_6:Gain",
-  "2kHz": "eq_band_7:Gain",
-  "4kHz": "eq_band_8:Gain",
-  "8kHz": "eq_band_9:Gain",
-  "16kHz": "eq_band_10:Gain",
-  //  Output: "output_gain:Volume",
-} as const
-
-const DISPLAY_BANDS = {
-  "31Hz": "eq_band_1:Gain",
-  "63Hz": "eq_band_2:Gain",
-  "125Hz": "eq_band_3:Gain",
-  "250Hz": "eq_band_4:Gain",
-  "500Hz": "eq_band_5:Gain",
-  "1kHz": "eq_band_6:Gain",
-  "2kHz": "eq_band_7:Gain",
-  "4kHz": "eq_band_8:Gain",
-  "8kHz": "eq_band_9:Gain",
-  "16kHz": "eq_band_10:Gain",
-} as const
 
 const frequencytoband = (freq: number) => {
   if (freq < 1000) {
@@ -39,8 +10,6 @@ const frequencytoband = (freq: number) => {
   }
   return `${freq / 1000}kHz`
 }
-
-export type BandName = keyof typeof EQ_BANDS
 
 export class PipeWireEqualizer {
   private nodeId: string | null = null
@@ -60,25 +29,25 @@ export class PipeWireEqualizer {
   }
 
   public applyPreset(preset: EqualizerPreset) {
-    for (let i = 0; i < preset.bands.length; i++) {
-      const band: Band = preset.bands[i]
-      let eqband = undefined
+    for (const band of preset.bands) {
+      let eqband: BandName | undefined = undefined
       try {
         eqband = frequencytoband(band.frequency_hz) as BandName
       } catch (err) {
-        logger.error(err)
+        logger.error("Error determining EQ band from frequency:", err)
         eqband = undefined
       }
-      if (eqband) {
-        const bandName = EQ_BANDS[eqband] as BandName
+      if (eqband && EQ_BANDS[eqband]) {
         this.setProperty(eqband, band.gain_db)
+      } else {
+        logger.warn(`Skipping band with unknown frequency: ${band.frequency_hz}Hz`)
       }
     }
   }
 
   public getEqBandByValue(index: number): BandName {
     const value = index < 1000 ? `${index}Hz` : `${index / 1000}kHz`
-    return EQ_BANDS[value]
+    return EQ_BANDS[value as keyof typeof EQ_BANDS] as BandName
   }
 
   private eqEnabled() {
@@ -90,7 +59,7 @@ export class PipeWireEqualizer {
       logger.trace(" eqcommand =>   ", command)
       return execSync(command, { encoding: "utf-8", stdio: "pipe" }).trim()
     } catch (error) {
-      logger.error(`\n🚨 Failed to execute command: ${command}`)
+      logger.error(`\n🚨 Failed to execute command: ${command}`, error)
       throw new Error(`Command failed.`)
     }
   }
@@ -114,29 +83,37 @@ export class PipeWireEqualizer {
   }
 
   public getControlValue<T>(controlName: string): T {
-    if (!this.eqEnabled()) {
-      return null
+    if (!this.eqEnabled() || !this.nodeId) {
+      return null as unknown as T
     }
     try {
       const stdout = execSync(`pw-dump ${this.nodeId}`)
       const dump = JSON.parse(stdout.toString())
-      const propsParam = dump[0].info.params.Props.find((p: any) => p.params.includes(controlName))
+
+      if (!dump[0] || !dump[0].info || !dump[0].info.params || !dump[0].info.params.Props) {
+        logger.error(`Error: Dump structure invalid for Node ${this.nodeId}.`)
+        return null as unknown as T
+      }
+
+      const propsParam = dump[0].info.params.Props.find(
+        (p: any) => p.params && p.params.includes(controlName),
+      )
+
       if (!propsParam) {
-        logger.error(`Error: Could not find 'Props' parameter for Node ${this.nodeId}.`)
-        return null
+        logger.error(
+          `Error: Could not find control '${controlName}' in 'Props' parameters for Node ${this.nodeId}.`,
+        )
+        return null as unknown as T
       }
 
-      const index = propsParam.params.indexOf(controlName)
-      if (index < 0) {
-        logger.error(`Error: Could not find dynamic 'params' array for Node ${this.nodeId}.`)
-        return null
-      }
+      const paramsArray = propsParam.params
+      const index = paramsArray.indexOf(controlName)
 
-      const parameterValue = propsParam.params[index + 1]
+      const parameterValue = paramsArray[index + 1]
       return parameterValue as unknown as T
     } catch (error) {
       logger.error(`Failed to execute pw-dump or parse output for Node ${this.nodeId}:`, error)
-      return null
+      return null as unknown as T
     }
   }
 
@@ -145,16 +122,20 @@ export class PipeWireEqualizer {
       return 0
     }
     const controlName = EQ_BANDS[band]
-    return this.getControlValue<number>(controlName)
+    const value = this.getControlValue<number>(controlName)
+    return value !== null && !isNaN(Number(value)) ? Number(value) : 0
   }
 
   public setProperty(band: BandName, prop: number | boolean) {
+    if (!this.nodeId) return
+
     const controlName = EQ_BANDS[band]
-    const value = parseFloat(prop.toString()).toFixed(2)
+    const value =
+      typeof prop === "number" ? parseFloat(prop.toString()).toFixed(2) : prop.toString()
 
     let command = `pw-cli set-param ${this.nodeId} Props '{params = ["${controlName}" ${value}]}'`
 
-    if (masterProps.includes(band)) {
+    if (masterProps.includes(band as string)) {
       command = `pw-cli set-param ${this.nodeId} Node:master_control ${controlName} ${value}`
     }
 
@@ -187,12 +168,13 @@ export class PipeWireEqualizer {
 
   public resetSettings(value: number) {
     if (!this.eqEnabled()) {
-      return 0
+      return this.getCurrentSettings()
     }
     const bands: BandName[] = Object.keys(EQ_BANDS) as BandName[]
-    console.log(value)
+
+    const resetValue = value ?? 0
     for (const band of bands) {
-      this.setProperty(band, value ?? 0)
+      this.setProperty(band, resetValue)
     }
     return this.getCurrentSettings()
   }

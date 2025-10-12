@@ -1,5 +1,5 @@
 import { logger } from "@/core/logger"
-import { exec } from "child_process"
+import { exec, ExecException } from "child_process"
 import { promisify } from "util"
 import { ApplicationStreamMap, AudioSink, AudioStream } from "./types"
 
@@ -8,22 +8,28 @@ const execPromise = promisify(exec)
 export class PipeWireRouter {
   private async executeCommand(command: string): Promise<string> {
     try {
-      const { stdout } = await execPromise(command)
+      const { stdout, stderr } = await execPromise(command)
+      if (stderr) {
+        logger.warn(`pactl/wpctl command produced stderr for: ${command}\nStderr: ${stderr.trim()}`)
+      }
       return stdout.trim()
     } catch (error) {
-      logger.error(`Error executing command: ${command}`)
-      throw new Error(`Shell command failed: ${error}`)
+      const err = error as ExecException
+      logger.error(`Error executing command: ${command}`, error)
+      throw new Error(`Shell command failed: ${err.message}`)
     }
   }
 
   public async getDefaultSinkName(): Promise<string> {
     let defaultSinkName = ""
     try {
-      defaultSinkName = await this.executeCommand(
-        'pactl info | grep "Default Sink:" | awk "{print $3}"',
-      )
-    } catch (e) {}
-    return defaultSinkName.replaceAll("Default Sink:", "").trim()
+      const rawOutput = await this.executeCommand('pactl info | grep "Default Sink:"')
+      const nameMatch = rawOutput.match(/Default Sink:\s+(.+)/)
+      defaultSinkName = nameMatch ? nameMatch[1].trim() : ""
+    } catch (e) {
+      logger.warn("Could not retrieve default sink name using pactl info.", e)
+    }
+    return defaultSinkName
   }
 
   public async listSinks(): Promise<AudioSink[]> {
@@ -34,15 +40,15 @@ export class PipeWireRouter {
       .split("\n")
       .filter((line) => line.trim() !== "")
       .map((line) => {
-        const parts = line.split("\t")
+        const parts = line.split(/\s{2,}|\t/)
         const id = parseInt(parts[0], 10)
-        const name = parts[1]
-        const description = parts.length > 3 ? parts[3] : name // Use name if description is missing
+        const name = parts[1] || `sink-${id}`
+        const description = parts.length > 3 ? parts[3] : name
 
         return {
           id,
           name,
-          description: description.replace("module-alsa-card.c", "").trim(), // Clean up description
+          description: description.replace("module-alsa-card.c", "").trim(),
           isDefault: name === defaultSinkName,
         }
       })
