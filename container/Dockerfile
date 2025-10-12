@@ -70,7 +70,8 @@ ARG BUILD_CONFIG
 ARG DATE=""
 ARG VERSION=""
 ENV MIXERDESK_BASE=/local/mixerdesk
-RUN mkdir -p $MIXERDESK_BASE
+ENV IR_RESPONSE_BASE=/local/mixerdesk/ir-responses
+RUN mkdir -p $MIXERDESK_BASE $IR_RESPONSE_BASE
 
 COPY --from=build /app/ ${APP_BASE}
 COPY --from=build /srv/ /srv/
