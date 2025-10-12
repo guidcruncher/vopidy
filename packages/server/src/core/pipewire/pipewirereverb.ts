@@ -11,7 +11,7 @@ export class PipewireReverbController {
   private nodeId: string = ""
 
   constructor() {
-    this.nodeId = findNodeId(FILTER_CHAIN_NODE_DESCRIPTION)
+    this.nodeId = this.findNodeId(FILTER_CHAIN_NODE_DESCRIPTION)
   }
 
   private executeCommandSync(command: string): string {
@@ -35,14 +35,14 @@ export class PipewireReverbController {
     }
   }
 
-  public findNodeId(description: string): Promise<string> {
+  public findNodeId(description: string): string {
     logger.log(`Searching for node with description: "${description}"...`)
 
     // Use pw-dump to get a JSON dump and filter for the description
-    const dump = executeCommandSync(
+    const dump = this.executeCommandSync(
       `pw-dump | jq '.[] | select(.info.props."node.description" == "${description}") | .id'`,
     )
-    const nodeId = dump.stdout.trim().replace(/"/g, "")
+    const nodeId = dump.toString().trim().replace(/"/g, "")
 
     if (!nodeId) {
       logger.error(
@@ -61,8 +61,8 @@ export class PipewireReverbController {
     logger.log(`Attempting to change convolver gain to ${newGain}...`)
 
     try {
-      const command = `set ${nodeId} filter.config '{ "convolver": { "control": { "gain": ${newGain} } } }'`
-      await runPwCli(`metadata ${command}`)
+      const command = `set ${this.nodeId} filter.config '{ "convolver": { "control": { "gain": ${newGain} } } }'`
+      await this.runPwCli(`metadata ${command}`)
       logger.log(`Successfully set convolver gain to ${newGain}.`)
     } catch (e) {
       // Fallback or warning if the direct metadata approach fails
@@ -76,8 +76,8 @@ export class PipewireReverbController {
   public async changeConvolverDelay(newDelay: number): Promise<void> {
     logger.log(`Attempting to change convolver delay to ${newDelay}...`)
     try {
-      const command = `set ${nodeId} filter.config '{ "convolver": { "control": { "delay": ${newDelay} } } }'`
-      await runPwCli(`metadata ${command}`)
+      const command = `set ${this.nodeId} filter.config '{ "convolver": { "control": { "delay": ${newDelay} } } }'`
+      await this.runPwCli(`metadata ${command}`)
       logger.log(`Successfully set convolver delay to ${newDelay}.`)
     } catch (e) {
       // Fallback or warning if the direct metadata approach fails
@@ -91,8 +91,8 @@ export class PipewireReverbController {
   public async changeIR(filename: string): Promise<void> {
     logger.log(`Attempting to change convolver IR file to ${filename}...`)
     try {
-      const command = `set ${nodeId} filter.config '{ "convolver": { "control": { "filename": '${filename}' } } }'`
-      await runPwCli(`metadata ${command}`)
+      const command = `set ${this.nodeId} filter.config '{ "convolver": { "control": { "filename": '${filename}' } } }'`
+      await this.runPwCli(`metadata ${command}`)
       logger.log(`Successfully set convolver IR file to ${filename}.`)
     } catch (e) {
       // Fallback or warning if the direct metadata approach fails
@@ -104,14 +104,14 @@ export class PipewireReverbController {
   }
 
   public async disableFilter(filename: string): Promise<void> {
-    const filename = `${process.env.IR_RESPONSE_BASE}/bypass.wav`
-    await this.changeGain(nodeId, 1)
-    await this.changeIR(filename)
+    const filepath = `${process.env.IR_RESPONSE_BASE}/bypass.wav`
+    await this.changeGain( 1)
+    await this.changeIR(filepath)
   }
 
   public async enableFilter(filename: string): Promise<void> {
-    const filename = `${process.env.IR_RESPONSE_BASE}/${filename}`
-    await this.changeGain(nodeId, 1)
-    await this.changeIR(filename)
+    const filepath = `${process.env.IR_RESPONSE_BASE}/${filename}`
+    await this.changeGain( 1)
+    await this.changeIR(filepath)
   }
 }
