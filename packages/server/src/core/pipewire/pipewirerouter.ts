@@ -1,29 +1,16 @@
 import { logger } from "@/core/logger"
-import { exec, ExecException } from "child_process"
+import { exec } from "child_process"
 import { promisify } from "util"
 import { ApplicationStreamMap, AudioSink, AudioStream } from "./types"
+import { executeCommand } from "./utils"
 
 const execPromise = promisify(exec)
 
 export class PipeWireRouter {
-  private async executeCommand(command: string): Promise<string> {
-    try {
-      const { stdout, stderr } = await execPromise(command)
-      if (stderr) {
-        logger.warn(`pactl/wpctl command produced stderr for: ${command}\nStderr: ${stderr.trim()}`)
-      }
-      return stdout.trim()
-    } catch (error) {
-      const err = error as ExecException
-      logger.error(`Error executing command: ${command}`, error)
-      throw new Error(`Shell command failed: ${err.message}`)
-    }
-  }
-
   public async getDefaultSinkName(): Promise<string> {
     let defaultSinkName = ""
     try {
-      const rawOutput = await this.executeCommand('pactl info | grep "Default Sink:"')
+      const rawOutput = await executeCommand('pactl info | grep "Default Sink:"')
       const nameMatch = rawOutput.match(/Default Sink:\s+(.+)/)
       defaultSinkName = nameMatch ? nameMatch[1].trim() : ""
     } catch (e) {
@@ -33,7 +20,7 @@ export class PipeWireRouter {
   }
 
   public async listSinks(): Promise<AudioSink[]> {
-    const stdout = await this.executeCommand("pactl list short sinks")
+    const stdout = await executeCommand("pactl list short sinks")
 
     let defaultSinkName = await this.getDefaultSinkName()
     return stdout
@@ -55,7 +42,7 @@ export class PipeWireRouter {
   }
 
   public async listActiveStreams(): Promise<AudioStream[]> {
-    const stdout = await this.executeCommand("pactl list sink-inputs")
+    const stdout = await executeCommand("pactl list sink-inputs")
     const streams: AudioStream[] = []
     let currentStream: Partial<AudioStream> = {}
 
@@ -123,7 +110,7 @@ export class PipeWireRouter {
     const command = `pactl move-sink-input ${streamId} ${targetSinkName}`
     logger.trace(`Executing: ${command}`)
 
-    await this.executeCommand(command)
+    await executeCommand(command)
     logger.trace(`✅ Successfully moved stream ID ${streamId} to sink ${targetSinkName}.`)
   }
 
@@ -137,7 +124,7 @@ export class PipeWireRouter {
     const command = `pactl move-sink-input ${streamId} ${defaultSinkAlias}`
     logger.trace(`Executing: ${command}`)
 
-    await this.executeCommand(command)
+    await executeCommand(command)
     logger.trace(
       `✅ Successfully moved stream ID ${streamId} to the current default sink (${defaultSinkAlias}).`,
     )
@@ -151,7 +138,7 @@ export class PipeWireRouter {
     const command = `wpctl set-default ${targetSinkId}`
     logger.trace(`Executing: ${command}`)
 
-    await this.executeCommand(command)
+    await executeCommand(command)
     logger.trace(`✅ Successfully set sink ID ${targetSinkId} as the new default.`)
   }
 }

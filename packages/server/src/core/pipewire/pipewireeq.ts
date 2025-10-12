@@ -1,6 +1,7 @@
 import { logger } from "@/core/logger"
 import { execSync } from "child_process"
 import { BandName, DISPLAY_BANDS, EQ_BANDS, EqualizerPreset } from "./types"
+import { executeCommandSync } from "./utils"
 
 const masterProps = ["Mute", "Input:", "Balance", "Output"]
 
@@ -54,22 +55,12 @@ export class PipeWireEqualizer {
     return true
   }
 
-  private executeCommand(command: string): string {
-    try {
-      logger.trace(" eqcommand =>   ", command)
-      return execSync(command, { encoding: "utf-8", stdio: "pipe" }).trim()
-    } catch (error) {
-      logger.error(`\n🚨 Failed to execute command: ${command}`, error)
-      throw new Error(`Command failed.`)
-    }
-  }
-
   private getNodeIdByName(name: string): string | null {
     if (!this.eqEnabled()) {
       return null
     }
 
-    const jsonOutput = this.executeCommand("pw-dump -N")
+    const jsonOutput = executeCommandSync("pw-dump -N")
     try {
       const graph = JSON.parse(jsonOutput)
       const targetNode = graph.find((obj: any) => {
@@ -140,7 +131,7 @@ export class PipeWireEqualizer {
     }
 
     logger.log(`   Setting ${band} to ${value} B...`)
-    this.executeCommand(command)
+    executeCommandSync(command)
   }
 
   public getCurrentSettings(): any {

@@ -1,6 +1,7 @@
 import { logger } from "@/core/logger"
-import { exec, ExecException, execSync } from "child_process"
+import { exec, ExecException } from "child_process"
 import { promisify } from "util"
+import { executeCommandSync } from "./utils"
 
 const execPromise = promisify(exec)
 
@@ -18,16 +19,6 @@ export class PipewireReverbController {
         "ReverbController could not initialize. Convolver filter chain may not be running.",
       )
       this.nodeId = ""
-    }
-  }
-
-  private executeCommandSync(command: string): string {
-    try {
-      logger.trace(" pw-dump/jq command =>   ", command)
-      return execSync(command, { encoding: "utf-8", stdio: "pipe" }).trim()
-    } catch (error) {
-      logger.error(`\n🚨 Failed to execute command: ${command}`, error)
-      throw new Error(`Command failed.`)
     }
   }
 
@@ -50,7 +41,7 @@ export class PipewireReverbController {
     logger.log(`Searching for node with description: "${description}"...`)
 
     const command = `pw-dump | jq -r '.[] | select(.info.props."node.description" == "${description}") | .id'`
-    const dump = this.executeCommandSync(command)
+    const dump = executeCommandSync(command)
 
     const nodeId = dump.toString().trim().replace(/"/g, "")
 
