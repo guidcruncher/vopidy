@@ -1,3 +1,10 @@
+export interface SpaControl {
+  index: number
+  id: number
+  type: "float"
+  value: number
+}
+
 export interface Band {
   frequency_hz: number
   gain_db: number

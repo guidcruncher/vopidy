@@ -138,7 +138,7 @@ export class PipeWire {
   }
 
   public async disableReverb(): Promise<void> {
-    return this.reverbController.disableFilter(filename)
+    return this.reverbController.disableFilter()
   }
 
   public async enableReverb(irFilename: string): Promise<void> {

@@ -1,120 +1,130 @@
 import { logger } from "@/core/logger"
-import { exec, ExecException } from "child_process"
+import { execSync, exec } from "child_process"
 import * as fs from "fs"
 import { promisify } from "util"
-import { executeCommandSync } from "./utils"
+import { SpaControl } from "./types"
 
 const execPromise = promisify(exec)
 
 const FILTER_CHAIN_NODE_DESCRIPTION = "10-Band EQ Sink"
 const CONVOLVER_NODE_NAME = "convolver"
 
+interface PipeWireObject {
+  id: number
+  type: string
+  info: {
+    props: {
+      "node.description"?: string
+      "media.name"?: string
+    }
+  }
+}
+
 export class PipewireReverbController {
-  private nodeId: string = ""
+  private nodeName: string = "convolver"
+  private nodeId: number | null
+  private controlParamId: number = 16 // SPA_PARAM_Route is 16
+
+  // Indices for the Convolver built-in filter controls
+  private static readonly GAIN_INDEX = 0
+  private static readonly DELAY_INDEX = 1
 
   constructor() {
-    try {
-      this.nodeId = this.findNodeId(FILTER_CHAIN_NODE_DESCRIPTION)
-    } catch (e) {
-      logger.error(
-        "ReverbController could not initialize. Convolver filter chain may not be running.",
-      )
-      this.nodeId = ""
-    }
+    this.nodeId = this.findConvolverNodeId()
   }
 
-  private async runPwCliMetadata(command: string): Promise<string> {
-    const cliCommand = `pw-metadata ${command}`
+  private findConvolverNodeId(): number | null {
+    logger.log(`Searching for PipeWire node with name: "${this.nodeName}"...`)
+    let stdout: string
     try {
-      const { stdout, stderr } = await execPromise(cliCommand)
-      if (stderr) {
-        logger.warn(`pw-cli command produced stderr: ${cliCommand}\nStderr: ${stderr.trim()}`)
-      }
-      return stdout.trim()
+      // Execute the 'pw-dump' command and capture its JSON output
+      stdout = execSync("pw-dump").toString()
     } catch (error) {
-      const err = error as ExecException
-      logger.error(`Error executing: ${cliCommand}\n`, err)
-      throw new Error(`PipeWire CLI command failed: ${err.message}`)
+      logger.error("Error executing 'pw-dump'. Is PipeWire running?")
+      logger.error(error)
+      return null
     }
-  }
 
-  public findNodeId(description: string): string {
-    logger.log(`Searching for node with description: "${description}"...`)
+    let pwObjects: PipeWireObject[]
+    try {
+      // Parse the massive JSON output array
+      pwObjects = JSON.parse(stdout)
+    } catch (error) {
+      logger.error("Error parsing JSON output from 'pw-dump'. The output may be corrupted.")
+      logger.error(error)
+      return null
+    }
 
-    const command = `pw-dump | jq -r '.[] | select(.info.props."node.description" == "${description}") | .id'`
-    const dump = executeCommandSync(command)
+    // Iterate through all objects to find the one matching the node name
+    for (const obj of pwObjects) {
+      // 1. Check if it is a Node interface object
+      if (obj.type === "PipeWire:Interface:Node" && obj.info && obj.info.props) {
+        const props = obj.info.props
 
-    let nodeId = undefined
-    const nodeIds = dump.toString().trim().replace(/"/g, "").split("\n")
-    if (nodeIds.length > 0) {
-      if (nodeIds.length > 1) {
-        nodeId = nodeIds[nodeIds.length - 1]
-      } else {
-        nodeId = nodeIds[0]
+        // 2. Check if the description or media name matches our target name
+        if (props["node.description"] === this.nodeName || props["media.name"] === this.nodeName) {
+          logger.log(`Found node ID: ${obj.id}.`)
+          return obj.id
+        }
       }
     }
 
-    if (!nodeId || isNaN(parseInt(nodeId, 10))) {
-      logger.error(
-        `PipeWire Node ID not found for description: ${description}. Is the filter chain running?`,
-      )
-      throw new Error(
-        `PipeWire Node ID not found for description: ${description}. Is the filter chain running?`,
-      )
-    }
-
-    logger.log(`Found Node ID: ${nodeId}`)
-    return nodeId
+    logger.log(`Node with name "${this.nodeName}" not found. Check the configuration file.`)
+    return null
   }
 
-  private async setConvolverControlProperty(
-    property: "gain" | "delay" | "filename",
-    value: number | string,
-  ): Promise<void> {
-    if (!this.nodeId) {
-      throw new Error("PipeWire Node ID is not initialized. Cannot set convolver property.")
+  private formatControl(index: number, value: number): string {
+    const controlObj: SpaControl = {
+      index: index,
+      id: index, // id often matches index for simple controls
+      type: "float",
+      value: value,
     }
-
-    const formattedValue = typeof value === "string" ? `'${value}'` : value
-    const command = `set ${this.nodeId} filter.config '{ "convolver": { "control": { "${property}": ${formattedValue} } } }'`
-
-    try {
-      await this.runPwCliMetadata(command)
-    } catch (e) {
-      logger.warn(
-        "Direct metadata control failed. This feature might not be fully exposed for this filter property in your PipeWire version.",
-        e,
-      )
-      throw e
-    }
+    // Convert to a single-line string with no spaces for safe shell execution (best practice)
+    return `'${JSON.stringify(controlObj).replace(/"/g, "")}'`
   }
 
-  public async changeGain(newGain: number): Promise<void> {
-    logger.log(`Attempting to change convolver gain to ${newGain}...`)
-    await this.setConvolverControlProperty("gain", newGain)
-    logger.log(`Successfully set convolver gain to ${newGain}.`)
+  public async changeGain(gain: number): Promise<void> {
+    if (this.nodeId === null) {
+	return
+    }
+
+    const spaControlString = this.formatControl(PipewireReverbController.GAIN_INDEX, gain)
+
+    // Command format: pw-cli s <Node ID> <Param ID for Control> <SPA JSON>
+    await execPromise(`pw-cli s ${this.nodeId} ${this.controlParamId} ${spaControlString}`)
   }
 
-  public async changeConvolverDelay(newDelay: number): Promise<void> {
-    logger.log(`Attempting to change convolver delay to ${newDelay}...`)
-    await this.setConvolverControlProperty("delay", newDelay)
-    logger.log(`Successfully set convolver delay to ${newDelay}.`)
+  public async changeConvolverDelay(delay: number): Promise<void> {
+    if (this.nodeId === null) {
+	return
+    }
+
+    const spaControlString = this.formatControl(PipewireReverbController.DELAY_INDEX, delay)
+    await execPromise(`pw-cli s ${this.nodeId} ${this.controlParamId} ${spaControlString}`)
   }
 
   public async changeIR(filename: string): Promise<void> {
     logger.log(`Attempting to change convolver IR file to ${filename}...`)
-    await this.setConvolverControlProperty("filename", filename)
-    logger.log(`Successfully set convolver IR file to ${filename}.`)
+    try {
+      process.env.IR_RESPONSE_FILLENAME = `${filename}`
+      const stdOut = execSync(`/app/startup/300-pipewire.sh "${filename}"`, {
+        env: process.env
+      })
+      logger.log(`Successfully set convolver IR file to ${filename}.`)
+    } catch (err) {
+      logger.error("Error changing IR Response file", err)
+      throw err
+    }
   }
 
   public async disableFilter(): Promise<void> {
-    const filepath = `${process.env.IR_RESPONSE_BASE}/bypass.wav`
+    const filepath = `bypass.wav`
     await this.changeGain(1)
     await this.changeIR(filepath)
   }
-
   public async enableFilter(filename: string): Promise<void> {
-    const filepath = `${process.env.IR_RESPONSE_BASE}/${filename}`
+    const filepath = `${filename}`
     await this.changeGain(1)
     await this.changeIR(filepath)
   }
