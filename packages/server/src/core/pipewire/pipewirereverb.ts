@@ -2,6 +2,7 @@ import { logger } from "@/core/logger"
 import { exec, ExecException } from "child_process"
 import { promisify } from "util"
 import { executeCommandSync } from "./utils"
+import * as fs from "fs"
 
 const execPromise = promisify(exec)
 
