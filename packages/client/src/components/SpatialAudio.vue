@@ -1,13 +1,13 @@
 <template>
-    <v-list lines="two">
-      <v-list-item
-        v-for="item in presets"
-        :title="item.equalizerPresetName"
-        :key="item.fileName"
-        @click="loadPreset(item)"
-      >
-      </v-list-item>
-    </v-list>
+  <v-list lines="two">
+    <v-list-item
+      v-for="item in presets"
+      :title="item.title"
+      :key="item.fileName"
+      @click="loadPreset(item)"
+    >
+    </v-list-item>
+  </v-list>
 </template>
 <style></style>
 <script lang="ts" setup></script>
@@ -25,7 +25,7 @@ export default {
     }
   },
   mounted() {
-    vopidy('mixer.equaliser-listpresets', {}).then((res) => {
+    vopidy('mixer.convolver-list', {}).then((res) => {
       if (res.result) {
         this.presets = res.result
       }
@@ -33,6 +33,11 @@ export default {
   },
   beforeUnmount() {},
   methods: {
+    loadPreset(item) {
+      vopidy('mixer.convolver_apply', { filename: item.filename, gain: 1 }).then((res) => {
+        alert(res)
+      })
+    },
   },
 }
 </script>

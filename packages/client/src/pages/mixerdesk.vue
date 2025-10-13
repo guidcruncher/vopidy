@@ -24,9 +24,9 @@
         <v-tabs-window-item value="equaliser">
           <Equaliser :locked="locked" />
         </v-tabs-window-item>
-<v-tabs-window-item value="spatial">
- <SpatialAudio :locked="locked" />
- </v-tabs-window-item>
+        <v-tabs-window-item value="spatial">
+          <SpatialAudio :locked="locked" />
+        </v-tabs-window-item>
         <v-tabs-window-item value="volume">
           <VolumeMixer :locked="locked" />
           <SnapcastVolume :locked="locked" />
