@@ -98,7 +98,7 @@ export class PipewireReverbController {
     logger.log(`Successfully set convolver IR file to ${filename}.`)
   }
 
-  public async disableFilter(filename: string): Promise<void> {
+  public async disableFilter(): Promise<void> {
     const filepath = `${process.env.IR_RESPONSE_BASE}/bypass.wav`
     await this.changeGain(1)
     await this.changeIR(filepath)
@@ -108,5 +108,11 @@ export class PipewireReverbController {
     const filepath = `${process.env.IR_RESPONSE_BASE}/${filename}`
     await this.changeGain(1)
     await this.changeIR(filepath)
+  }
+
+  public getConvolverPresets() {
+    const filepath = `${process.env.IR_RESPONSE_BASE}/00-index.json`
+    const json = fs.readFileSync(filepath, "utf8")
+    return JSON.parse(json)
   }
 }

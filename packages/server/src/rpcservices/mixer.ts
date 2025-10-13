@@ -4,6 +4,21 @@ import { EqualizerPresetManager } from "@/core/pipewire/presetmanager"
 import { Mixer } from "@/services/mixer/"
 
 class MixerService implements RpcService {
+  public async convolver_disable() {
+    const equal = new PipeWire()
+    return equal.disableReverb()
+  }
+
+  public async convolver_apply(value: any) {
+    const equal = new PipeWire()
+    return equal.enableReverb(value.filename)
+  }
+
+  public convolver_list() {
+    const equal = new PipeWire()
+    return equal.getConvolverPresets()
+  }
+
   public async equaliser_get() {
     const equal = new PipeWire()
     return equal.getCurrentEq()

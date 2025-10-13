@@ -137,7 +137,7 @@ export class PipeWire {
     return this.reverbController.changeIR(filename)
   }
 
-  public async disableReverb(filename: string): Promise<void> {
+  public async disableReverb(): Promise<void> {
     return this.reverbController.disableFilter(filename)
   }
 
@@ -155,5 +155,9 @@ export class PipeWire {
 
   public async writeEqPresetFile(filename: string, preset: EqualizerPreset): Promise<void> {
     return this.presetManager.writePresetFile(filename, preset)
+  }
+
+  public getConvolverPresets() {
+    return this.reverbController.getConvolverPresets()
   }
 }

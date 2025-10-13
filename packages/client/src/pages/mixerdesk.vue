@@ -15,6 +15,7 @@
   <v-card>
     <v-tabs v-model="tab">
       <v-tab value="equaliser">Equaliser</v-tab>
+      <v-tab value="spatial">Spatial Audio</v-tab>
       <v-tab value="volume">Volume</v-tab>
     </v-tabs>
 
@@ -23,6 +24,9 @@
         <v-tabs-window-item value="equaliser">
           <Equaliser :locked="locked" />
         </v-tabs-window-item>
+<v-tabs-window-item value="spatial">
+ <SpatialAudio :locked="locked" />
+ </v-tabs-window-item>
         <v-tabs-window-item value="volume">
           <VolumeMixer :locked="locked" />
           <SnapcastVolume :locked="locked" />
