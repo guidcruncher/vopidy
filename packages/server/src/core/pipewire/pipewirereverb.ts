@@ -1,8 +1,8 @@
 import { logger } from "@/core/logger"
 import { exec, ExecException } from "child_process"
+import * as fs from "fs"
 import { promisify } from "util"
 import { executeCommandSync } from "./utils"
-import * as fs from "fs"
 
 const execPromise = promisify(exec)
 
@@ -24,7 +24,7 @@ export class PipewireReverbController {
   }
 
   private async runPwCliMetadata(command: string): Promise<string> {
-    const cliCommand = `pw-cli metadata ${command}`
+    const cliCommand = `pw-metadata ${command}`
     try {
       const { stdout, stderr } = await execPromise(cliCommand)
       if (stderr) {
@@ -44,7 +44,15 @@ export class PipewireReverbController {
     const command = `pw-dump | jq -r '.[] | select(.info.props."node.description" == "${description}") | .id'`
     const dump = executeCommandSync(command)
 
-    const nodeId = dump.toString().trim().replace(/"/g, "")
+    let nodeId = undefined
+    const nodeIds = dump.toString().trim().replace(/"/g, "").split("\n")
+    if (nodeIds.length > 0) {
+      if (nodeIds.length > 1) {
+        nodeId = nodeIds[nodeIds.length - 1]
+      } else {
+        nodeId = nodeIds[0]
+      }
+    }
 
     if (!nodeId || isNaN(parseInt(nodeId, 10))) {
       logger.error(
