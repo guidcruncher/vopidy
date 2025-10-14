@@ -69,7 +69,9 @@ export default {
         filename: item.filename,
         gain: this.gain,
         delay: this.delay,
-      }).then((res) => { alert(res) })
+      }).then((res) => {
+        alert(res)
+      })
     },
     setProps() {
       vopidy('mixer.convolver_applyprops', { gain: this.gain, delay: this.delay }).then((res) => {})
