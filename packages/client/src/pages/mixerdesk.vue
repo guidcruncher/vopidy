@@ -15,7 +15,6 @@
   <v-card>
     <v-tabs v-model="tab">
       <v-tab value="equaliser">Equaliser</v-tab>
-      <v-tab value="spatial">Spatial Audio</v-tab>
       <v-tab value="volume">Volume</v-tab>
     </v-tabs>
 

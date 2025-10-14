@@ -33,7 +33,7 @@ npm install -g pm2 node-gyp
 EOF
 
 ENV MIXERDESK_BASE=/local/mixerdesk 
-ENV IR_RESPONSE_BASE=/local/mixerdesk/ir-responses
+ENV IR_RESPONSE_BASE=/local/mixerdesk/impulse-responses
 RUN mkdir -p $MIXERDESK_BASE $IR_RESPONSE_BASE
 
 COPY ./container/shared/mixerdesk/ ${MIXERDESK_BASE}
