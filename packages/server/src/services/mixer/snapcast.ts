@@ -1,21 +1,13 @@
 import { JsonRpcClient } from "@/core/jsonrpc/jsonrpcclient"
-import { RpcService, ServiceModule } from "@/core/jsonrpc/types"
 
-class SnapcastService implements RpcService {
+export class SnapcastService {
   private client: JsonRpcClient
 
   constructor() {
     this.client = new JsonRpcClient("http://127.0.0.1:1780/jsonrpc")
   }
 
-  public async setclientname(id: string, name: string) {
-    return await this.client.call("Client.SetName", {
-      id: id,
-      name: name,
-    })
-  }
-
-  public async setvolume(id: string, level: number, muted: boolean) {
+  private async setClientVolume(id: string, level: number, muted: boolean) {
     if (!level) {
       return await this.client.call("Client.SetVolume", {
         id: id,
@@ -29,19 +21,34 @@ class SnapcastService implements RpcService {
     }
   }
 
-  public async setmastervolume(level: number, muted: boolean) {
-    const res = await this.client.call("Server.GetStatus")
+  public async getVolume(): Promise<number> {
+    return (await this.getMasterVolume()).level
+  }
 
+  public async setVolume(percentage: number): Promise<void> {
+    return this.setMasterVolume(percentage, false)
+  }
+
+  public async mute(): Promise<void> {
+    return this.setMasterVolume(undefined, true)
+  }
+
+  public async unmute(): Promise<void> {
+    return this.setMasterVolume(undefined, false)
+  }
+
+  public async setMasterVolume(level: number, muted: boolean) {
+    const res = await this.client.call("Server.GetStatus")
     for (let i = 0; i < res.server.groups.length; i++) {
       const clients = res.server.groups[i].clients
       for (let j = 0; j < clients.length; j++) {
         const client = clients[j]
-        await this.setvolume(client.id, level, muted)
+        await this.setClientVolume(client.id, level, muted)
       }
     }
   }
 
-  public async getmastervolume() {
+  public async getMasterVolume() {
     const res = await this.client.call("Server.GetStatus")
     let data = { level: 0, muted: false }
 
@@ -55,15 +62,4 @@ class SnapcastService implements RpcService {
     }
     return data
   }
-
-  public async status() {
-    const res = await this.client.call("Server.GetStatus")
-    return res
-  }
 }
-
-export const namespace = "snapcast"
-export const service = new SnapcastService()
-
-const module: ServiceModule = { namespace, service }
-export default module

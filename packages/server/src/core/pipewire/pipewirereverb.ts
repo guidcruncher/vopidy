@@ -1,5 +1,5 @@
 import { logger } from "@/core/logger"
-import { execSync, exec } from "child_process"
+import { exec, execSync } from "child_process"
 import * as fs from "fs"
 import { promisify } from "util"
 import { SpaControl } from "./types"
@@ -86,7 +86,7 @@ export class PipewireReverbController {
 
   public async changeGain(gain: number): Promise<void> {
     if (this.nodeId === null) {
-	return
+      return
     }
 
     const spaControlString = this.formatControl(PipewireReverbController.GAIN_INDEX, gain)
@@ -97,7 +97,7 @@ export class PipewireReverbController {
 
   public async changeConvolverDelay(delay: number): Promise<void> {
     if (this.nodeId === null) {
-	return
+      return
     }
 
     const spaControlString = this.formatControl(PipewireReverbController.DELAY_INDEX, delay)
@@ -109,7 +109,7 @@ export class PipewireReverbController {
     try {
       process.env.IR_RESPONSE_FILLENAME = `${filename}`
       const stdOut = execSync(`/app/startup/300-pipewire.sh "${filename}"`, {
-        env: process.env
+        env: process.env,
       })
       logger.log(`Successfully set convolver IR file to ${filename}.`)
     } catch (err) {
