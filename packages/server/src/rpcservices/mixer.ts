@@ -9,9 +9,9 @@ class MixerService implements RpcService {
     return equal.disableReverb()
   }
 
-  public async convolver_apply(filename: string) {
+  public async convolver_apply(filename: string, gain: number, delay: number) {
     const equal = new PipeWire()
-    return equal.enableReverb(filename)
+    return equal.loadReverbIR(filename, gain, delay)
   }
 
   public async convolver_applyprops(gain: number, delay: number) {

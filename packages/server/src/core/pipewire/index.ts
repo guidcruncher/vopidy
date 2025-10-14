@@ -133,8 +133,8 @@ export class PipeWire {
     return this.reverbController.changeConvolverDelay(delay)
   }
 
-  public async loadReverbIR(filename: string): Promise<void> {
-    return this.reverbController.changeIR(filename)
+  public async loadReverbIR(filename: string, gain: number, delay: number): Promise<void> {
+    return this.reverbController.changeIR(filename, gain, delay)
   }
 
   public async disableReverb(): Promise<void> {

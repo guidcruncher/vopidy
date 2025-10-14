@@ -104,11 +104,11 @@ export class PipewireReverbController {
     await execPromise(`pw-cli s ${this.nodeId} ${this.controlParamId} ${spaControlString}`)
   }
 
-  public async changeIR(filename: string): Promise<void> {
+  public async changeIR(filename: string, gain: number, delay: number): Promise<void> {
     logger.log(`Attempting to change convolver IR file to ${filename}...`)
     try {
       process.env.IR_RESPONSE_FILLENAME = `${filename}`
-      const stdOut = execSync(`/app/startup/300-pipewire.sh "${filename}"`, {
+      const stdOut = execSync(`/usr/local/bin/reloadpipewire.sh "${filename}" ${gain} ${delay}`, {
         env: process.env,
       })
       logger.log(`Successfully set convolver IR file to ${filename}.`)
@@ -120,13 +120,11 @@ export class PipewireReverbController {
 
   public async disableFilter(): Promise<void> {
     const filepath = `bypass.wav`
-    await this.changeGain(1)
-    await this.changeIR(filepath)
+    await this.changeIR(filepath, 1, 0)
   }
   public async enableFilter(filename: string): Promise<void> {
     const filepath = `${filename}`
-    await this.changeGain(1)
-    await this.changeIR(filepath)
+    await this.changeIR(filepath, 0.95, 0)
   }
 
   public getConvolverPresets() {

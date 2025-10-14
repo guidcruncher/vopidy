@@ -66,6 +66,7 @@ export interface PipewireDump {
 
 export class Eq10Parameters {
   balance: number
+  eq_preamp: number
   band_0_gain: number
   band_1_gain: number
   band_2_gain: number
@@ -100,6 +101,7 @@ export interface EasyEffectsPreset {
 }
 
 export const EQ_BANDS = {
+  "Pre-Amp": "eq_preamp:Gain",
   "31Hz": "eq_band_1:Gain",
   "63Hz": "eq_band_2:Gain",
   "125Hz": "eq_band_3:Gain",
@@ -113,6 +115,7 @@ export const EQ_BANDS = {
 } as const
 
 export const DISPLAY_BANDS = {
+  "Pre-Amp": "eq_preamp:Gain",
   "31Hz": "eq_band_1:Gain",
   "63Hz": "eq_band_2:Gain",
   "125Hz": "eq_band_3:Gain",

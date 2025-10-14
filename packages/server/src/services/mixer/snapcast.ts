@@ -62,9 +62,10 @@ export class SnapcastService {
       for (let j = 0; j < clients.length; j++) {
         const client = clients[j]
         data.muted = client.config.volume.muted
-        data.level == client.config.volume.level
+        data.level = client.config.volume.percent
       }
     }
+
     return data
   }
 }
