@@ -9,6 +9,7 @@ import { Streamer } from "@/services/streamer/"
 import { TuneIn } from "@/services/tunein/"
 import { DeviceMapper } from "./devicemapper"
 import { PlaybackStateStore } from "./playbackstatestore"
+import { VolumeController } from "./volumecontroller"
 
 export class PlaybackController {
   public static getMpdClient(): IMediaPlayer {
@@ -119,7 +120,6 @@ export class PlaybackController {
     const paClient = new PipeWire()
     const source = PlaybackStateStore.activeOutputDevice()
     const client = PlaybackController.getActiveDeviceClient(source)
-
     let res: any = { playing: false, source: "" }
 
     if (client) {
@@ -127,7 +127,7 @@ export class PlaybackController {
     }
 
     // Supplement status with volume/mute info from PipeWire
-    const paState = await paClient.getVolumeStatus()
+    const paState = await VolumeController.getVolumeStatus()
 
     if (res) {
       res.volume = paState.volume

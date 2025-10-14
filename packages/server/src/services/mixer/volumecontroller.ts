@@ -16,6 +16,11 @@ export class VolumeController {
     return await paClient.setVolume(volume)
   }
 
+  public static async getVolumeStatus() {
+    const paClient = VolumeController.getClient()
+    return await paClient.getVolumeStatus()
+  }
+
   public static async mute(): Promise<any> {
     const paClient = VolumeController.getClient()
     // Update state to muted (handled within setPlaybackState)

@@ -48,6 +48,11 @@ export class SnapcastService {
     }
   }
 
+  public async getVolumeStatus() {
+    const state = await this.getMasterVolume()
+    return { volume: state.level, isMuted: state.muted }
+  }
+
   public async getMasterVolume() {
     const res = await this.client.call("Server.GetStatus")
     let data = { level: 0, muted: false }

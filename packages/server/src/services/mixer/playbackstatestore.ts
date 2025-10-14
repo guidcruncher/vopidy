@@ -1,3 +1,4 @@
+import { logger } from "@/core/logger"
 import * as fs from "node:fs"
 import { PlaybackState } from "./playbackstate"
 
@@ -35,9 +36,13 @@ export class PlaybackStateStore {
       state.lastvolume = state.volume
     }
 
+    if (obj.volume) {
+      state.volume = obj.volume
+    }
+
     // Apply updates from the provided object
     Object.assign(state, obj)
-
+    logger.warn(state)
     PlaybackStateStore.savePlaybackState(state)
   }
 
