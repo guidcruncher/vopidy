@@ -3,7 +3,7 @@ export const config = {
     return `${window.location.protocol}//${window.location.host}/api`
   },
   wsBaseUrl: () => {
-    if (window.location.protocol == 'https') {
+    if (window.location.protocol == 'https:') {
       return `wss://${window.location.host}/ws`
     }
     return `ws://${window.location.host}/ws`
