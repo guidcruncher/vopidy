@@ -2,10 +2,7 @@ import { logger } from "@/core/logger"
 import { ProcessManager } from "@/core/processmanager"
 import { WsClientStore } from "@/core/wsclientstore"
 import { Mixer } from "@/services/mixer/"
-import { exec, spawn } from "child_process"
-import { promisify } from "util"
-
-const execPromise = promisify(exec)
+import { spawn } from "child_process"
 
 export class FFplayProcessManager {
   private proc: any = undefined
@@ -13,17 +10,6 @@ export class FFplayProcessManager {
   private isActive: boolean = false
   private isPaused: boolean = false
   private isStopped: boolean = false // Only used in original FFplay.shutdown()
-
-  public async playDetached(filename: string): Promise<any> {
-    const opts = ["-nodisp", "-autoexit", `"${filename}"`]
-    logger.debug("/usr/bin/ffplay " + opts.join(" "))
-
-    try {
-      return execPromise("/usr/bin/ffplay " + opts.join(" "))
-    } catch (err) {
-      logger.error("Error in FFplayProcessManager.play", err)
-    }
-  }
 
   public isPlayerActive(): boolean {
     return this.isActive
@@ -65,7 +51,7 @@ export class FFplayProcessManager {
 
   public async play(filename: string): Promise<void> {
     await this.stop()
-    const opts = ["-nodisp", "-autoexit", `"${filename}"`]
+    const opts = ["-nodisp", "-autoexit", filename]
     logger.debug("/usr/bin/ffplay " + opts.join(" "))
 
     try {
