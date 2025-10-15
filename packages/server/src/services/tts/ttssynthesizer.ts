@@ -7,12 +7,8 @@ export class TtsSynthesizer {
     params.append("ie", "UTF-8")
     params.append("q", text)
     params.append("tl", lang)
-    params.append("total", 1)
-    params.append("idx", 0)
-    params.append("textlen", text.length)
     params.append("client", "tw-ob")
-    params.append("prev", "input")
-    params.append("ttsspeed", 1)
+    params.append("rd", Math.floor(Math.random() * 50000000).toString())
     return host + "/translate_tts?" + params.toString()
   }
 }
