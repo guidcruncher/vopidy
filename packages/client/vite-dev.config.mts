@@ -104,6 +104,7 @@ export default defineConfig({
     watch: {
       usePolling: false
     },
+    allowedHosts: [ "0875ce890ad6.duckdns.org" ],
     port: 3003 ,
   },
   css: {
