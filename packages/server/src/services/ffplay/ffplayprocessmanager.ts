@@ -11,6 +11,17 @@ export class FFplayProcessManager {
   private isPaused: boolean = false
   private isStopped: boolean = false // Only used in original FFplay.shutdown()
 
+  public async playDetached(filename: string): Promise<void> {
+    const opts = ["-nodisp", "-autoexit", filename]
+    logger.debug("/usr/bin/ffplay " + opts.join(" "))
+
+    try {
+      this.proc = spawn("/usr/bin/ffplay", opts, { stdio: "ignore" })
+    } catch (err) {
+      logger.error("Error in FFplayProcessManager.play", err)
+    }
+  }
+
   public isPlayerActive(): boolean {
     return this.isActive
   }

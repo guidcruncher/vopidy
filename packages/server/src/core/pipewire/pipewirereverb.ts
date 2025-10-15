@@ -30,7 +30,7 @@ export class PipewireReverbController {
   private static readonly DELAY_INDEX = 1
 
   constructor() {
-//    this.nodeId = this.findConvolverNodeId()
+    //    this.nodeId = this.findConvolverNodeId()
   }
 
   private findConvolverNodeId(): number | null {

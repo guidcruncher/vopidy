@@ -16,7 +16,6 @@
     "@hono/node-server": "^1.19.5",
     "@hono/node-ws": "^1.2.0",
     "@hono/swagger-ui": "^0.5.2",
-    "google-tts-api": "^0.0.6",
     "hono": "^4.9.9",
     "htmlparser2": "^10.0.0",
     "m3u-parser-generator": "^5.0.2",
