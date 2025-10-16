@@ -1,10 +1,6 @@
 <template>
   <center>
-<div style="height:145px" >
-    <div >
-      <span /><img :src="status.track.image" style="height:145px"  />
-    </div>
-  </div>
+    <ScaledImage :src="status.track.image" size="xxl" padding="5" @click="viewDetail()" />
     <h2 v-if="status.track">{{ status.track.name }}</h2>
     <h3 v-if="status.track && status.track.nowplaying">
       {{ status.track.nowplaying.streamTitle }}

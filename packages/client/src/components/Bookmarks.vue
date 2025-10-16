@@ -4,12 +4,14 @@
       <v-slide-group show-arrows>
         <v-slide-group-item v-for="(item, index) in bookmarks" :key="item">
           <div class="pa-1">
-<div style="height:80px" @click="selectItem(item)" >
-    <div >
-      <span /><img :src="item.image" style="height:80px"  />
-    </div>
-  </div>
-             <center v-if="mode == 'editor'">
+            <ScaledImage
+              :src="item.image"
+              size="sm"
+              @click="selectItem(item)"
+              v-bind:responsive="false"
+              padding="1"
+            />
+            <center v-if="mode == 'editor'">
               <v-btn
                 @click="deleteItem(item)"
                 icon="mdi-delete-forever"

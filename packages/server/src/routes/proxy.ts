@@ -5,6 +5,11 @@ import * as fs from "fs"
 import { Hono } from "hono"
 import * as path from "path"
 
+import Module from "node:module"
+
+const require = Module.createRequire(import.meta.url)
+const sharp = require("sharp")
+
 const isImageCacheEnabled = () => {
   const cfg: Config = Config.load()
   return cfg.enableImageCache
@@ -14,7 +19,7 @@ export const proxyRoute = new Hono()
 
 proxyRoute.get("/", async (c) => {
   try {
-    let contenttype = ""
+    let contenttype = "image/webp"
     const url = Buffer.from(decodeURIComponent(c.req.query("u")), "base64").toString("ascii")
     let bytes = undefined
     const hash = crypto.createHash("sha256").update(url).digest("hex")
@@ -22,17 +27,18 @@ proxyRoute.get("/", async (c) => {
     if (isImageCacheEnabled()) {
       const cacheFile = path.join(process.env.VOPIDY_CACHE.toString() + "/", hash)
       if (fs.existsSync(cacheFile)) {
-        const json = JSON.parse(fs.readFileSync(cacheFile, "utf8"))
-        bytes = Buffer.from(json.b, "base64")
-        contenttype = json.c
+        bytes = fs.readFileSync(cacheFile)
       } else {
         const data = await fetch(url)
         if (data.ok) {
-          c.header("Content-Type", data.headers.get("Content-Type"))
-          contenttype = data.headers.get("Content-Type")
-          bytes = await data.bytes()
-          const value = { b: Buffer.from(bytes).toString("base64"), c: contenttype }
-          fs.writeFileSync(cacheFile, JSON.stringify(value))
+          const Sharp = new sharp(await data.bytes())
+            .resize(300, 300, { fit: "contain" })
+            .toFormat("webp")
+            .toBuffer()
+            .then((data) => {
+              fs.writeFileSync(cacheFile, data)
+              return c.body(data, { headers: { "Content-Type": "image/webp" } })
+            })
         } else {
           return c.notFound()
         }
@@ -40,17 +46,17 @@ proxyRoute.get("/", async (c) => {
     } else {
       const cdata = await fetch(url)
       if (cdata.ok) {
-        c.header("Content-Type", cdata.headers.get("Content-Type"))
-        contenttype = cdata.headers.get("Content-Type")
-        bytes = await cdata.bytes()
+        const Sharp = new sharp(await cdata.bytes())
+          .resize(300, 300, { fit: "contain" })
+          .toFormat("webp")
+          .toBuffer()
+          .then((data) => {
+            return c.body(data, { headers: { "Content-Type": "image/webp" } })
+          })
       } else {
         return c.notFound()
       }
     }
-
-    return c.body(bytes, {
-      headers: { "Content-Type": contenttype },
-    })
   } catch (err) {
     logger.error("Error in proxy", err)
     c.status(404)
