@@ -66,12 +66,11 @@
               @click="selectItem(item)"
               v-if="item.itemType == 'dir'"
             />
-            <ScaledImage
-              :src="item.image"
-              size="lg"
+           <img
+              src="/images/noimage.webp"
+              style="width: 150px; height: 150px"
               @click="selectItem(item)"
               v-if="item.itemType == 'file'"
-              v-bind:responsive="false"
             />
             <div
               @click="selectItem(item)"
