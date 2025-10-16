@@ -66,7 +66,7 @@
               @click="selectItem(item)"
               v-if="item.itemType == 'dir'"
             />
-           <img
+            <img
               src="/images/noimage.webp"
               style="width: 150px; height: 150px"
               @click="selectItem(item)"
