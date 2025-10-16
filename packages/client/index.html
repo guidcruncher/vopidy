@@ -23,6 +23,18 @@ value=JSON.stringify(args)
 }
 window._alert(value)
 })
+
+window.onerror = function(msg, url, line, col, error) {
+   var extra = !col ? '' : '\ncolumn: ' + col;
+   extra += !error ? '' : '\nerror: ' + error;
+
+   alert("Error: " + msg + "\nurl: " + url + "\nline: " + line + extra);
+
+   // TODO: Report this error via ajax so you can keep track
+   //       of what pages have JS issues
+
+   return suppressErrorAlert;
+};
 </script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js"></script>
     <script type="module" src="/src/main.ts"></script>

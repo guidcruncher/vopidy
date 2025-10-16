@@ -1,6 +1,6 @@
 <template>
   <div class="pa-2" v-if="canMix">
-<br/>
+    <br />
     <center>
       <v-slider
         min="0"

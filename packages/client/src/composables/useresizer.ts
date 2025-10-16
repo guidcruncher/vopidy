@@ -14,18 +14,24 @@ export function useResizer(target, heightOffset: number = 0) {
 
   function start(el) {
     return useResizeObserver(el, (entries) => {
-      const entry = entries[0]
-      let { w, h } = entry.contentRect
-      if (!h || h == 0) {
-        h = window.innerHeight
-      }
-      if (!w || w == 0) {
-        w = window.innerWidth
-      }
-      cols.value = Math.ceil(w / columnSize)
-      width.value = w.toString() + 'px'
-      height.value = (h - heightOffset).toString() + 'px'
-      emit('resized', { cols: cols.value, size: { width: width.value, height: height.value } })
+      window.requestAnimationFrame((): void | undefined => {
+        if (!Array.isArray(entries) || !entries.length) {
+          return
+        }
+
+        const entry = entries[0]
+        let { w, h } = entry.contentRect
+        if (!h || h == 0) {
+          h = window.innerHeight
+        }
+        if (!w || w == 0) {
+          w = window.innerWidth
+        }
+        cols.value = Math.ceil(w / columnSize)
+        width.value = w.toString() + 'px'
+        height.value = (h - heightOffset).toString() + 'px'
+        emit('resized', { cols: cols.value, size: { width: width.value, height: height.value } })
+      })
     })
   }
 
