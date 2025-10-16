@@ -26,10 +26,6 @@ export class FFplay implements IMediaPlayer {
 
   // --- IMediaPlayer Implementation (Proxy methods) ---
 
-  public async playDetached(filename: string): Promise<void> {
-    await FFplay.processManager.playDetached(filename)
-  }
-
   public async play(filename: string): Promise<MediaPlayerStatus> {
     await FFplay.processManager.play(filename)
     // getStatus now relies on the processManager state
