@@ -67,6 +67,7 @@ export default {
       }
       const params = new URLSearchParams()
       params.append('u', encodeURIComponent(window.btoa(url)))
+return url
       return '/api/p?' + params.toString()
     },
     setBgColor(ev: Event) {
@@ -111,7 +112,7 @@ export default {
 <template>
   <div :class="border" :style="{ width: pixelSize, height: pixelSize, padding: derivedPadding }">
     <div :class="derivedClass">
-      <span /><img :src="proxy(src)" @load="sniffBgColor($event)" v-show="ready" />
+      <span /><img :src="src"  />
     </div>
   </div>
 </template>
