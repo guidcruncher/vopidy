@@ -22,9 +22,10 @@
 	}
 
 	handle {
-                encode gzip
+                encode
 		root * /app/packages/client
 		try_files {path}.html {path} /index.html
 		file_server
+		header /index.html Cache-Control "public, max-age=0, must-revalidate"
 	}
 }

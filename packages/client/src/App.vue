@@ -6,13 +6,21 @@
     <Loader v-if="appLoading" />
   </div>
 </template>
-
 <script lang="ts" setup>
-//
+import { emit, off, on } from '@/composables/useeventbus'
+
+const detectColorScheme = () => {
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    emit('themechange', 'dark')
+  } else {
+    emit('themechange', 'light')
+  }
+}
+
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', detectColorScheme)
 </script>
 <script lang="ts">
 import Loader from '@/components/Loader'
-import { off, on } from '@/composables/useeventbus'
 import { useConfigStore } from '@/stores/configstore'
 import { useUiStateStore } from '@/stores/uistatestore'
 

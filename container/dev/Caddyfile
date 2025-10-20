@@ -22,7 +22,8 @@
 	}
 
         handle {
-                encode gzip
+                encode
+		header /index.html Cache-Control "public, max-age=0, must-revalidate"
                 reverse_proxy http://localhost:3003
         }
 

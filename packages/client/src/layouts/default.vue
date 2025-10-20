@@ -94,9 +94,13 @@ export default {
       this.snackbar = opt
       this.snackbar.show = true
     })
+    on('themechange', (newtheme) => {
+      this.theme = newtheme
+    })
   },
   beforeUnmount() {
     off('snackbar')
+    off('themechange')
   },
   methods: {
     onResize() {
