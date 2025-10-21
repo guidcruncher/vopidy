@@ -82,7 +82,7 @@ proxyRoute.get("/", async (c) => {
   if (fs.existsSync(cacheFile)) {
     bytes = fs.readFileSync(cacheFile)
   } else {
-    const data = await fetchShim(url)
+    const data: any = await fetchShim(url)
     if (data.ok) {
       bytes = await data.bytes()
       const stats = await new sharp(bytes).stats()
